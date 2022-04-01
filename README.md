@@ -1,0 +1,2 @@
+# accelerate
+Project Template Accelerator
