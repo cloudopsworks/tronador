@@ -1,0 +1,19 @@
+export SHELL = /bin/bash
+export ACCELERATE_ORG ?= cloudopsworks
+export ACCELERATE_PROJECT ?= accelerate
+export ACCELERATE_BRANCH ?= master
+export ACCELERATE_PATH ?= $(shell until [ -d "$(ACCELERATE_PROJECT)" ] || [ "`pwd`" == '/' ]; do cd ..; done; pwd)/$(ACCELERATE_PROJECT)
+-include $(ACCELERATE_PATH)/Makefile
+
+.PHONY : init
+## Init Accelerate Tooling
+init::
+	@curl --retry 5 --fail --silent --retry-delay 1 https://raw.githubusercontent.com/$(ACCELERATE_ORG)/$(ACCELERATE_PROJECT)/$(ACCELERATE_BRANCH)/bin/install.sh | \
+		bash -s "$(ACCELERATE_ORG)" "$(ACCELERATE_PROJECT)" "$(ACCELERATE_BRANCH)"
+
+.PHONY : clean
+## Clean Accelerate Tooling
+clean::
+	@[ "$(ACCELERATE_PATH)" == '/' ] || \
+	 [ "$(ACCELERATE_PATH)" == '.' ] || \
+	   echo rm -rf $(ACCELERATE_PATH)
