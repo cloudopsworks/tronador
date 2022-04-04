@@ -4,8 +4,6 @@ export SELF ?= $(MAKE)
 # Rewrite the path with vendor folder
 export PATH := $(ACCELERATE_PATH)/vendor:$(PATH)
 
--include $(shell curl -sSL -o .accelerate-base "https://raw.githubusercontent.com/cloudopsworks/accelerate/master/bin/install.sh"; echo .accelerate-base)
-
 ifeq ($(CURDIR),$(realpath $(ACCELERATE_PATH)))
 # List of targets the `readme` target should call before generating the readme
 export README_DEPS ?= docs/targets.md auto-label
@@ -16,5 +14,17 @@ endif
 include $(ACCELERATE_PATH)/Makefile.*
 include $(ACCELERATE_PATH)/modules/*/Makefile*
 
+
+auto-label: MODULES=$(filter %/, $(sort $(wildcard modules/*/)))
+auto-label:
+	for module in $(MODULES); do \
+		echo "$${module%/}: $${module}**"; \
+	done > .github/$@.yml
+
 init::
 	@exit 0
+
+ifndef TRANSLATE_COLON_NOTATION
+%:
+	@$(SELF) -s $(subst :,/,$@) TRANSLATE_COLON_NOTATION=false
+endif
