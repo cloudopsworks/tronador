@@ -3,7 +3,10 @@ name: 'auto-readme'
 on:
   # Open a PR to update README (as necessary)
   pull_request: 
-    types: [opened, synchronize, reopened]
+    types: 
+      - opened
+      - synchronize
+      - reopened
 
   # Update README nightly
   schedule:
