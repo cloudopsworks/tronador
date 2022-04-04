@@ -8,7 +8,7 @@
   -->
 [![README Header][readme_header_img]][readme_header_link]
 
-[![eLasticGuru][logo]](https://cloudops.works/)
+[![cloudopsworks][logo]](https://cloudops.works/)
 
 # Cloud Ops Works Accelerate [![Build Status](https://travis-ci.org/cloudopsworks/accelerate.svg?branch=master)](https://travis-ci.org/cloudopsworks/accelerate) [![Latest Release](https://img.shields.io/github/release/cloudopsworks/accelerate.svg)](https://github.com/cloudopsworks/accelerate/releases/latest) [![Slack Community](https://slack.cloudopsworks.com/badge.svg)](https://slack.cloudopsworks.com)
 
@@ -99,7 +99,37 @@ Here's how to get started...
 
 
 
+## Makefile targets
+```
+Available targets:
 
+  bash/lint                           Lint all bash scripts
+  git/aliases-update                  Update git aliases
+  git/export                          Export git vars
+  git/submodules-update               Update submodules
+  github/download-private-release     Download release from github
+  github/download-public-release      Download release from github
+  github/latest-release               Fetch the latest release tag from the GitHub API
+  github/push-artifacts               Push all release artifacts to GitHub (Required: `GITHUB_TOKEN`)
+  help                                Help screen
+  help/all                            Display help for all targets
+  help/short                          This help short screen
+  make/lint                           Lint all makefiles
+  packages/delete                     Delete packages
+  packages/install                    Install packages 
+  packages/install/%                  Install package (e.g. helm, helmfile, kubectl)
+  packages/reinstall                  Reinstall packages
+  packages/reinstall/%                Reinstall package (e.g. helm, helmfile, kubectl)
+  packages/uninstall/%                Uninstall package (e.g. helm, helmfile, kubectl)
+  readme                              Alias for readme/build
+  readme/build                        Create README.md by building it from README.yaml
+  readme/init                         Create basic minimalistic .README.md template file
+  readme/lint                         Verify the `README.md` is up to date
+  semver/export                       Export semver vars
+  template/build                      Create $OUT file by building it from $IN template file
+  template/deps                       Install dependencies
+
+```
 
 
 ## Share the Love 
@@ -199,7 +229,7 @@ All other trademarks referenced herein are the property of their respective owne
 
 ## About
 
-This project is maintained by [eLasticGuru OÜ][website]. 
+This project is maintained by [Cloud Ops Works LLC][website]. 
 
 
 ### Contributors
