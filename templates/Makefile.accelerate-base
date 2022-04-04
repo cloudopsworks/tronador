@@ -8,8 +8,7 @@ export ACCELERATE_PATH ?= $(shell until [ -d "$(ACCELERATE_PROJECT)" ] || [ "`pw
 .PHONY : init
 ## Init Accelerate Tooling
 init::
-	@curl --retry 5 --fail --silent --retry-delay 1 https://raw.githubusercontent.com/$(ACCELERATE_ORG)/$(ACCELERATE_PROJECT)/$(ACCELERATE_BRANCH)/bin/install.sh | \
-		bash -s "$(ACCELERATE_ORG)" "$(ACCELERATE_PROJECT)" "$(ACCELERATE_BRANCH)"
+	@curl --retry 5 --fail --silent --retry-delay 1 https://raw.githubusercontent.com/$(ACCELERATE_ORG)/$(ACCELERATE_PROJECT)/$(ACCELERATE_BRANCH)/bin/install.sh | bash -s "$(ACCELERATE_ORG)" "$(ACCELERATE_PROJECT)" "$(ACCELERATE_BRANCH)"
 
 .PHONY : clean
 ## Clean Accelerate Tooling
