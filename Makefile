@@ -18,7 +18,7 @@ include $(ACCELERATE_PATH)/modules/*/Makefile*
 
 auto-label: MODULES=$(filter %/, $(sort $(wildcard modules/*/)))
 auto-label:
-	for module in $(MODULES); do \
+	@for module in $(MODULES); do \
 		echo "$${module%/}: $${module}**"; \
 	done > .github/$@.yml
 

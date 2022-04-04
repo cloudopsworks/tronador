@@ -1,0 +1,125 @@
+---
+# 
+# This is the canonical configuration for the `README.md`
+# Run `make readme` to rebuild the `README.md`
+#
+
+# Name of this project
+name: Cloud Ops Works Accelerate 
+
+# Logo for this project
+#logo: docs/logo.png
+
+# License of this project
+license: "APACHE2"
+
+# Copyrights
+copyrights:
+  - name: "Cloud ops Works LLC"
+    url: "https://cloudops.works"
+    year: "2021-2022"
+
+# Canonical GitHub repo 
+github_repo: cloudopsworks/accelerate
+
+# Badges to display
+badges:
+  - name: "Build Status"
+    image: "https://travis-ci.org/cloudopsworks/accelerate.svg?branch=master"
+    url: "https://travis-ci.org/cloudopsworks/accelerate"
+  - name: "Latest Release"
+    image: "https://img.shields.io/github/release/cloudopsworks/accelerate.svg"
+    url: "https://github.com/cloudopsworks/accelerate/releases/latest"
+  - name: "Slack Community"
+    image: "https://slack.cloudopsworks.com/badge.svg"
+    url: "https://slack.cloudopsworks.com"
+
+related:
+  - name: "Packages"
+    description: "Cloud Ops Works installer and distribution of native apps"
+    url: "https://github.com/cloudopsworks/accelerate-packages"
+  - name: "Dev Harness"
+    description: "Cloud Ops Works Local Development Harness"
+    url: "https://github.com/cloudopsworks/dev"
+
+# References
+references:
+  - name: "Wikipedia - Test Harness"
+    description: 'The `accelerate` is similar in concept to a "Test Harness"'
+    url: "https://en.wikipedia.org/wiki/Test_harness"
+
+# Screenshots
+screenshots:
+  - name: "demo"
+    description: "Example of using the `accelerate` to build a docker image"
+    url: "https://cdn.rawgit.com/cloudopsworks/accelerate/master/docs/demo.svg"
+ 
+# Short description of this project
+description: |-
+  This `accelerate` is a collection of Makefiles to facilitate building Golang projects, Dockerfiles, Helm charts, and more.
+  It's designed to work with CI/CD systems such as GitHub Actions, Codefresh, Travis CI, CircleCI and Jenkins.
+
+# Introduction to the project
+#introduction: |-
+#  This is an introduction.
+
+# How to use this project
+usage: |-
+  At the top of your `Makefile` add, the following...
+
+  ```make
+  -include $(shell curl -sSL -o .accelerate "https://cowk.io/accelerate"; echo .accelerate)
+  ```
+
+  This will download a `Makefile` called `.accelerate` and include it at run-time. We recommend adding the `.accelerate` file to your `.gitignore`.
+
+  This automatically exposes many new targets that you can leverage throughout your build & CI/CD process.
+
+  Run `make help` for a list of available targets.
+
+  **NOTE:** the `/` is interchangable with the `:` in target names
+
+  ## GitHub Actions
+  
+  The `accelerate` is compatible with [GitHub Actions](https://github.com/features/actions).
+
+  Here's an example of running `make readme/lint` 
+
+  ```
+  name: accelerate/readme/lint
+  on: [pull_request]
+  jobs:
+    build:
+      name: 'Lint README.md'
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@master
+      - uses: cloudopsworks/accelerate@master
+        with:
+          entrypoint: /usr/bin/make
+          args: readme/lint
+   ```
+
+# Example usage
+# examples: |-
+#   Here are some real world examples:
+#   - [`github-authorized-keys`](https://github.com/cloudopsworks/github-authorized-keys/) - A Golang project that leverages `docker/%`, `go/%`, `travis/%` targets
+#   - [`charts`](https://github.com/cloudopsworks/charts/) - A collection of Helm Charts that leverages `docker/%` and `helm/%` targets
+#   - [`bastion`](https://github.com/cloudopsworks/bastion/) - A docker image that leverages `docker/%` and `bash/lint` targets
+#   - [`terraform-null-label`](https://github.com/cloudopsworks/terraform-null-label/) - A terraform module that leverages `terraform/%` targets
+
+# How to get started quickly
+quickstart: |-
+  Here's how to get started...
+
+  1. `git clone https://github.com/cloudopsworks/accelerate.git` to pull down the repository
+  2. `make init` to initialize the [`accelerate`](https://github.com/cloudopsworks/accelerate/)
+
+# Other files to include in this README from the project folder
+include:
+  - "docs/targets.md"
+
+# Contributors to this project
+contributors:
+  - name: "Cristian Beraha"
+    github: "berahac"
