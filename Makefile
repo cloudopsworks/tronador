@@ -12,6 +12,7 @@ endif
 
 # Import Makefiles into current context
 include $(ACCELERATE_PATH)/Makefile.*
+include $(ACCELERATE_PATH)/modules/*/bootstrap.Makefile*
 include $(ACCELERATE_PATH)/modules/*/Makefile*
 
 
