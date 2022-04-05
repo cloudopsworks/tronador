@@ -57,7 +57,7 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 At the top of your `Makefile` add, the following...
 
 ```make
--include $(shell curl -sSL -o .accelerate "https://cowk.io/accelerate"; echo .accelerate)
+-include $(shell curl -sSL -o .accelerate "https://cowk.io/acc"; echo .accelerate)
 ```
 
 This will download a `Makefile` called `.accelerate` and include it at run-time. We recommend adding the `.accelerate` file to your `.gitignore`.
