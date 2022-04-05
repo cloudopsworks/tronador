@@ -17,7 +17,7 @@ license: "APACHE2"
 copyrights:
   - name: "Cloud ops Works LLC"
     url: "https://cloudops.works"
-    year: "2021-2022"
+    year: "2021"
 
 # Canonical GitHub repo 
 github_repo: cloudopsworks/accelerate

@@ -186,7 +186,7 @@ Please use the [issue tracker](https://github.com/cloudopsworks/accelerate/issue
 
 ## Copyrights
 
-Copyright © 2021-2022-2022 [Cloud ops Works LLC](https://cloudops.works)
+Copyright © 2021-2022 [Cloud ops Works LLC](https://cloudops.works)
 
 
 
