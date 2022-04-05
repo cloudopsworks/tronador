@@ -16,15 +16,15 @@ terraform/install:
 
 ## Ensure all plugins can be fetched
 terraform/get-plugins:
-	@$(TERRAFORM) init -get=true -backend=false -input=false >/dev/null
+	$(TERRAFORM) init -get=true -backend=false -input=false >/dev/null
 
 ## Ensure all modules can be fetched
 terraform/get-modules:
-	@$(TERRAFORM) init -get -backend=false -input=false >/dev/null
+	$(TERRAFORM) init -get -backend=false -input=false >/dev/null
 
 ## Basic terraform sanity check
 terraform/validate:
-	@$(TERRAFORM) validate
+	$(TERRAFORM) validate
 
 ## Lint check Terraform
 terraform/lint:
