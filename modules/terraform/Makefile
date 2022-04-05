@@ -1,7 +1,7 @@
 TMP ?= /tmp
 TERRAFORM ?= $(ACCELERATE_PATH)/vendor/terraform
 TERRAFORM_VERSION ?= 1.1.7
-TERRAFORM_URL ?= https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(OS)_$(OS_ARCH).zip
+TERRAFORM_URL ?= https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(OS)_$(ARCH).zip
 
 ## Install terraform
 terraform/install:

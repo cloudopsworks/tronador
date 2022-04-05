@@ -1,6 +1,7 @@
 export TMP ?= /tmp
 export ACCELERATE_PATH ?= $(shell 'pwd')
 export OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
+export ARCH ?= $(shell uname -m)
 export SELF ?= $(MAKE)
 # Rewrite the path with vendor folder
 export PATH := $(ACCELERATE_PATH)/vendor:$(PATH)
