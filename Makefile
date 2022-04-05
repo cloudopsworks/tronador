@@ -1,3 +1,4 @@
+export TMP ?= /tmp
 export ACCELERATE_PATH ?= $(shell 'pwd')
 export OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 export SELF ?= $(MAKE)
