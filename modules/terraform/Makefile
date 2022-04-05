@@ -16,7 +16,7 @@ terraform/install:
 
 ## Ensure all plugins can be fetched
 terraform/get-plugins:
-	@$(TERRAFORM) init -get-plugins -backend=false -input=false >/dev/null
+	@$(TERRAFORM) init -get=true -backend=false -input=false >/dev/null
 
 ## Ensure all modules can be fetched
 terraform/get-modules:
@@ -24,11 +24,7 @@ terraform/get-modules:
 
 ## Basic terraform sanity check
 terraform/validate:
-ifeq ("12","$(word 2, $(subst ., ,$(TERRAFORM_VERSION)))")
-	@echo "Terraform 0.12 does not support validate without skipping variables"
-else
 	@$(TERRAFORM) validate
-endif
 
 ## Lint check Terraform
 terraform/lint:
