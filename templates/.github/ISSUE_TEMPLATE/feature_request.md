@@ -7,9 +7,9 @@ assignees: ''
 
 ---
 
-Have a question? Please checkout our [Slack Community](https://slack.cloudposse.com) in the `#geodesic` channel or visit our [Slack Archive](https://archive.sweetops.com/geodesic/). 
+Have a question? Please checkout our [Slack Community](https://slack.cloudops.works) in the `#geodesic` channel or visit our [Slack Archive](https://archive.sweetops.com/geodesic/). 
 
-[![Slack Community](https://slack.cloudposse.com/badge.svg)](https://slack.cloudposse.com)
+[![Slack Community](https://slack.cloudops.works/badge.svg)](https://slack.cloudops.works)
 
 ## Describe the Feature
 
