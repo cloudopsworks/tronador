@@ -1,0 +1,27 @@
+##
+# (c) 2021 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+pipeline:
+  - docker
+  - helm
+#  - zip
+zipGlobs:
+  - target/*.jar
+  - conf/**
+excludeGlobs:
+  - Dockerfile
+  - .helmignore
+  - .dockerignore
+  - .git*
+  - .git/
+  - OWNER*
+  - README.md
+  - jenkins*
+  - charts/
+  - cloudopsworks-ci
+  - skafold*
+  - original-*.jar
+# cd:
+#   env: dev

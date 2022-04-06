@@ -1,0 +1,49 @@
+##
+# (c) 2021 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+name: Build Pull Request Checks
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - edited
+
+permissions:
+  contents: read
+  packages: write
+  statuses: write
+  pull-requests: write
+  issues: write
+  checks: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/code-build.yml
+    with:
+      isRelease: false
+      semver: 0.1.0-SNAPSHOT
+      ref: ${{ github.head_ref }}
+    secrets:
+      DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
+      HELM_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
+      BOT_USER: ${{ secrets.BOT_USER }}
+      BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      dockerRegistryUser: ${{ secrets.AZURE_SERVICE_ID }}
+      dockerRegistryPassword: ${{ secrets.AZURE_SERVICE_SECRET }}
+      helmRegistryUser: ${{ secrets.AZURE_SERVICE_ID }}
+      helmRegistryPassword: ${{ secrets.AZURE_SERVICE_SECRET }}
+
+  static-analysis:
+    needs:
+      - build
+    uses: ./.github/workflows/static-analysis.yml
+    with:
+      ref: ${{ github.head_ref }}
+    secrets:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      sonarqubeUrl: ${{ secrets.SONARQUBE_URL }}
+      sonarqubeToken: ${{ secrets.SONARQUBE_TOKEN }}

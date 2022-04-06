@@ -1,0 +1,16 @@
+##
+# (c) 2021 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+release:
+- ./*
+
+size-XS:
+- any: [ '*Dockerfile' ]
+
+size-S:
+- any: [ 'package*.json', 'node_modules/**/*' ]
+
+size-XL:
+- any: [ '**/*.js', '!*Dockerfile', '!package*.json', '!charts/**/*', '!node_modules/**/*' ]

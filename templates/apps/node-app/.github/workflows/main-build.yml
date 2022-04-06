@@ -1,0 +1,85 @@
+
+##
+# (c) 2021 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+name: NodeJS Build
+on:
+  # Run only on branches PUSH except when charts are modified
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - ".github/workflows/**"
+  workflow_dispatch:
+    
+# Permission Settings for the entire RUN
+permissions:
+  actions: write
+  contents: write
+  issues: write
+  packages: write
+  statuses: write
+
+jobs:
+  new_version:
+    uses: ./.github/workflows/code-tag.yml
+    secrets:
+      DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
+      HELM_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
+      BOT_USER: ${{ secrets.BOT_USER }}
+      BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+  build:
+    needs: 
+      - new_version
+    uses: ./.github/workflows/code-build.yml
+    with:
+      semver: ${{ needs.new_version.outputs.release_version }} 
+      ref: ${{ needs.new_version.outputs.release_tag }}
+    secrets:
+      DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
+      HELM_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
+      BOT_USER: ${{ secrets.BOT_USER }}
+      BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      dockerRegistryUser: ${{ secrets.AZURE_SERVICE_ID }}
+      dockerRegistryPassword: ${{ secrets.AZURE_SERVICE_SECRET }}
+      helmRegistryUser: ${{ secrets.AZURE_SERVICE_ID }}
+      helmRegistryPassword: ${{ secrets.AZURE_SERVICE_SECRET }}
+
+  release:
+    needs:
+      - build
+      - new_version
+    uses: ./.github/workflows/base/create-release.yml
+    with:
+      release-tag: ${{ needs.new_version.outputs.release_version }}
+    secrets:
+      token: ${{ secrets.BOT_TOKEN }}
+
+  static-analysis:
+    needs:
+      - build
+      - new_version
+    uses: ./.github/workflows/static-analysis.yml
+    with:
+      ref: ${{ needs.new_version.outputs.release_tag }}
+    secrets:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      sonarqubeUrl: ${{ secrets.SONARQUBE_URL }}
+      sonarqubeToken: ${{ secrets.SONARQUBE_TOKEN }}
+
+  delivery:
+    needs:
+      - build
+      - release
+      - new_version
+    uses: ./.github/workflows/base/delivery-push.yml
+    with:
+      release_version: ${{ needs.new_version.outputs.release_version }}
+    secrets:
+      token: ${{ secrets.BOT_TOKEN }}
+

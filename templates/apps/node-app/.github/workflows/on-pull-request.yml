@@ -1,0 +1,22 @@
+##
+# (c) 2021 - Cloud Ops Works LLC - https://cloudops.works/
+#            On GitHub: https://github.com/cloudopsworks
+#            Distributed Under Apache v2.0 License
+#
+name: Check on Pull request
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+  statuses: write
+  pull-requests: write
+  issues: write
+  checks: write
+
+jobs:
+  plan:
+    uses: ./.github/workflows/base/on-pull-request.yml
+    secrets:
+      token: ${{ secrets.BOT_TOKEN }}
