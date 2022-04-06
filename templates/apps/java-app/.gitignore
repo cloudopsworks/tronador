@@ -3,6 +3,10 @@
 #            On GitHub: https://github.com/cloudopsworks
 #            Distributed Under Apache v2.0 License
 #
+# Tronador tooling
+tronador/
+.tronador
+
 # Compiled class file
 **/.DS_Store
 *.class
