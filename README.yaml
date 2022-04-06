@@ -25,22 +25,22 @@ github_repo: cloudopsworks/tronador
 # Badges to display
 badges:
   - name: "Build Status"
-    image: "https://travis-ci.org/cloudopsworks/tronador.svg?branch=master"
-    url: "https://travis-ci.org/cloudopsworks/tronador"
+    image: "https://github.com/cloudopsworks/tronador/workflows/build/badge.svg?branch=master&event=push"
+    url: "https://github.com/cloudopsworks/tronador/actions/workflows/build.yml"
   - name: "Latest Release"
-    image: "https://img.shields.io/github/release/cloudopsworks/tronador.svg"
+    image: "https://img.shields.io/github/v/release/cloudopsworks/tronador?display_name=tag"
     url: "https://github.com/cloudopsworks/tronador/releases/latest"
   - name: "Slack Community"
-    image: "https://slack.cloudopsworks.com/badge.svg"
-    url: "https://slack.cloudopsworks.com"
+    image: "https://slack.cloudops.works/badge.svg"
+    url: "https://slack.cloudops.works"
 
 related:
   - name: "Packages"
     description: "Cloud Ops Works installer and distribution of native apps"
     url: "https://github.com/cloudopsworks/tronador-packages"
-  - name: "Dev Harness"
-    description: "Cloud Ops Works Local Development Harness"
-    url: "https://github.com/cloudopsworks/dev"
+  # - name: "Dev Harness"
+  #   description: "Cloud Ops Works Local Development Harness"
+  #   url: "https://github.com/cloudopsworks/dev"
 
 # References
 references:
