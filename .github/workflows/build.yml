@@ -1,0 +1,33 @@
+##
+# (c) 2022 Cloud Ops Works LLC
+#
+name: build
+on:
+  workflow_dispatch:
+    
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - ".github/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          fetch-depth: 0
+      - name: Install Deps
+        run: |
+          # make go/deps-build
+          # make go/deps-dev
+          make readme/deps
+      - name: Build It
+        run: |
+          make bash/lint
+          make make/lint
+          make terraform/install
+          # make docker/build
+
