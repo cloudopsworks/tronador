@@ -1,5 +1,5 @@
 TMP ?= /tmp
-TERRAFORM ?= $(ACCELERATE_PATH)/vendor/terraform
+TERRAFORM ?= $(TRONADOR_PATH)/vendor/terraform
 TERRAFORM_VERSION ?= 1.1.7
 TERRAFORM_URL ?= https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(OS)_$(ARCH).zip
 
@@ -33,4 +33,4 @@ terraform/lint:
 
 ## Upgrade all terraform module sources
 terraform/upgrade-modules: packages/install/json2hcl
-	@$(ACCELERATE_PATH)/bin/upgrade_terraform_modules.sh all
+	@$(TRONADOR_PATH)/bin/upgrade_terraform_modules.sh all

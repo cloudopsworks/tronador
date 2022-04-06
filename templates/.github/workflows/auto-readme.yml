@@ -36,6 +36,6 @@ jobs:
           title: Automatic Update of README.md
           body: |-
             This is an auto-generated PR which updates the `README.md` from the `README.yaml` 
-            using the [`cloudopsworks/accelerate`](https://github.com/cloudopsworks/accelerate).
+            using the [`cloudopsworks/tronador`](https://github.com/cloudopsworks/tronador).
           branch: github-actions/auto-readme
           #branch-suffix: none

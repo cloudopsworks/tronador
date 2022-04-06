@@ -1,11 +1,11 @@
-export INSTALL_PATH ?= $(ACCELERATE_PATH)/vendor
+export INSTALL_PATH ?= $(TRONADOR_PATH)/vendor
 export PACKAGES_VERSION ?= master
-export PACKAGES_PATH ?= $(ACCELERATE_PATH)/vendor/packages
+export PACKAGES_PATH ?= $(TRONADOR_PATH)/vendor/packages
 
 # If customer defined their own packages versions then will come defined from upper
 ifndef CUSTOMER_PACKAGES_OWNER
 export CUSTOMER_PACKAGES_OWNER ?= cloudopsworks
-export CUSTOMER_PACKAGES_REPO ?= accelerate-packages
+export CUSTOMER_PACKAGES_REPO ?= tronador-packages
 endif
 
 ## Delete packages

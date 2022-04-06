@@ -10,10 +10,10 @@
 
 [![cloudopsworks][logo]](https://cloudops.works/)
 
-# Cloud Ops Works Accelerate [![Build Status](https://travis-ci.org/cloudopsworks/accelerate.svg?branch=master)](https://travis-ci.org/cloudopsworks/accelerate) [![Latest Release](https://img.shields.io/github/release/cloudopsworks/accelerate.svg)](https://github.com/cloudopsworks/accelerate/releases/latest) [![Slack Community](https://slack.cloudopsworks.com/badge.svg)](https://slack.cloudopsworks.com)
+# Cloud Ops Works Accelerate [![Build Status](https://travis-ci.org/cloudopsworks/tronador.svg?branch=master)](https://travis-ci.org/cloudopsworks/tronador) [![Latest Release](https://img.shields.io/github/release/cloudopsworks/tronador.svg)](https://github.com/cloudopsworks/tronador/releases/latest) [![Slack Community](https://slack.cloudopsworks.com/badge.svg)](https://slack.cloudopsworks.com)
 
 
-This `accelerate` is a collection of Makefiles to facilitate building Golang projects, Dockerfiles, Helm charts, and more.
+This `tronador` is a collection of Makefiles to facilitate building Golang projects, Dockerfiles, Helm charts, and more.
 It's designed to work with CI/CD systems such as GitHub Actions, Codefresh, Travis CI, CircleCI and Jenkins.
 
 
@@ -45,8 +45,8 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 ## Screenshots
 
 
-![demo](https://cdn.rawgit.com/cloudopsworks/accelerate/master/docs/demo.svg)
-*Example of using the `accelerate` to build a docker image*
+![demo](https://cdn.rawgit.com/cloudopsworks/tronador/master/docs/demo.svg)
+*Example of using the `tronador` to build a docker image*
 
 
 
@@ -57,10 +57,10 @@ It's 100% Open Source and licensed under the [APACHE2](LICENSE).
 At the top of your `Makefile` add, the following...
 
 ```make
--include $(shell curl -sSL -o .accelerate "https://cowk.io/acc"; echo .accelerate)
+-include $(shell curl -sSL -o .tronador "https://cowk.io/acc"; echo .tronador)
 ```
 
-This will download a `Makefile` called `.accelerate` and include it at run-time. We recommend adding the `.accelerate` file to your `.gitignore`.
+This will download a `Makefile` called `.tronador` and include it at run-time. We recommend adding the `.tronador` file to your `.gitignore`.
 
 This automatically exposes many new targets that you can leverage throughout your build & CI/CD process.
 
@@ -70,12 +70,12 @@ Run `make help` for a list of available targets.
 
 ## GitHub Actions
 
-The `accelerate` is compatible with [GitHub Actions](https://github.com/features/actions).
+The `tronador` is compatible with [GitHub Actions](https://github.com/features/actions).
 
 Here's an example of running `make readme/lint` 
 
 ```
-name: accelerate/readme/lint
+name: tronador/readme/lint
 on: [pull_request]
 jobs:
   build:
@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: cloudopsworks/accelerate@master
+    - uses: cloudopsworks/tronador@master
       with:
         entrypoint: /usr/bin/make
         args: readme/lint
@@ -93,8 +93,8 @@ jobs:
 
 Here's how to get started...
 
-1. `git clone https://github.com/cloudopsworks/accelerate.git` to pull down the repository
-2. `make init` to initialize the [`accelerate`](https://github.com/cloudopsworks/accelerate/)
+1. `git clone https://github.com/cloudopsworks/tronador.git` to pull down the repository
+2. `make init` to initialize the [`tronador`](https://github.com/cloudopsworks/tronador/)
 
 
 
@@ -134,7 +134,7 @@ Available targets:
 
 ## Share the Love 
 
-Like this project? Please give it a ★ on [our GitHub](https://github.com/cloudopsworks/accelerate)! (it helps us **a lot**) 
+Like this project? Please give it a ★ on [our GitHub](https://github.com/cloudopsworks/tronador)! (it helps us **a lot**) 
 
 Are you using this project or any of our other projects? Consider [leaving a testimonial][testimonial]. =)
 
@@ -143,7 +143,7 @@ Are you using this project or any of our other projects? Consider [leaving a tes
 
 Check out these related projects.
 
-- [Packages](https://github.com/cloudopsworks/accelerate-packages) - Cloud Ops Works installer and distribution of native apps
+- [Packages](https://github.com/cloudopsworks/tronador-packages) - Cloud Ops Works installer and distribution of native apps
 - [Dev Harness](https://github.com/cloudopsworks/dev) - Cloud Ops Works Local Development Harness
 
 
@@ -153,14 +153,14 @@ Check out these related projects.
 
 For additional context, refer to some of these links. 
 
-- [Wikipedia - Test Harness](https://en.wikipedia.org/wiki/Test_harness) - The `accelerate` is similar in concept to a "Test Harness"
+- [Wikipedia - Test Harness](https://en.wikipedia.org/wiki/Test_harness) - The `tronador` is similar in concept to a "Test Harness"
 
 
 ## Help
 
 **Got a question?** We got answers. 
 
-File a GitHub [issue](https://github.com/cloudopsworks/accelerate/issues), send us an [email][email] or join our [Slack Community][slack].
+File a GitHub [issue](https://github.com/cloudopsworks/tronador/issues), send us an [email][email] or join our [Slack Community][slack].
 
 [![README Commercial Support][readme_commercial_support_img]][readme_commercial_support_link]
 
@@ -177,7 +177,7 @@ File a GitHub [issue](https://github.com/cloudopsworks/accelerate/issues), send 
 
 ### Bug Reports & Feature Requests
 
-Please use the [issue tracker](https://github.com/cloudopsworks/accelerate/issues) to report any bugs or file feature requests.
+Please use the [issue tracker](https://github.com/cloudopsworks/tronador/issues) to report any bugs or file feature requests.
 
 ### Developing
 
@@ -244,31 +244,31 @@ This project is maintained by [Cloud Ops Works LLC][website].
 [![Beacon][beacon]][website]
 
   [logo]: https://cloudops.works/logo-300x69.svg
-  [docs]: https://cowk.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=docs
-  [website]: https://cowk.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=website
-  [github]: https://cowk.io/github?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=github
-  [jobs]: https://cowk.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=jobs
-  [hire]: https://cowk.io/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=hire
-  [slack]: https://cowk.io/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=slack
-  [linkedin]: https://cowk.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=linkedin
-  [twitter]: https://cowk.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=twitter
-  [testimonial]: https://cowk.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=testimonial
-  [office_hours]: https://cloudops.works/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=office_hours
-  [newsletter]: https://cowk.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=newsletter
-  [email]: https://cowk.io/email?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=email
-  [commercial_support]: https://cowk.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=commercial_support
-  [we_love_open_source]: https://cowk.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=we_love_open_source
-  [terraform_modules]: https://cowk.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=terraform_modules
+  [docs]: https://cowk.io/docs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=docs
+  [website]: https://cowk.io/homepage?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=website
+  [github]: https://cowk.io/github?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=github
+  [jobs]: https://cowk.io/jobs?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=jobs
+  [hire]: https://cowk.io/hire?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=hire
+  [slack]: https://cowk.io/slack?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=slack
+  [linkedin]: https://cowk.io/linkedin?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=linkedin
+  [twitter]: https://cowk.io/twitter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=twitter
+  [testimonial]: https://cowk.io/leave-testimonial?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=testimonial
+  [office_hours]: https://cloudops.works/office-hours?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=office_hours
+  [newsletter]: https://cowk.io/newsletter?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=newsletter
+  [email]: https://cowk.io/email?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=email
+  [commercial_support]: https://cowk.io/commercial-support?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=commercial_support
+  [we_love_open_source]: https://cowk.io/we-love-open-source?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=we_love_open_source
+  [terraform_modules]: https://cowk.io/terraform-modules?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=terraform_modules
   [readme_header_img]: https://cloudops.works/readme/header/img
-  [readme_header_link]: https://cloudops.works/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=readme_header_link
+  [readme_header_link]: https://cloudops.works/readme/header/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=readme_header_link
   [readme_footer_img]: https://cloudops.works/readme/footer/img
-  [readme_footer_link]: https://cloudops.works/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=readme_footer_link
+  [readme_footer_link]: https://cloudops.works/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=readme_footer_link
   [readme_commercial_support_img]: https://cloudops.works/readme/commercial-support/img
-  [readme_commercial_support_link]: https://cloudops.works/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/accelerate&utm_content=readme_commercial_support_link
-  [share_twitter]: https://twitter.com/intent/tweet/?text=Cloud+Ops+Works+Accelerate&url=https://github.com/cloudopsworks/accelerate
-  [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Cloud+Ops+Works+Accelerate&url=https://github.com/cloudopsworks/accelerate
-  [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudopsworks/accelerate
-  [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/accelerate
-  [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudopsworks/accelerate
-  [share_email]: mailto:?subject=Cloud+Ops+Works+Accelerate&body=https://github.com/cloudopsworks/accelerate
-  [beacon]: https://ga-beacon.cloudops.works/UA-76589703-4/cloudopsworks/accelerate?pixel&cs=github&cm=readme&an=accelerate
+  [readme_commercial_support_link]: https://cloudops.works/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=readme_commercial_support_link
+  [share_twitter]: https://twitter.com/intent/tweet/?text=Cloud+Ops+Works+Accelerate&url=https://github.com/cloudopsworks/tronador
+  [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Cloud+Ops+Works+Accelerate&url=https://github.com/cloudopsworks/tronador
+  [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudopsworks/tronador
+  [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/tronador
+  [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudopsworks/tronador
+  [share_email]: mailto:?subject=Cloud+Ops+Works+Accelerate&body=https://github.com/cloudopsworks/tronador
+  [beacon]: https://ga-beacon.cloudops.works/UA-76589703-4/cloudopsworks/tronador?pixel&cs=github&cm=readme&an=tronador

@@ -1,0 +1,18 @@
+export SHELL = /bin/bash
+export TRONADOR_ORG ?= cloudopsworks
+export TRONADOR_PROJECT ?= tronador
+export TRONADOR_BRANCH ?= master
+export TRONADOR_PATH ?= $(shell until [ -d "$(TRONADOR_PROJECT)" ] || [ "`pwd`" == '/' ]; do cd ..; done; pwd)/$(TRONADOR_PROJECT)
+-include $(TRONADOR_PATH)/Makefile
+
+.PHONY : init
+## Init Accelerate Tooling
+init::
+	@curl --retry 5 --fail --silent --retry-delay 1 https://raw.githubusercontent.com/$(TRONADOR_ORG)/$(TRONADOR_PROJECT)/$(TRONADOR_BRANCH)/bin/install.sh | bash -s "$(TRONADOR_ORG)" "$(TRONADOR_PROJECT)" "$(TRONADOR_BRANCH)"
+
+.PHONY : clean
+## Clean Accelerate Tooling
+clean::
+	@[ "$(TRONADOR_PATH)" == '/' ] || \
+	 [ "$(TRONADOR_PATH)" == '.' ] || \
+	   echo rm -rf $(TRONADOR_PATH)

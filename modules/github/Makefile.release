@@ -8,7 +8,7 @@ github/download-private-release:
 	$(call assert-set,FILE)
 	$(call assert-set,VERSION)
 	$(call assert-set,OUTPUT)
-	$(ACCELERATE_PATH)/bin/github_download_private_release.sh $(VERSION) $(OUTPUT)
+	$(TRONADOR_PATH)/bin/github_download_private_release.sh $(VERSION) $(OUTPUT)
 
 ## REPO="<user_or_org>/<repo_name>"
 ## FILE="<name_of_asset_file>"      # the name of your release asset file, e.g. build.tar.gz
@@ -18,7 +18,7 @@ github/download-public-release:
 	$(call assert-set,FILE)
 	$(call assert-set,VERSION)
 	$(call assert-set,OUTPUT)
-	$(ACCELERATE_PATH)/bin/github_download_public_release.sh $(VERSION) $(OUTPUT)
+	$(TRONADOR_PATH)/bin/github_download_public_release.sh $(VERSION) $(OUTPUT)
 
 # To use ghr, you need a GitHub API token.
 # Please set it via `GITHUB_TOKEN` env var
@@ -31,5 +31,5 @@ github/push-artifacts: packages/install/ghr
 .PHONY : github/latest-release
 ## Fetch the latest release tag from the GitHub API
 github/latest-release:
-	@$(ACCELERATE_PATH)/bin/github_repo_metadata.sh '$(GIT_ORG)' '$(GIT_REPO)' 'releases/latest' '.tag_name'
+	@$(TRONADOR_PATH)/bin/github_repo_metadata.sh '$(GIT_ORG)' '$(GIT_REPO)' 'releases/latest' '.tag_name'
 
