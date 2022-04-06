@@ -36,5 +36,5 @@ OWNERS: # Do not overwrite by default
 	git add $@
 
 ## Template init for JAVA app
-template/apps/java: template/deps github/init $(JAVA_GH_TEMPLATES) $(BASE_GH_TEMPLATES) pom.xml Dockerfile cloudopsworks-ci.yaml OWNERS
+template/apps/java: template/deps github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) pom.xml Dockerfile cloudopsworks-ci.yaml OWNERS
 
