@@ -1,0 +1,40 @@
+JAVA_TEMPLATES = \
+	.github/labeler.yml \
+	.github/workflows/automerge.yml \
+	.github/workflows/build-pull-request.yml \
+	.github/workflows/code-build.yml \
+	.github/workflows/code-tag.yml \
+	.github/workflows/main-build.yml \
+	.github/workflows/on-pull-request.yml \
+	.github/workflows/slash-commands.yml \
+	.github/workflows/slash-on-approve.yml \
+	.github/workflows/slash-on-promote.yml \
+	.github/workflows/static-analysis.yml \
+	.dockerignore \
+	.gitignore \
+	.helmignore
+
+$(JAVA_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/java-app, $(JAVA_TEMPLATES))
+	mkdir -p $(dir $@)
+	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	git add $@
+
+Dockerfile: # Do not overwrite by default
+	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	git add $@
+
+cloudopsworks-ci.yaml: # Do not overwrite by default
+	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	git add $@
+
+pom.xml: # Do not overwrite by default
+	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	git add $@
+
+OWNERS: # Do not overwrite by default
+	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	git add $@
+
+## Template init for JAVA app
+template/apps/java: template/deps github/init $(JAVA_GH_TEMPLATES) $(BASE_GH_TEMPLATES) pom.xml Dockerfile cloudopsworks-ci.yaml OWNERS
+
