@@ -14,7 +14,7 @@ JAVA_TEMPLATES = \
 	.gitignore \
 	.helmignore
 
-$(JAVA_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/java-app, $(JAVA_TEMPLATES))
+$(JAVA_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/java-app/, $(JAVA_TEMPLATES))
 	mkdir -p $(dir $@)
 	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
 	git add $@
