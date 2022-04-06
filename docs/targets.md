@@ -1,8 +1,9 @@
-## Makefile targets
+## Makefile Targets
 ```
 Available targets:
 
   bash/lint                           Lint all bash scripts
+  docs/copyright-add                  Add copyright headers to source code
   git/aliases-update                  Update git aliases
   git/export                          Export git vars
   git/submodules-update               Update submodules
@@ -27,5 +28,11 @@ Available targets:
   semver/export                       Export semver vars
   template/build                      Create $OUT file by building it from $IN template file
   template/deps                       Install dependencies
+  terraform/get-modules               Ensure all modules can be fetched
+  terraform/get-plugins               Ensure all plugins can be fetched
+  terraform/install                   Install terraform
+  terraform/lint                      Lint check Terraform
+  terraform/upgrade-modules           Upgrade all terraform module sources
+  terraform/validate                  Basic terraform sanity check
 
 ```

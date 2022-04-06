@@ -10,7 +10,7 @@
 
 [![cloudopsworks][logo]](https://cloudops.works/)
 
-# Cloud Ops Works Accelerate [![Build Status](https://travis-ci.org/cloudopsworks/tronador.svg?branch=master)](https://travis-ci.org/cloudopsworks/tronador) [![Latest Release](https://img.shields.io/github/release/cloudopsworks/tronador.svg)](https://github.com/cloudopsworks/tronador/releases/latest) [![Slack Community](https://slack.cloudopsworks.com/badge.svg)](https://slack.cloudopsworks.com)
+# Cloud Ops Works Accelerate [![Build Status](https://github.com/cloudopsworks/tronador/workflows/build/badge.svg?branch=master&event=push)](https://github.com/cloudopsworks/tronador/actions/workflows/build.yml) [![Latest Release](https://img.shields.io/github/v/release/cloudopsworks/tronador?display_name=tag)](https://github.com/cloudopsworks/tronador/releases/latest) [![Slack Community](https://slack.cloudops.works/badge.svg)](https://slack.cloudops.works)
 
 
 This `tronador` is a collection of Makefiles to facilitate building Golang projects, Dockerfiles, Helm charts, and more.
@@ -99,11 +99,12 @@ Here's how to get started...
 
 
 
-## Makefile targets
+## Makefile Targets
 ```
 Available targets:
 
   bash/lint                           Lint all bash scripts
+  docs/copyright-add                  Add copyright headers to source code
   git/aliases-update                  Update git aliases
   git/export                          Export git vars
   git/submodules-update               Update submodules
@@ -128,8 +129,15 @@ Available targets:
   semver/export                       Export semver vars
   template/build                      Create $OUT file by building it from $IN template file
   template/deps                       Install dependencies
+  terraform/get-modules               Ensure all modules can be fetched
+  terraform/get-plugins               Ensure all plugins can be fetched
+  terraform/install                   Install terraform
+  terraform/lint                      Lint check Terraform
+  terraform/upgrade-modules           Upgrade all terraform module sources
+  terraform/validate                  Basic terraform sanity check
 
 ```
+
 
 
 ## Share the Love 
@@ -144,7 +152,6 @@ Are you using this project or any of our other projects? Consider [leaving a tes
 Check out these related projects.
 
 - [Packages](https://github.com/cloudopsworks/tronador-packages) - Cloud Ops Works installer and distribution of native apps
-- [Dev Harness](https://github.com/cloudopsworks/dev) - Cloud Ops Works Local Development Harness
 
 
 
