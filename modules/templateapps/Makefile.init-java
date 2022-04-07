@@ -32,7 +32,7 @@ template/apps/quickstart:
 	rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven/.git
 	cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven/. .
 
-template/apps/pomconfig:
+template/apps/pomconfig: packages/install/yq
 ifeq ($(OS),darwin)
 	echo -n "Name of the Maven Group Id? (com.example): " ; \
 	read -i "com.example" GROUP_ID ; \
@@ -51,10 +51,10 @@ else
 endif
 
 ## Template init for JAVA app
-template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml
+template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml template/apps/quickstart template/apps/pomconfig
 
 ## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
-template/apps/java/%: template/apps/java template/apps/quickstart template/apps/pomconfig
+template/apps/java/%: template/apps/java
 ifeq ($(OS),darwin)
 	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
 	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
