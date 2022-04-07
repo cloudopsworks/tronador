@@ -33,9 +33,18 @@ template/apps/quickstart:
 	cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven/. .
 
 template/apps/pomconfig:
-	echo -n "$(yellow)Name of the Maven Group Id? (com.example)$(yellow)" ; \
+ifeq ($(OS),darwin)
+	echo -n "Name of the Maven Group Id? (com.example)" ; \
+	read GROUP_ID ; \
+	sed -i "" -e "s|<groupId>com\.example</groupId>|<groupId>$$GROUP_ID</groupId>|g" pom.xml
+else ifeq ($(OS),linux)
+	echo -n "Name of the Maven Group Id? (com.example)" ; \
 	read GROUP_ID ; \
 	sed -i -e "s|<groupId>com\.example</groupId>|<groupId>$$GROUP_ID</groupId>|g" pom.xml
+else
+	echo "platfrom $(OS) not supported to release from"
+	exit -1
+endif
 
 ## Template init for JAVA app
 template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml
