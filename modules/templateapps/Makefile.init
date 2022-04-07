@@ -1,3 +1,5 @@
+QUICKSTART_REPO ?= https://github.com/tronador-quickstarts
+
 BASE_GH_TEMPLATES = \
 	.github/workflows/base/create-release.yml \
 	.github/workflows/base/delivery-push.yml \

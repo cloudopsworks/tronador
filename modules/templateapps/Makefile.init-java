@@ -27,19 +27,16 @@ cloudopsworks-ci.yaml: # Do not overwrite by default
 	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
 	git add $@
 
-pom.xml: # Do not overwrite by default
-	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
-	git add $@
-
-OWNERS: # Do not overwrite by default
-	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
-	git add $@
+template/apps/quickstart:
+	git clone $(QUICKSTART_REPO)/spring-boot-maven $(TRONADOR_PATH)/vendor/spring-boot-maven
+	rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven/.git
+	cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven .
 
 ## Template init for JAVA app
-template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) pom.xml Dockerfile cloudopsworks-ci.yaml OWNERS
+template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml
 
 ## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
-template/apps/java/%: template/apps/java
+template/apps/java/%: template/apps/java template/apps/quickstart
 ifeq ($(OS),darwin)
 	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
 	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
