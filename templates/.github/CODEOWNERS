@@ -1,4 +1,21 @@
 # Use this file to define individuals or teams that are responsible for code in a repository.
 # Read more: <https://help.github.com/articles/about-codeowners/>
+#
+# Order is important: the last matching pattern has the highest precedence
 
+# These owners will be the default owners for everything
 * @cloudopsworks/engineering
+
+## Add your entries here: ==>
+
+## Add your entries here <==
+
+# Makefiles are maintained by DevOps Accelerator team
+**/Makefile     @cloudopsworks/engineering
+**/Makefile.*   @cloudopsworks/engineering
+
+# All in github settings are managed by DevOps Accelerator team
+.github         @cloudopsworks/engineering
+
+# Admins has precedence over these specific items
+.github/CODEOWNERS  @cloudopsworks/admins

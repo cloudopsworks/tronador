@@ -7,10 +7,6 @@ assignees: ''
 
 ---
 
-Found a bug? Maybe our [Slack Community](https://slack.cloudops.works) can help. 
-
-[![Slack Community](https://slack.cloudops.works/badge.svg)](https://slack.cloudops.works)
-
 ## Describe the Bug
 A clear and concise description of what the bug is.
 
