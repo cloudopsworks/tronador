@@ -1,16 +1,21 @@
 GITHUB_TEMPLATES = \
 	.github/CODEOWNERS \
-	.github/workflows/auto-greet.yml \
+	.github/workflows/auto-release.yml \
 	.github/workflows/auto-assign.yml \
 	.github/workflows/auto-label.yml \
-	.github/workflows/auto-readme.yml \
 	.github/ISSUE_TEMPLATE/config.yml \
 	.github/PULL_REQUEST_TEMPLATE.md \
+	.github/ISSUE_TEMPLATE/command_submission.md \
 	.github/ISSUE_TEMPLATE/feature_request.md \
 	.github/ISSUE_TEMPLATE/bug_report.md \
 	.github/ISSUE_TEMPLATE/question.md
 
 $(GITHUB_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/, $(GITHUB_TEMPLATES))
+	mkdir -p $(dir $@)
+	cp $(TRONADOR_PATH)/templates/$@ $@
+	git add $@
+
+.github/auto-release.yml: # do not overwrite config by default
 	mkdir -p $(dir $@)
 	cp $(TRONADOR_PATH)/templates/$@ $@
 	git add $@
@@ -25,4 +30,4 @@ $(GITHUB_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/, $(GITHUB_TEMPLATES
 	cp $(TRONADOR_PATH)/templates/$@ $@
 	git add $@
 
-github/init: $(GITHUB_TEMPLATES) .github/auto-assign.yml .github/auto-label.yml
+github/init: $(GITHUB_TEMPLATES) .github/auto-assign.yml .github/auto-label.yml .github/auto-release.yml
