@@ -5,4 +5,12 @@
 #
 FROM openjdk:11-jdk
 
-CMD ["/bin/sh", "-c", "$JAVA_HOME/bin/java -XX:+UnlockExperimentalVMOptions $JAVA_OPTS $APM_OPTS -jar /var/app/current/bin/app.jar"]
+RUN mkdir /var/app
+RUN groupad -g 999 webapp
+RUN useradd -d /var/app -g webapp -u 999 webapp
+RUN chown 999:999 /var/app
+WORKDIR /var/app
+COPY target/*.jar app.jar
+USER webapp:webapp
+
+CMD ["/bin/sh", "-c", "$JAVA_HOME/bin/java $JAVA_OPTS $APM_OPTS -jar app.jar"]
