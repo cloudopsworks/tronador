@@ -27,7 +27,7 @@ template/apps/quickstart:
 	@git clone $(QUICKSTART_REPO)/spring-boot-maven $(TRONADOR_PATH)/vendor/spring-boot-maven
 	@rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven/.git
 	@cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven/. .
-	@if [ -d ./charts/maven ] ; \
+	@if [ -d ./charts/maven ] ; then \
 		mkdir ./charts/$(PROJECT_NAME) ; \
 		cp -R ./charts/maven ./charts/$(PROJECT_NAME) ; \
 	fi
