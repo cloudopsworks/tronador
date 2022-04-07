@@ -43,6 +43,7 @@ template/pomconfig: packages/install/yq
 	yq -px -ox -i -e ".project.groupId = \"$$GROUP_ID\" | .project.artifactId = \"$$ART_ID\" | .project.name = \"$$ART_ID\" | .project.version = \"$$VER_ID\"" pom.xml
 
 .PHONY: template/update/java
+## Template update for JAVA app
 template/update/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) 
 
 .PHONY: template/java
