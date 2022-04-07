@@ -34,9 +34,13 @@ template/apps/quickstart:
 
 template/apps/pomconfig:
 ifeq ($(OS),darwin)
-	echo -n "Name of the Maven Group Id? (com.example)" ; \
-	read GROUP_ID ; \
-	sed -i "" -e "s|<groupId>com\.example</groupId>|<groupId>$$GROUP_ID</groupId>|g" pom.xml
+	echo -n "Name of the Maven Group Id? (com.example): " ; \
+	read -i "com.example" GROUP_ID ; \
+	echo -n "Name of the Maven Artifact? (demo): " ; \
+	read -i "demo" ART_ID ; \
+	echo -n "Name of the Maven Artifact? (0.0.1-SNAPSHOT): " ; \
+	read -i "0.0.1-SNAPSHOT" VER_ID ; \
+	yq -px -ox -e ".project.groupId = \"$$GROUP_ID\" | .project.artifactId = \"$$ART_ID\" | .project.version = \"$$VER_ID\"" pom.xml
 else ifeq ($(OS),linux)
 	echo -n "Name of the Maven Group Id? (com.example)" ; \
 	read GROUP_ID ; \
