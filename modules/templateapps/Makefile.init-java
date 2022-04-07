@@ -11,7 +11,6 @@ JAVA_TEMPLATES = \
 	.github/workflows/slash-on-promote.yml \
 	.github/workflows/static-analysis.yml \
 	.dockerignore \
-	.gitignore \
 	.helmignore
 
 $(JAVA_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/java-app/, $(JAVA_TEMPLATES))
@@ -28,23 +27,33 @@ cloudopsworks-ci.yaml: # Do not overwrite by default
 	git add $@
 
 template/apps/quickstart:
+	rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven
 	git clone $(QUICKSTART_REPO)/spring-boot-maven $(TRONADOR_PATH)/vendor/spring-boot-maven
 	rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven/.git
-	cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven .
+	cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven/. .
+
+template/apps/pomconfig:
+	echo -n "$(yellow)Name of the Maven Group Id? (com.example)$(yellow)" ; \
+	read GROUP_ID ; \
+	sed -i -e "s|<groupId>com\.example</groupId>|<groupId>$$GROUP_ID</groupId>|g" pom.xml
 
 ## Template init for JAVA app
 template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml
 
 ## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
-template/apps/java/%: template/apps/java template/apps/quickstart
+template/apps/java/%: template/apps/java template/apps/pomconfig template/apps/quickstart 
 ifeq ($(OS),darwin)
 	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
 	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
 	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/static-analysis.yml
+	sed -i "" -e "s/FROM openjdk\:.*/FROM openjdk:$(notdir $@)-jdk/g" Dockerfile
+	sed -i "" -e "s|<java.version>./</java.version>|<java.version>$(notdir $@)</java.version>|g" pom.xml
 else ifeq ($(OS),linux)
 	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
 	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
 	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/static-analysis.yml
+	sed -i -e "s/FROM openjdk\:.*/FROM openjdk:$(notdir $@)-jdk/g" Dockerfile
+	sed -i -e "s|<java.version>./</java.version>|<java.version>$(notdir $@)</java.version>|g" pom.xml
 else
 	echo "platfrom $(OS) not supported to release from"
 	exit -1
