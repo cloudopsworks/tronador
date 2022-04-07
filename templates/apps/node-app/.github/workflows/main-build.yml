@@ -54,7 +54,7 @@ jobs:
     needs:
       - build
       - new_version
-    uses: .github/workflows/base/create-release.yml
+    uses: ./.github/workflows/base-create-release.yml
     with:
       release-tag: ${{ needs.new_version.outputs.release_version }}
     secrets:
@@ -77,7 +77,7 @@ jobs:
       - build
       - release
       - new_version
-    uses: .github/workflows/base/delivery-push.yml
+    uses: ./.github/workflows/base-delivery-push.yml
     with:
       release_version: ${{ needs.new_version.outputs.release_version }}
     secrets:

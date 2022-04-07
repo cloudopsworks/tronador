@@ -19,6 +19,6 @@ permissions:
 
 jobs:
   approve:
-    uses: .github/workflows/base/slash-on-approve.yml
+    uses: ./.github/workflows/base-slash-on-approve.yml
     secrets:
       token: ${{ secrets.BOT_TOKEN }}

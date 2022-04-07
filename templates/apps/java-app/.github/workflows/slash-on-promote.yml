@@ -19,6 +19,6 @@ permissions:
 
 jobs:
   promote:
-    uses: .github/workflows/base/slash-on-promote.yml
+    uses: ./.github/workflows/base-slash-on-promote.yml
     secrets:
       token: ${{ secrets.BOT_TOKEN }}

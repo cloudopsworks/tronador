@@ -1,12 +1,12 @@
 QUICKSTART_REPO ?= https://github.com/tronador-quickstarts
 
 BASE_GH_TEMPLATES = \
-	.github/workflows/base/create-release.yml \
-	.github/workflows/base/delivery-push.yml \
-	.github/workflows/base/on-pull-request.yml \
-	.github/workflows/base/slash-commands.yml \
-	.github/workflows/base/slash-on-approve.yml \
-	.github/workflows/base/slash-on-promote.yml
+	.github/workflows/base-create-release.yml \
+	.github/workflows/base-delivery-push.yml \
+	.github/workflows/base-on-pull-request.yml \
+	.github/workflows/base-slash-commands.yml \
+	.github/workflows/base-slash-on-approve.yml \
+	.github/workflows/base-slash-on-promote.yml
 
 $(BASE_GH_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/base-app/, $(BASE_GH_TEMPLATES))
 	@mkdir -p $(dir $@)
