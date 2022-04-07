@@ -1,5 +1,4 @@
 JAVA_TEMPLATES = \
-	.github/labeler.yml \
 	.github/workflows/automerge.yml \
 	.github/workflows/build-pull-request.yml \
 	.github/workflows/code-build.yml \
@@ -9,16 +8,10 @@ JAVA_TEMPLATES = \
 	.github/workflows/slash-commands.yml \
 	.github/workflows/slash-on-approve.yml \
 	.github/workflows/slash-on-promote.yml \
-	.github/workflows/static-analysis.yml \
-	.dockerignore \
-	.helmignore
+	.github/workflows/static-analysis.yml
 
 $(JAVA_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/java-app/, $(JAVA_TEMPLATES))
 	@mkdir -p $(dir $@)
-	@cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
-	@git add $@
-
-Dockerfile: # Do not overwrite by default
 	@cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
 	@git add $@
 
@@ -45,7 +38,7 @@ template/apps/pomconfig: packages/install/yq
 
 .PHONY: template/apps/java
 ## Template init for JAVA app
-template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml template/apps/quickstart template/apps/pomconfig
+template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) cloudopsworks-ci.yaml template/apps/quickstart template/apps/pomconfig
 
 ## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
 template/apps/java/%: template/apps/java
