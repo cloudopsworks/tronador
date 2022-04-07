@@ -24,7 +24,7 @@ permissions:
 
 jobs:
   new_version:
-    uses: ./.github/workflows/code-tag.yml
+    uses: .github/workflows/code-tag.yml
     secrets:
       DOCKER_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
       HELM_REGISTRY_ADDRESS: ${{ secrets.DOCKER_REGISTRY_ADDRESS }}
@@ -35,7 +35,7 @@ jobs:
   build:
     needs: 
       - new_version
-    uses: ./.github/workflows/code-build.yml
+    uses: .github/workflows/code-build.yml
     with:
       semver: ${{ needs.new_version.outputs.release_version }} 
       ref: ${{ needs.new_version.outputs.release_tag }}
@@ -54,7 +54,7 @@ jobs:
     needs:
       - build
       - new_version
-    uses: ./.github/workflows/base/create-release.yml
+    uses: .github/workflows/base/create-release.yml
     with:
       release-tag: ${{ needs.new_version.outputs.release_version }}
     secrets:
@@ -64,7 +64,7 @@ jobs:
     needs:
       - build
       - new_version
-    uses: ./.github/workflows/static-analysis.yml
+    uses: .github/workflows/static-analysis.yml
     with:
       ref: ${{ needs.new_version.outputs.release_tag }}
     secrets:
@@ -77,7 +77,7 @@ jobs:
       - build
       - release
       - new_version
-    uses: ./.github/workflows/base/delivery-push.yml
+    uses: .github/workflows/base/delivery-push.yml
     with:
       release_version: ${{ needs.new_version.outputs.release_version }}
     secrets:

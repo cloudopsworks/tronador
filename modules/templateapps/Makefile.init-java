@@ -21,8 +21,8 @@ cloudopsworks-ci.yaml: # Do not overwrite by default
 	@cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
 	@git add $@
 
-.PHONY: template/apps/quickstart
-template/apps/quickstart:
+.PHONY: template/quickstart/java
+template/quickstart/java:
 	@rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven
 	@git clone $(QUICKSTART_REPO)/spring-boot-maven $(TRONADOR_PATH)/vendor/spring-boot-maven
 	@rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven/.git
@@ -32,8 +32,8 @@ template/apps/quickstart:
 		cp -R ./charts/maven ./charts/$(PROJECT_NAME) ; \
 	fi
 
-.PHONY: template/apps/pomconfig
-template/apps/pomconfig: packages/install/yq
+.PHONY: template/pomconfig
+template/pomconfig: packages/install/yq
 	@read -p "Name of the Maven Group Id? (com.example) : " GROUP_ID ; \
 	read -p "Name of the Maven Artifact? ($(PROJECT_NAME)) : " ART_ID ; \
 	read -p "Name of the Version? (0.0.1-SNAPSHOT) : " VER_ID ; \
@@ -42,12 +42,15 @@ template/apps/pomconfig: packages/install/yq
 	VER_ID=$${VER_ID:-0.0.1-SNAPSHOT} ; \
 	yq -px -ox -i -e ".project.groupId = \"$$GROUP_ID\" | .project.artifactId = \"$$ART_ID\" | .project.name = \"$$ART_ID\" | .project.version = \"$$VER_ID\"" pom.xml
 
-.PHONY: template/apps/java
+.PHONY: template/update/java
+template/update/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) 
+
+.PHONY: template/java
 ## Template init for JAVA app
-template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) cloudopsworks-ci.yaml template/apps/quickstart template/apps/pomconfig
+template/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) cloudopsworks-ci.yaml template/quickstart/java template/pomconfig
 
 ## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
-template/apps/java/%: template/apps/java
+template/java/%: template/apps/java
 	@yq -px -ox -i -e ".project.properties[\"java.version\"] = \"$(notdir $@)\"" pom.xml
 ifeq ($(OS),darwin)
 	@VER=$(notdir $@) ; \

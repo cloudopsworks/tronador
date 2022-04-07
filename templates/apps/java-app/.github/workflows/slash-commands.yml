@@ -19,6 +19,6 @@ permissions:
 
 jobs:
   gitops:
-    uses: ./.github/workflows/base/slash-commands.yml
+    uses: .github/workflows/base/slash-commands.yml
     secrets:
       token: ${{ secrets.BOT_TOKEN }}

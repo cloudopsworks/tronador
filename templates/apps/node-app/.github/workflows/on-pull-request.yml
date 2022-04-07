@@ -17,6 +17,6 @@ permissions:
 
 jobs:
   plan:
-    uses: ./.github/workflows/base/on-pull-request.yml
+    uses: .github/workflows/base/on-pull-request.yml
     secrets:
       token: ${{ secrets.BOT_TOKEN }}
