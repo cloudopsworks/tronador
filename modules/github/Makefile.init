@@ -11,23 +11,23 @@ GITHUB_TEMPLATES = \
 	.github/ISSUE_TEMPLATE/question.md
 
 $(GITHUB_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/, $(GITHUB_TEMPLATES))
-	mkdir -p $(dir $@)
-	cp $(TRONADOR_PATH)/templates/$@ $@
-	git add $@
+	@mkdir -p $(dir $@)
+	@cp $(TRONADOR_PATH)/templates/$@ $@
+	@git add $@
 
 .github/auto-release.yml: # do not overwrite config by default
-	mkdir -p $(dir $@)
-	cp $(TRONADOR_PATH)/templates/$@ $@
-	git add $@
+	@mkdir -p $(dir $@)
+	@cp $(TRONADOR_PATH)/templates/$@ $@
+	@git add $@
 
 .github/auto-assign.yml: # do not overwrite config by default
-	mkdir -p $(dir $@)
-	cp $(TRONADOR_PATH)/templates/$@ $@
-	git add $@
+	@mkdir -p $(dir $@)
+	@cp $(TRONADOR_PATH)/templates/$@ $@
+	@git add $@
 
 .github/auto-label.yml: # do not overwrite config by default
-	mkdir -p $(dir $@)
-	cp $(TRONADOR_PATH)/templates/$@ $@
-	git add $@
+	@mkdir -p $(dir $@)
+	@cp $(TRONADOR_PATH)/templates/$@ $@
+	@git add $@
 
 github/init: $(GITHUB_TEMPLATES) .github/auto-assign.yml .github/auto-label.yml .github/auto-release.yml

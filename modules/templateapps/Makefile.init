@@ -9,6 +9,6 @@ BASE_GH_TEMPLATES = \
 	.github/workflows/base/slash-on-promote.yml
 
 $(BASE_GH_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/base-app/, $(BASE_GH_TEMPLATES))
-	mkdir -p $(dir $@)
-	cp $(TRONADOR_PATH)/templates/apps/base-app/$@ $@
-	git add $@
+	@mkdir -p $(dir $@)
+	@cp $(TRONADOR_PATH)/templates/apps/base-app/$@ $@
+	@git add $@
