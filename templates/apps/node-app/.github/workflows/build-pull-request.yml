@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   build:
-    uses: .github/workflows/code-build.yml
+    uses: ./.github/workflows/code-build.yml
     with:
       isRelease: false
       semver: 0.1.0-SNAPSHOT
@@ -40,7 +40,7 @@ jobs:
   static-analysis:
     needs:
       - build
-    uses: .github/workflows/static-analysis.yml
+    uses: ./.github/workflows/static-analysis.yml
     with:
       ref: ${{ github.head_ref }}
     secrets:
