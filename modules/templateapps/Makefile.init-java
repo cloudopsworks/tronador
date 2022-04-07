@@ -40,14 +40,14 @@ template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) pom.xml D
 
 ## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
 template/apps/java/%: template/apps/java
-ifeq ($(OS),Darwin)
-	sed -i "" -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-build.yml
-	sed -i "" -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-tag.yml
-	sed -i "" -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/static-analysis.yml
-else ifeq ($(OS),Linux)
-	sed -i -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-build.yml
-	sed -i -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-tag.yml
-	sed -i -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/static-analysis.yml
+ifeq ($(OS),darwin)
+	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
+	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
+	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/static-analysis.yml
+else ifeq ($(OS),linux)
+	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
+	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
+	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/static-analysis.yml
 else
 	echo "platfrom $(OS) not supported to release from"
 	exit -1
