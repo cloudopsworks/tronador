@@ -14,57 +14,54 @@ JAVA_TEMPLATES = \
 	.helmignore
 
 $(JAVA_TEMPLATES): $(addprefix $(TRONADOR_PATH)/templates/apps/java-app/, $(JAVA_TEMPLATES))
-	mkdir -p $(dir $@)
-	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
-	git add $@
+	@mkdir -p $(dir $@)
+	@cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	@git add $@
 
 Dockerfile: # Do not overwrite by default
-	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
-	git add $@
+	@cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	@git add $@
 
 cloudopsworks-ci.yaml: # Do not overwrite by default
-	cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
-	git add $@
+	@cp $(TRONADOR_PATH)/templates/apps/java-app/$@ $@
+	@git add $@
 
+.PHONY: template/apps/quickstart
 template/apps/quickstart:
-	rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven
-	git clone $(QUICKSTART_REPO)/spring-boot-maven $(TRONADOR_PATH)/vendor/spring-boot-maven
-	rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven/.git
-	cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven/. .
+	@rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven
+	@git clone $(QUICKSTART_REPO)/spring-boot-maven $(TRONADOR_PATH)/vendor/spring-boot-maven
+	@rm -fr $(TRONADOR_PATH)/vendor/spring-boot-maven/.git
+	@cp -pR $(TRONADOR_PATH)/vendor/spring-boot-maven/. .
 
+.PHONY: template/apps/pomconfig
 template/apps/pomconfig: packages/install/yq
-ifeq ($(OS),darwin)
-	read -p $$"\e[32mName of the Maven Group Id? \e[31m(com.example) \e[0m: " GROUP_ID ; \
-	read -p $$"\e[32mName of the Maven Artifact? \e[31m(demo) \e[0m: " ART_ID ; \
-	read -p $$"\e[32mName of the Version? \e[31m(0.0.1-SNAPSHOT) \e[0m: " VER_ID ; \
-	yq -px -ox -e ".project.groupId = \"$$GROUP_ID\" | .project.artifactId = \"$$ART_ID\" | .project.version = \"$$VER_ID\"" pom.xml
-else ifeq ($(OS),linux)
-	echo -n "Name of the Maven Group Id? (com.example)" ; \
-	read GROUP_ID ; \
-	sed -i -e "s|<groupId>com\.example</groupId>|<groupId>$$GROUP_ID</groupId>|g" pom.xml
-else
-	echo "platfrom $(OS) not supported to release from"
-	exit -1
-endif
--p $'\e[31mFoobar\e[0m: '
+	@read -p "Name of the Maven Group Id? (com.example) : " GROUP_ID ; \
+	read -p "Name of the Maven Artifact? (demo) : " ART_ID ; \
+	read -p "Name of the Version? (0.0.1-SNAPSHOT) : " VER_ID ; \
+	GROUP_ID=$${GROUP_ID:-com.example} ; \
+	ART_ID=$${ART_ID:-demo} ; \
+	VER_ID=$${VER_ID:-0.0.1-SNAPSHOT} ; \
+	yq -px -ox -i -e ".project.groupId = \"$$GROUP_ID\" | .project.artifactId = \"$$ART_ID\" | .project.name = \"$$ART_ID\" | .project.version = \"$$VER_ID\"" pom.xml
 
+.PHONY: template/apps/java
 ## Template init for JAVA app
 template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml template/apps/quickstart template/apps/pomconfig
 
 ## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
 template/apps/java/%: template/apps/java
+	@yq -px -ox -i -e ".project.properties[\"java.version\"] = \"$(notdir $@)\"" pom.xml
 ifeq ($(OS),darwin)
-	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
-	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
-	sed -i "" -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/static-analysis.yml
-	sed -i "" -e "s/FROM openjdk\:.*/FROM openjdk:$(notdir $@)-jdk/g" Dockerfile
-	sed -i "" -e "s|<java.version>./</java.version>|<java.version>$(notdir $@)</java.version>|g" pom.xml
+	@VER=$(notdir $@) ; \
+	sed -i "" -e "s/java-version\:.*/java-version: \"$$VER\"/g" .github/workflows/code-build.yml ; \
+	sed -i "" -e "s/java-version\:.*/java-version: \"$$VER\"/g" .github/workflows/code-tag.yml ; \
+	sed -i "" -e "s/java-version\:.*/java-version: \"$$VER\"/g" .github/workflows/static-analysis.yml ; \
+	sed -i "" -e "s/FROM openjdk\:.*/FROM openjdk:$${VER}-jdk/g" Dockerfile
 else ifeq ($(OS),linux)
-	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-build.yml
-	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/code-tag.yml
-	sed -i -e "s/java-version\:.*/java-version: \"$(notdir $@)\"/g" .github/workflows/static-analysis.yml
-	sed -i -e "s/FROM openjdk\:.*/FROM openjdk:$(notdir $@)-jdk/g" Dockerfile
-	sed -i -e "s|<java.version>./</java.version>|<java.version>$(notdir $@)</java.version>|g" pom.xml
+	@VER=$(notdir $@) ; \
+	sed -i -e "s/java-version\:.*/java-version: \"$$VER\"/g" .github/workflows/code-build.yml ; \
+	sed -i -e "s/java-version\:.*/java-version: \"$$VER\"/g" .github/workflows/code-tag.yml ; \
+	sed -i -e "s/java-version\:.*/java-version: \"$$VER\"/g" .github/workflows/static-analysis.yml ; \
+	sed -i -e "s/FROM openjdk\:.*/FROM openjdk:$${VER}-jdk/g" Dockerfile
 else
 	echo "platfrom $(OS) not supported to release from"
 	exit -1
