@@ -34,12 +34,9 @@ template/apps/quickstart:
 
 template/apps/pomconfig: packages/install/yq
 ifeq ($(OS),darwin)
-	echo -n "Name of the Maven Group Id? (com.example): " ; \
-	read -i "com.example" GROUP_ID ; \
-	echo -n "Name of the Maven Artifact? (demo): " ; \
-	read -i "demo" ART_ID ; \
-	echo -n "Name of the Maven Artifact? (0.0.1-SNAPSHOT): " ; \
-	read -i "0.0.1-SNAPSHOT" VER_ID ; \
+	read -p $$"\e[32mName of the Maven Group Id? \e[31m(com.example) \e[0m: " GROUP_ID ; \
+	read -p $$"\e[32mName of the Maven Artifact? \e[31m(demo) \e[0m: " ART_ID ; \
+	read -p $$"\e[32mName of the Version? \e[31m(0.0.1-SNAPSHOT) \e[0m: " VER_ID ; \
 	yq -px -ox -e ".project.groupId = \"$$GROUP_ID\" | .project.artifactId = \"$$ART_ID\" | .project.version = \"$$VER_ID\"" pom.xml
 else ifeq ($(OS),linux)
 	echo -n "Name of the Maven Group Id? (com.example)" ; \
@@ -49,6 +46,7 @@ else
 	echo "platfrom $(OS) not supported to release from"
 	exit -1
 endif
+-p $'\e[31mFoobar\e[0m: '
 
 ## Template init for JAVA app
 template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) Dockerfile cloudopsworks-ci.yaml template/apps/quickstart template/apps/pomconfig
