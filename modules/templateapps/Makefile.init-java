@@ -36,5 +36,20 @@ OWNERS: # Do not overwrite by default
 	git add $@
 
 ## Template init for JAVA app
-template/apps/java: template/deps github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) pom.xml Dockerfile cloudopsworks-ci.yaml OWNERS
+template/apps/java: github/init $(JAVA_TEMPLATES) $(BASE_GH_TEMPLATES) pom.xml Dockerfile cloudopsworks-ci.yaml OWNERS
+
+## Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
+template/apps/java/%: template/apps/java
+ifeq ($(OS),Darwin)
+	sed -i "" -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-build.yml
+	sed -i "" -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-tag.yml
+	sed -i "" -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/static-analysis.yml
+else ifeq ($(OS),Linux)
+	sed -i -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-build.yml
+	sed -i -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/code-tag.yml
+	sed -i -e "s/java-version:[ \t]*\".*\"/java-version: \"$@\"/g" .github/workflows/static-analysis.yml
+else
+	echo "platfrom $(OS) not supported to release from"
+	exit -1
+endif
 
