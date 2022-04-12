@@ -1,0 +1,38 @@
+name: <project name>
+
+#logo: logo/logo.jpg
+
+license: "APACHE2"
+
+copyrights:
+  - name: "Cloud Ops Works LLC"
+    url: "https://cloudops.works"
+    year: "2021"
+
+github_repo: <owner/repo>
+
+
+description: |-
+  <description>.
+
+# Introduction to the project
+#introduction: |-
+#  This is an introduction.
+
+# How to use this project
+#usage: |-
+
+# Example usage
+#examples: |-
+
+# How to get started quickly
+#quickstart: |-
+
+# Uncomment to include terraform generated docs (optional)
+#include:
+#  - "docs/targets.md"
+#  - "docs/terraform.md"
+
+contributors:
+  - name: "<contributor name>"
+    github: "<github id>"
