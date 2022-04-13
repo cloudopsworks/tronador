@@ -20,12 +20,12 @@ It's designed to work with CI/CD systems such as GitHub Actions, Codefresh, Trav
 ---
 
 This project is part of our comprehensive approach towards DevOps Acceleration. 
-[<img align="right" title="Share via Email" width="16" height="16" src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
-[<img align="right" title="Share on Google+" size="16px" src="https://docs.cloudops.works/images/ionicons/logo-googleplus.svg" />][share_googleplus]
-[<img align="right" title="Share on Facebook" size="16px" src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
-[<img align="right" title="Share on Reddit" size="16px" src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
-[<img align="right" title="Share on LinkedIn" size="16px" src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
-[<img align="right" title="Share on Twitter" size="16px" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
+[<img align="right" title="Share via Email" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
+[<img align="right" title="Share on Google+" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-googleplus.svg" />][share_googleplus]
+[<img align="right" title="Share on Facebook" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
+[<img align="right" title="Share on Reddit" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
+[<img align="right" title="Share on LinkedIn" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
+[<img align="right" title="Share on Twitter" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
 
 
 
