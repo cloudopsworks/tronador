@@ -10,7 +10,9 @@
 
 [![cloudopsworks][logo]](https://cloudops.works/)
 
-# Cloud Ops Works Accelerate [![Build Status](https://github.com/cloudopsworks/tronador/workflows/build/badge.svg?branch=master&event=push)](https://github.com/cloudopsworks/tronador/actions/workflows/build.yml) [![Latest Release](https://img.shields.io/github/v/release/cloudopsworks/tronador?display_name=tag)](https://github.com/cloudopsworks/tronador/releases/latest) [![Slack Community](https://slack.cloudops.works/badge.svg)](https://slack.cloudops.works)
+# Cloud Ops Works Tronador DevOps Acceleator
+
+ [![Build Status](https://github.com/cloudopsworks/tronador/workflows/build/badge.svg?branch=master&event=push)](https://github.com/cloudopsworks/tronador/actions/workflows/build.yml) [![Latest Release](https://img.shields.io/github/v/release/cloudopsworks/tronador?display_name=tag)](https://github.com/cloudopsworks/tronador/releases/latest) [![Slack Community](https://slack.cloudops.works/badge.svg)](https://slack.cloudops.works)
 
 
 This `tronador` is a collection of Makefiles to facilitate building Golang projects, Dockerfiles, Helm charts, and more.
@@ -20,12 +22,12 @@ It's designed to work with CI/CD systems such as GitHub Actions, Codefresh, Trav
 ---
 
 This project is part of our comprehensive approach towards DevOps Acceleration. 
-[<img align="right" title="Share via Email" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
-[<img align="right" title="Share on Google+" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-googleplus.svg" />][share_googleplus]
-[<img align="right" title="Share on Facebook" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
-[<img align="right" title="Share on Reddit" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
-[<img align="right" title="Share on LinkedIn" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
-[<img align="right" title="Share on Twitter" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
+[<img align="right" title="Share via Email" width="24" height="24 src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
+[<img align="right" title="Share on Google+" width="24" height="24 src="https://docs.cloudops.works/images/ionicons/logo-googleplus.svg" />][share_googleplus]
+[<img align="right" title="Share on Facebook" width="24" height="24 src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
+[<img align="right" title="Share on Reddit" width="24" height="24 src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
+[<img align="right" title="Share on LinkedIn" width="24" height="24 src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
+[<img align="right" title="Share on Twitter" width="24" height="24 src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
 
 
 
@@ -129,6 +131,9 @@ Available targets:
   semver/export                       Export semver vars
   template/build                      Create $OUT file by building it from $IN template file
   template/deps                       Install dependencies
+  template/java                       Template init for JAVA app
+  template/java/%                     Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
+  template/update/java                Template update for JAVA app
   terraform/get-modules               Ensure all modules can be fetched
   terraform/get-plugins               Ensure all plugins can be fetched
   terraform/install                   Install terraform
@@ -245,7 +250,7 @@ This project is maintained by [Cloud Ops Works LLC][website].
 |---|
 
   [berahac_homepage]: https://github.com/berahac
-  [berahac_avatar]: https://img.cloudops.works/150x150/https://github.com/berahac.png
+  [berahac_avatar]: https://docs.cloudops.works/images/150x150/https://github.com/berahac.png
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
@@ -272,10 +277,10 @@ This project is maintained by [Cloud Ops Works LLC][website].
   [readme_footer_link]: https://cloudops.works/readme/footer/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=readme_footer_link
   [readme_commercial_support_img]: https://cloudops.works/readme/commercial-support/img
   [readme_commercial_support_link]: https://cloudops.works/readme/commercial-support/link?utm_source=github&utm_medium=readme&utm_campaign=cloudopsworks/tronador&utm_content=readme_commercial_support_link
-  [share_twitter]: https://twitter.com/intent/tweet/?text=Cloud+Ops+Works+Accelerate&url=https://github.com/cloudopsworks/tronador
-  [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Cloud+Ops+Works+Accelerate&url=https://github.com/cloudopsworks/tronador
+  [share_twitter]: https://twitter.com/intent/tweet/?text=Cloud+Ops+Works+Tronador+DevOps+Acceleator&url=https://github.com/cloudopsworks/tronador
+  [share_linkedin]: https://www.linkedin.com/shareArticle?mini=true&title=Cloud+Ops+Works+Tronador+DevOps+Acceleator&url=https://github.com/cloudopsworks/tronador
   [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudopsworks/tronador
   [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/tronador
   [share_googleplus]: https://plus.google.com/share?url=https://github.com/cloudopsworks/tronador
-  [share_email]: mailto:?subject=Cloud+Ops+Works+Accelerate&body=https://github.com/cloudopsworks/tronador
-  [beacon]: https://ga-beacon.cloudops.works/UA-76589703-4/cloudopsworks/tronador?pixel&cs=github&cm=readme&an=tronador
+  [share_email]: mailto:?subject=Cloud+Ops+Works+Tronador+DevOps+Acceleator&body=https://github.com/cloudopsworks/tronador
+  [beacon]: https://ga-beacon.cloudops.works/G-7XWMFVFXZT/cloudopsworks/tronador?pixel&cs=github&cm=readme&an=tronador
