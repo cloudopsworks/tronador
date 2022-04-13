@@ -295,7 +295,7 @@ This project is maintained by [Cloud Ops Works LLC][website].
 {{ end -}}
 {{ if has $contributor "avatar" }}{{ printf "  [%s_avatar]: %s" $contributor.github $contributor.avatar }}
 {{ else -}}
-{{ printf "  [%s_avatar]: https://docs.cloudops.works/images/150x150/https://github.com/%s.png" $contributor.github $contributor.github }}
+{{ printf "  [%s_avatar]: https://github.com/%s.png?size=50" $contributor.github $contributor.github }}
 {{- end }}
 {{ end }}
 {{ end }}
