@@ -250,7 +250,7 @@ This project is maintained by [Cloud Ops Works LLC][website].
 |---|
 
   [berahac_homepage]: https://github.com/berahac
-  [berahac_avatar]: https://docs.cloudops.works/images/150x150/https://github.com/berahac.png
+  [berahac_avatar]: https://github.com/berahac.png?size=50
 
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
