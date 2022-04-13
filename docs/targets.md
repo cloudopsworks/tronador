@@ -28,6 +28,9 @@ Available targets:
   semver/export                       Export semver vars
   template/build                      Create $OUT file by building it from $IN template file
   template/deps                       Install dependencies
+  template/java                       Template init for JAVA app
+  template/java/%                     Template init for JAVA app, specifying specific version (e.g. 8, 11, 16)
+  template/update/java                Template update for JAVA app
   terraform/get-modules               Ensure all modules can be fetched
   terraform/get-plugins               Ensure all plugins can be fetched
   terraform/install                   Install terraform
