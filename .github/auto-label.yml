@@ -7,4 +7,5 @@ modules/packages: modules/packages/**
 modules/readme: modules/readme/**
 modules/semver: modules/semver/**
 modules/template: modules/template/**
+modules/templateapps: modules/templateapps/**
 modules/terraform: modules/terraform/**
