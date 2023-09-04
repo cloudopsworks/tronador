@@ -1,3 +1,4 @@
+modules/apps: modules/apps/**
 modules/bash: modules/bash/**
 modules/docs: modules/docs/**
 modules/git: modules/git/**
@@ -7,5 +8,4 @@ modules/packages: modules/packages/**
 modules/readme: modules/readme/**
 modules/semver: modules/semver/**
 modules/template: modules/template/**
-modules/templateapps: modules/templateapps/**
 modules/terraform: modules/terraform/**
