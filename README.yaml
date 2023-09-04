@@ -20,16 +20,16 @@ copyrights:
     year: "2021"
 
 # Canonical GitHub repo 
-github_repo: cloudopsworks/accelerate
+github_repo: cloudopsworks/tronador
 
 # Badges to display
 badges:
   - name: "Build Status"
-    image: "https://github.com/cloudopsworks/accelerate/workflows/build/badge.svg?branch=master&event=push"
-    url: "https://github.com/cloudopsworks/accelerate/actions/workflows/build.yml"
+    image: "https://github.com/cloudopsworks/tronador/workflows/build/badge.svg?branch=master&event=push"
+    url: "https://github.com/cloudopsworks/tronador/actions/workflows/build.yml"
   - name: "Latest Release"
-    image: "https://img.shields.io/github/v/release/cloudopsworks/accelerate?display_name=tag"
-    url: "https://github.com/cloudopsworks/accelerate/releases/latest"
+    image: "https://img.shields.io/github/v/release/cloudopsworks/tronador?display_name=tag"
+    url: "https://github.com/cloudopsworks/tronador/releases/latest"
   - name: "Slack Community"
     image: "https://slack.cloudops.works/badge.svg"
     url: "https://slack.cloudops.works"
@@ -37,7 +37,7 @@ badges:
 related:
   - name: "Packages"
     description: "Cloud Ops Works installer and distribution of native apps"
-    url: "https://github.com/cloudopsworks/accelerate-packages"
+    url: "https://github.com/cloudopsworks/tronador-packages"
   # - name: "Dev Harness"
   #   description: "Cloud Ops Works Local Development Harness"
   #   url: "https://github.com/cloudopsworks/dev"
@@ -52,7 +52,7 @@ references:
 screenshots:
   - name: "demo"
     description: "Example of using the `tronador` to build a docker image"
-    url: "https://cdn.rawgit.com/cloudopsworks/accelerate/master/docs/demo.svg"
+    url: "https://cdn.rawgit.com/cloudopsworks/tronador/master/docs/demo.svg"
  
 # Short description of this project
 description: |-
@@ -94,7 +94,7 @@ usage: |-
       runs-on: ubuntu-latest
       steps:
       - uses: actions/checkout@master
-      - uses: cloudopsworks/accelerate@master
+      - uses: cloudopsworks/tronador@master
         with:
           entrypoint: /usr/bin/make
           args: readme/lint
@@ -112,8 +112,8 @@ usage: |-
 quickstart: |-
   Here's how to get started...
 
-  1. `git clone https://github.com/cloudopsworks/accelerate.git` to pull down the repository
-  2. `make init` to initialize the [`tronador`](https://github.com/cloudopsworks/accelerate/)
+  1. `git clone https://github.com/cloudopsworks/tronador.git` to pull down the repository
+  2. `make init` to initialize the [`tronador`](https://github.com/cloudopsworks/tronador/)
 
 # Other files to include in this README from the project folder
 include:
