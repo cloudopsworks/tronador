@@ -69,12 +69,7 @@ gitflow/release/start/patch: gitflow/deps
 	$(GIT) push -u origin release/$(shell $(SEMVER) bump patch -g)
 
 ## Git-Flow release start
-gitflow/release/start:
-	$(call assert-set,GIT)
-	$(GIT) checkout develop
-	$(GIT) pull origin develop
-	$(GIT) checkout -b release/$(filter-out $@,$(MAKECMDGOALS)) develop
-	$(GIT) push -u origin release/$(filter-out $@,$(MAKECMDGOALS))
+gitflow/release/start: gitflow/release/start/minor
 
 ## Git-Flow release finish (manual)
 gitflow/release/manual/finish:
@@ -91,6 +86,14 @@ gitflow/release/manual/finish:
 	$(GIT) push origin develop
 	$(GIT) branch -d release/$(filter-out $@,$(MAKECMDGOALS))
 
+## Git-Flow release publish (manual)
+gitflow/release/publish:
+	$(call assert-set,GIT)
+	$(GIT) checkout release/$(filter-out $@,$(MAKECMDGOALS))
+	$(GIT) push origin release/$(filter-out $@,$(MAKECMDGOALS))
+
+
+LIST:=$(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDGOALS)) --json number -q '.[].number')
 ## Git-Flow release finish (automatic via pr)
 # Creates a milestone on github
 # Creates a PR to merge automatically into master and
@@ -98,15 +101,7 @@ gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(call assert-set,GH)
-	echo "{	\"title\":\"$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)\",\"description\":\"Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)\"}" | \
-		$(GH) api --method POST repos/:owner/:repo/milestones --input - | \
-		jq '{ html_url: .html_url, state: .state, created_at: .created_at }'
-	$(GH) pr create --title "Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
-		-B $(MAIN_BRANCH) -m $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) \
-		-H release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -b ""
-	$(GH) pr create --title "Release Development Merge $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
-		-B develop -m $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) \
-		-H release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -b ""
+	$(foreach var in $(LIST), $(GH) pr comment $(var) -b "/finish")
 
 ## Git-Flow support start
 gitflow/support/start:
