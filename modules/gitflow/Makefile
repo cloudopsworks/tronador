@@ -96,15 +96,15 @@ gitflow/release/manual/finish:
 # Creates a PR to merge automatically into master and
 gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
-	$(call assert-set,GITVERSION_EXE)
-	$(call assert-set,GH_EXE)
+	$(call assert-set,GITVERSION)
+	$(call assert-set,GH)
 	echo "{	\"title\":\"$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)\",\"description\":\"Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)\"}" | \
-		gh api --method POST repos/:owner/:repo/milestones --input - | \
+		$(GH) api --method POST repos/:owner/:repo/milestones --input - | \
 		jq '{ html_url: .html_url, state: .state, created_at: .created_at }'
-	gh pr create --title "Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
+	$(GH) pr create --title "Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
 		-B $(MAIN_BRANCH) -m $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) \
 		-H release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -b ""
-	gh pr create --title "Release Development Merge $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
+	$(GH) pr create --title "Release Development Merge $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
 		-B develop -m $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) \
 		-H release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -b ""
 
