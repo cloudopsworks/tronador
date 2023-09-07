@@ -41,6 +41,9 @@ endif
 ## Use as default version first of possible versions
 export SEMVERSION ?= $(word 1,$(SEMVERSIONS))
 
+export SEMVER_EXE ?= $(INSTALL_PATH)/semver
+export GITVERSION_EXE ?= $(INSTALL_PATH)/gitversion
+
 ## Export semver vars
 semver/export:
 	@echo "SEMVERSION_COMMIT_SHORT=$(SEMVERSION_COMMIT_SHORT)"
@@ -49,6 +52,18 @@ semver/export:
 	@echo "SEMVERSION_BRANCH_COMMIT_SHORT=$(SEMVERSION_BRANCH_COMMIT_SHORT)"
 	@echo "SEMVERSION_BRANCH_COMMIT=$(SEMVERSION_BRANCH_COMMIT)"
 	@echo "SEMVERSION_TAG=$(SEMVERSION_TAG)"
+
+semver/bump-major: packages/install/semver
+	$(call assert-set,SEMVER_EXE)
+	@$(SEMVER_EXE) bump major -g
+
+semver/bump-minor: packages/install/semver
+	$(call assert-set,SEMVER_EXE)
+	@$(SEMVER_EXE) bump minor -g
+
+semver/bump-patch: packages/install/semver
+	$(call assert-set,SEMVER_EXE)
+	@$(SEMVER_EXE) bump patch -g
 
 else ifeq ($(DEBUG),true)
   $(warning disabled semver processing)
