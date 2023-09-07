@@ -53,15 +53,15 @@ semver/export:
 	@echo "SEMVERSION_BRANCH_COMMIT=$(SEMVERSION_BRANCH_COMMIT)"
 	@echo "SEMVERSION_TAG=$(SEMVERSION_TAG)"
 
-semver/bump-major: packages/install/semver
+semver/bump/major: packages/install/semver
 	$(call assert-set,SEMVER_EXE)
 	@$(SEMVER_EXE) bump major -g
 
-semver/bump-minor: packages/install/semver
+semver/bump/minor: packages/install/semver
 	$(call assert-set,SEMVER_EXE)
 	@$(SEMVER_EXE) bump minor -g
 
-semver/bump-patch: packages/install/semver
+semver/bump/patch: packages/install/semver
 	$(call assert-set,SEMVER_EXE)
 	@$(SEMVER_EXE) bump patch -g
 

@@ -20,12 +20,12 @@ gitflow/init:
 	fi
 
 ## Git-Flow feature start
-gitflow/feature-start:
+gitflow/feature/start:
 	$(call assert-set,GIT)
 	$(GIT) checkout -b feature/$(filter-out $@,$(MAKECMDGOALS)) develop
 
 ## Git-Flow feature finish
-gitflow/feature-finish:
+gitflow/feature/finish:
 	$(call assert-set,GIT)
 	$(GIT) checkout develop
 	$(GIT) pull origin develop
@@ -34,13 +34,13 @@ gitflow/feature-finish:
 	$(GIT) push origin develop
 
 ## Git-Flow feature publish
-gitflow/feature-publish:
+gitflow/feature/publish:
 	$(call assert-set,GIT)
 	$(GIT) checkout feature/$(filter-out $@,$(MAKECMDGOALS))
 	$(GIT) push origin feature/$(filter-out $@,$(MAKECMDGOALS))
 
 ## Git-Flow release start next version (major)
-gitflow/release-start-major: packages/install/semver
+gitflow/release/start/major: packages/install/semver
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(GIT) checkout develop
@@ -49,7 +49,7 @@ gitflow/release-start-major: packages/install/semver
 	$(GIT) push -u origin release/$(shell $(SEMVER) bump major -g)
 
 ## Git-Flow release start next version (minor)
-gitflow/release-start-minor: packages/install/semver
+gitflow/release/start/minor: packages/install/semver
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(GIT) checkout develop
@@ -58,7 +58,7 @@ gitflow/release-start-minor: packages/install/semver
 	$(GIT) push -u origin release/$(shell $(SEMVER) bump minor -g)
 
 ## Git-Flow release start next version (patch)
-gitflow/release-start-patch: packages/install/semver
+gitflow/release/start/patch: packages/install/semver
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(GIT) checkout develop
@@ -67,7 +67,7 @@ gitflow/release-start-patch: packages/install/semver
 	$(GIT) push -u origin release/$(shell $(SEMVER) bump patch -g)
 
 ## Git-Flow release start
-gitflow/release-start:
+gitflow/release/start:
 	$(call assert-set,GIT)
 	$(GIT) checkout develop
 	$(GIT) pull origin develop
@@ -75,7 +75,7 @@ gitflow/release-start:
 	$(GIT) push -u origin release/$(filter-out $@,$(MAKECMDGOALS))
 
 ## Git-Flow release finish (manual)
-gitflow/release-manual-finish:
+gitflow/release/manual/finish:
 	$(call assert-set,GIT)
 	$(GIT) checkout $(MAIN_BRANCH)
 	$(GIT) pull origin $(MAIN_BRANCH)
@@ -92,7 +92,7 @@ gitflow/release-manual-finish:
 ## Git-Flow release finish (automatic via pr)
 # Creates a milestone on github
 # Creates a PR to merge automatically into master and
-gitflow/release-finish: packages/install/gitversion packages/install/gh
+gitflow/release/finish: packages/install/gitversion packages/install/gh
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION_EXE)
 	$(call assert-set,GH_EXE)
@@ -107,7 +107,7 @@ gitflow/release-finish: packages/install/gitversion packages/install/gh
 		-H release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -b ""
 
 ## Git-Flow support start
-gitflow/support-start:
+gitflow/support/start:
 	$(call assert-set,GIT)
 	$(GIT) checkout
 	$(GIT) checkout -b support/$(filter-out $@,$(MAKECMDGOALS)) $(filter-out $@,$(MAKECMDGOALS))
