@@ -1,8 +1,8 @@
 GIT:= $(shell which git)
 MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "master|main")
-GH:=$(INSTALL_DIR)/gh
-GITVERSION:=$(INSTALL_DIR)/gitversion
-SEMVER:=$(INSTALL_DIR)/semver
+export GH ?= $(INSTALL_DIR)/gh
+export SEMVER ?= $(INSTALL_PATH)/semver
+export GITVERSION ?= $(INSTALL_PATH)/gitversion
 
 ## Git-Flow Initialize develop branch
 gitflow/init:
@@ -18,6 +18,8 @@ gitflow/init:
 		$(GIT) checkout -b develop; \
 		$(GIT) push -u origin develop; \
 	fi
+
+gitflow/deps: packages/install/gitversion packages/install/gh packages/install/semver
 
 ## Git-Flow feature start
 gitflow/feature/start:
@@ -49,7 +51,7 @@ gitflow/release/start/major: packages/install/semver
 	$(GIT) push -u origin release/$(shell $(SEMVER) bump major -g)
 
 ## Git-Flow release start next version (minor)
-gitflow/release/start/minor: packages/install/semver
+gitflow/release/start/minor: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(GIT) checkout develop
@@ -58,7 +60,7 @@ gitflow/release/start/minor: packages/install/semver
 	$(GIT) push -u origin release/$(shell $(SEMVER) bump minor -g)
 
 ## Git-Flow release start next version (patch)
-gitflow/release/start/patch: packages/install/semver
+gitflow/release/start/patch: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(GIT) checkout develop
@@ -92,7 +94,7 @@ gitflow/release/manual/finish:
 ## Git-Flow release finish (automatic via pr)
 # Creates a milestone on github
 # Creates a PR to merge automatically into master and
-gitflow/release/finish: packages/install/gitversion packages/install/gh
+gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION_EXE)
 	$(call assert-set,GH_EXE)
