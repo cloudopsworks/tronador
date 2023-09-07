@@ -1,6 +1,6 @@
 GIT:= $(shell which git)
 MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "master|main")
-export GH ?= $(INSTALL_DIR)/gh
+export GH ?= $(INSTALL_PATH)/gh
 export SEMVER ?= $(INSTALL_PATH)/semver
 export GITVERSION ?= $(INSTALL_PATH)/gitversion
 
