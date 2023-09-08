@@ -1,5 +1,6 @@
 GIT:= $(shell which git)
 MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "master|main")
+export GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
 export GH ?= $(INSTALL_PATH)/gh
 export SEMVER ?= $(INSTALL_PATH)/semver
 export GITVERSION ?= $(INSTALL_PATH)/gitversion
@@ -41,32 +42,14 @@ gitflow/feature/publish:
 	$(GIT) checkout feature/$(filter-out $@,$(MAKECMDGOALS))
 	$(GIT) push origin feature/$(filter-out $@,$(MAKECMDGOALS))
 
-## Git-Flow release start next version (major)
-gitflow/release/start/major: packages/install/semver
+## Git-Flow release start next version, type inferred from input. (major, minor, patch)
+gitflow/release/start/%: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(GIT) checkout develop
 	$(GIT) pull origin develop
-	$(GIT) checkout -b release/$(shell $(SEMVER) bump major -g) develop
-	$(GIT) push -u origin release/$(shell $(SEMVER) bump major -g)
-
-## Git-Flow release start next version (minor)
-gitflow/release/start/minor: gitflow/deps
-	$(call assert-set,GIT)
-	$(call assert-set,SEMVER)
-	$(GIT) checkout develop
-	$(GIT) pull origin develop
-	$(GIT) checkout -b release/$(shell $(SEMVER) bump minor -g) develop
-	$(GIT) push -u origin release/$(shell $(SEMVER) bump minor -g)
-
-## Git-Flow release start next version (patch)
-gitflow/release/start/patch: gitflow/deps
-	$(call assert-set,GIT)
-	$(call assert-set,SEMVER)
-	$(GIT) checkout develop
-	$(GIT) pull origin develop
-	$(GIT) checkout -b release/$(shell $(SEMVER) bump patch -g) develop
-	$(GIT) push -u origin release/$(shell $(SEMVER) bump patch -g)
+	$(GIT) checkout -b release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g) develop
+	$(GIT) push -u origin release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g)
 
 ## Git-Flow release start
 gitflow/release/start: gitflow/release/start/minor
@@ -92,8 +75,9 @@ gitflow/release/publish:
 	$(GIT) checkout release/$(filter-out $@,$(MAKECMDGOALS))
 	$(GIT) push origin release/$(filter-out $@,$(MAKECMDGOALS))
 
+# Recover the list of PRs from the release branch
+LIST ?= $(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDGOALS)) --json number -q '.[].number')
 
-LIST:=$(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDGOALS)) --json number -q '.[].number')
 ## Git-Flow release finish (automatic via pr)
 # Creates a milestone on github
 # Creates a PR to merge automatically into master and
@@ -101,13 +85,26 @@ gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(call assert-set,GH)
-	$(foreach var in $(LIST), $(GH) pr comment $(var) -b "/finish")
+	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
 
 ## Git-Flow support start
 gitflow/support/start:
 	$(call assert-set,GIT)
-	$(GIT) checkout
+	$(GIT) checkout $(MAIN_BRANCH)
 	$(GIT) checkout -b support/$(filter-out $@,$(MAKECMDGOALS)) $(filter-out $@,$(MAKECMDGOALS))
+
+## Git-Flow support publish
+gitflow/support/publish: gitflow/deps
+	$(call assert-set,GIT)
+ifneq($(filter-out $@,$(MAKECMDGOALS)),"")
+	$(GIT) checkout support/$(filter-out $@,$(MAKECMDGOALS))
+	$(GIT) push origin support/$(filter-out $@,$(MAKECMDGOALS))
+else ifeq($(GIT_BRANCH),support)
+export BUMP_VERSION ?= v$(shell $(GITVERSION) -output json -showvariable FullSemver)
+	$(GIT) push origin support/$(BUMP_VERSION)
+else
+	$(error "You must specify a support version to publish, or being working on a support branch")
+endif
 
 # Ignore any additional arguments that come from MAKECMDGOALS
 %:
