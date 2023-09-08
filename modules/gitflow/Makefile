@@ -97,7 +97,7 @@ gitflow/support/start:
 ## Git-Flow support publish
 gitflow/support/publish: gitflow/deps
 	$(call assert-set,GIT)
-ifneq ($(filter-out $@,$(MAKECMDGOALS)),"")
+ifdef ($(filter-out $@,$(MAKECMDGOALS)))
 	@$(GIT) checkout support/$(filter-out $@,$(MAKECMDGOALS))
 	@$(GIT) push origin support/$(filter-out $@,$(MAKECMDGOALS))
 else ifeq ($(GIT_BRANCH_PREFIX),support)
