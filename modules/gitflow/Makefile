@@ -8,7 +8,7 @@ export GITVERSION ?= $(INSTALL_PATH)/gitversion
 ## Git-Flow Initialize develop branch
 gitflow/init:
 	$(call assert-set,GIT)
-	if [ "$(MAIN_BRANCH)" = "" ]; then \
+	@if [ "$(MAIN_BRANCH)" = "" ]; then \
 		$(GIT) checkout -b main; \
 		$(GIT) push -u origin main; \
 		$(GIT) checkout -b develop; \
@@ -25,31 +25,31 @@ gitflow/deps: packages/install/gitversion packages/install/gh packages/install/s
 ## Git-Flow feature start
 gitflow/feature/start:
 	$(call assert-set,GIT)
-	$(GIT) checkout -b feature/$(filter-out $@,$(MAKECMDGOALS)) develop
+	@$(GIT) checkout -b feature/$(filter-out $@,$(MAKECMDGOALS)) develop
 
 ## Git-Flow feature finish
 gitflow/feature/finish:
 	$(call assert-set,GIT)
-	$(GIT) checkout develop
-	$(GIT) pull origin develop
-	$(GIT) merge --no-ff feature/$(filter-out $@,$(MAKECMDGOALS))
-	$(GIT) branch -d feature/$(filter-out $@,$(MAKECMDGOALS))
-	$(GIT) push origin develop
+	@$(GIT) checkout develop
+	@$(GIT) pull origin develop
+	@$(GIT) merge --no-ff feature/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) branch -d feature/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) push origin develop
 
 ## Git-Flow feature publish
 gitflow/feature/publish:
 	$(call assert-set,GIT)
-	$(GIT) checkout feature/$(filter-out $@,$(MAKECMDGOALS))
-	$(GIT) push origin feature/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) checkout feature/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) push origin feature/$(filter-out $@,$(MAKECMDGOALS))
 
 ## Git-Flow release start next version, type inferred from input. (major, minor, patch)
 gitflow/release/start/%: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
-	$(GIT) checkout develop
-	$(GIT) pull origin develop
-	$(GIT) checkout -b release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g) develop
-	$(GIT) push -u origin release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g)
+	@$(GIT) checkout develop
+	@$(GIT) pull origin develop
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g) develop
+	@$(GIT) push -u origin release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g)
 
 ## Git-Flow release start
 gitflow/release/start: gitflow/release/start/minor
@@ -57,23 +57,23 @@ gitflow/release/start: gitflow/release/start/minor
 ## Git-Flow release finish (manual)
 gitflow/release/manual/finish:
 	$(call assert-set,GIT)
-	$(GIT) checkout $(MAIN_BRANCH)
-	$(GIT) pull origin $(MAIN_BRANCH)
-	$(GIT) merge --no-ff release/$(filter-out $@,$(MAKECMDGOALS))
-	$(GIT) tag -a $(filter-out $@,$(MAKECMDGOALS)) -m "Release $(filter-out $@,$(MAKECMDGOALS))"
-	$(GIT) push origin $(MAIN_BRANCH)
-	$(GIT) push origin $(MAIN_BRANCH) --tags
-	$(GIT) checkout develop
-	$(GIT) pull origin develop
-	$(GIT) merge --no-ff release/$(filter-out $@,$(MAKECMDGOALS))
-	$(GIT) push origin develop
-	$(GIT) branch -d release/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+	@$(GIT) merge --no-ff release/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) tag -a $(filter-out $@,$(MAKECMDGOALS)) -m "Release $(filter-out $@,$(MAKECMDGOALS))"
+	@$(GIT) push origin $(MAIN_BRANCH)
+	@$(GIT) push origin $(MAIN_BRANCH) --tags
+	@$(GIT) checkout develop
+	@$(GIT) pull origin develop
+	@$(GIT) merge --no-ff release/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) push origin develop
+	@$(GIT) branch -d release/$(filter-out $@,$(MAKECMDGOALS))
 
 ## Git-Flow release publish (manual)
 gitflow/release/publish:
 	$(call assert-set,GIT)
-	$(GIT) checkout release/$(filter-out $@,$(MAKECMDGOALS))
-	$(GIT) push origin release/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) checkout release/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) push origin release/$(filter-out $@,$(MAKECMDGOALS))
 
 # Recover the list of PRs from the release branch
 LIST ?= $(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDGOALS)) --json number -q '.[].number')
@@ -90,18 +90,18 @@ gitflow/release/finish: gitflow/deps
 ## Git-Flow support start
 gitflow/support/start:
 	$(call assert-set,GIT)
-	$(GIT) checkout $(MAIN_BRANCH)
-	$(GIT) checkout -b support/$(filter-out $@,$(MAKECMDGOALS)) $(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) checkout -b support/$(filter-out $@,$(MAKECMDGOALS)) $(filter-out $@,$(MAKECMDGOALS))
 
 ## Git-Flow support publish
 gitflow/support/publish: gitflow/deps
 	$(call assert-set,GIT)
-ifneq($(filter-out $@,$(MAKECMDGOALS)),"")
-	$(GIT) checkout support/$(filter-out $@,$(MAKECMDGOALS))
-	$(GIT) push origin support/$(filter-out $@,$(MAKECMDGOALS))
-else ifeq($(GIT_BRANCH),support)
+ifneq ($(filter-out $@,$(MAKECMDGOALS)),"")
+	@$(GIT) checkout support/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) push origin support/$(filter-out $@,$(MAKECMDGOALS))
+else ifeq ($(GIT_BRANCH),support)
 export BUMP_VERSION ?= v$(shell $(GITVERSION) -output json -showvariable FullSemver)
-	$(GIT) push origin support/$(BUMP_VERSION)
+	@$(GIT) push origin $(GIT_BRANCH)
 else
 	$(error "You must specify a support version to publish, or being working on a support branch")
 endif
