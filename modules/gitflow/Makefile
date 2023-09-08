@@ -1,6 +1,7 @@
 GIT:= $(shell which git)
 MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "master|main")
 export GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
+export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null | sed -e 's/\(.*\)\/.*/\1/')
 export GH ?= $(INSTALL_PATH)/gh
 export SEMVER ?= $(INSTALL_PATH)/semver
 export GITVERSION ?= $(INSTALL_PATH)/gitversion
@@ -99,8 +100,7 @@ gitflow/support/publish: gitflow/deps
 ifneq ($(filter-out $@,$(MAKECMDGOALS)),"")
 	@$(GIT) checkout support/$(filter-out $@,$(MAKECMDGOALS))
 	@$(GIT) push origin support/$(filter-out $@,$(MAKECMDGOALS))
-else ifeq ($(GIT_BRANCH),support)
-export BUMP_VERSION ?= v$(shell $(GITVERSION) -output json -showvariable FullSemver)
+else ifeq ($(GIT_BRANCH_PREFIX),support)
 	@$(GIT) push origin $(GIT_BRANCH)
 else
 	$(error "You must specify a support version to publish, or being working on a support branch")
