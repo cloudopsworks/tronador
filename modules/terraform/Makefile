@@ -1,17 +1,8 @@
 TMP ?= /tmp
-TERRAFORM ?= $(TRONADOR_PATH)/vendor/terraform
-TERRAFORM_VERSION ?= 1.1.7
-TERRAFORM_URL ?= https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(OS)_$(ARCH).zip
+TERRAFORM ?= $(INSTALL_PATH)/terraform
 
 ## Install terraform
-terraform/install:
-	@[ -x $(TERRAFORM) ] || ( \
-		echo "Installing Terraform $(TERRAFORM_VERSION) ($(OS)) from $(TERRAFORM_URL)" && \
-		curl '-#' -fL -o $(TMP)/terraform.zip $(TERRAFORM_URL) && \
-		unzip -q -d $(TMP)/ $(TMP)/terraform.zip && \
-		mv $(TMP)/terraform $(TERRAFORM) && \
-		rm -f $(TMP)/terraform.zip \
-		)
+terraform/install: packages/install/terraform
 	$(TERRAFORM) version
 
 ## Ensure all plugins can be fetched
