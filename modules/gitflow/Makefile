@@ -50,7 +50,6 @@ gitflow/release/start/%: gitflow/deps
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
 	@$(GIT) checkout -b release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g) develop
-	@$(GIT) push -u origin release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g)
 
 ## Git-Flow release start
 gitflow/release/start: gitflow/release/start/minor
@@ -71,10 +70,24 @@ gitflow/release/manual/finish:
 	@$(GIT) branch -d release/$(filter-out $@,$(MAKECMDGOALS))
 
 ## Git-Flow release publish (manual)
-gitflow/release/publish:
+gitflow/release/manual/publish:
 	$(call assert-set,GIT)
 	@$(GIT) checkout release/$(filter-out $@,$(MAKECMDGOALS))
 	@$(GIT) push origin release/$(filter-out $@,$(MAKECMDGOALS))
+
+## Git-Flow release publish (automatic creates pr)
+# ensure that the branch is named release/* in order to proceed with task compare agains git
+gitflow/release/publish:
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	$(call assert-set,GH)
+ifeq ($(GIT_BRANCH_PREFIX),release)
+	@$(GIT) push -u origin $(GIT_BRANCH)
+	@$(GH) pr create -B $(MAIN_BRANCH) -b "Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
+	@$(GH) pr create -B develop -b "Development Merge from Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Merge from Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
+else
+	$(error "You must be in a release branch to publish")
+endif
 
 # Recover the list of PRs from the release branch
 LIST ?= $(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDGOALS)) --json number -q '.[].number')
