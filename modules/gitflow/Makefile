@@ -106,7 +106,7 @@ else
 	$(error "You must specify a support version to publish, or being working on a support branch")
 endif
 
-gitflow/version/tag:
+gitflow/version/tag: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	@$(GIT) tag "$(shell $(GITVERSION) -output json -showvariable SemVer)"
