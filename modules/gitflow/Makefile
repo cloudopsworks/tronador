@@ -75,16 +75,25 @@ gitflow/release/manual/publish:
 	@$(GIT) checkout release/$(filter-out $@,$(MAKECMDGOALS))
 	@$(GIT) push origin release/$(filter-out $@,$(MAKECMDGOALS))
 
-## Git-Flow release publish (automatic creates pr)
-# ensure that the branch is named release/* in order to proceed with task compare agains git
+## Git-Flow release publish
 gitflow/release/publish:
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(call assert-set,GH)
 ifeq ($(GIT_BRANCH_PREFIX),release)
 	@$(GIT) push -u origin $(GIT_BRANCH)
-	@$(GH) pr create -B $(MAIN_BRANCH) -b "Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
-	@$(GH) pr create -B develop -b "Development Merge from Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Merge from Release $(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
+else
+	$(error "You must be in a release branch to publish")
+endif
+
+## Git-Flow release publish Pull-Request against MAIN and DEVELOP branches
+gitflow/release/publish/pr:
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	$(call assert-set,GH)
+ifeq ($(GIT_BRANCH_PREFIX),release)
+	@$(GH) pr create -B $(MAIN_BRANCH) -b "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
+	@$(GH) pr create -B develop -b "Development Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
 else
 	$(error "You must be in a release branch to publish")
 endif
@@ -122,7 +131,7 @@ endif
 gitflow/version/tag: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
-	@$(GIT) tag "$(shell $(GITVERSION) -output json -showvariable SemVer)"
+	@$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)"
 
 gitflow/version/publish:
 	$(call assert-set,GIT)
