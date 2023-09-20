@@ -106,6 +106,16 @@ else
 	$(error "You must specify a support version to publish, or being working on a support branch")
 endif
 
+gitflow/version/tag:
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	@$(GIT) tag "$(shell $(GITVERSION) -output json -showvariable SemVer)"
+
+gitflow/version/publish:
+	$(call assert-set,GIT)
+	@$(GIT) push origin --tags
+
+
 # Ignore any additional arguments that come from MAKECMDGOALS
-%:
-	@:
+#gitflow/%:
+#	@:
