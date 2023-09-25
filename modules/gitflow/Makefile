@@ -3,8 +3,8 @@ MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "maste
 export GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
 export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null | sed -e 's/\(.*\)\/.*/\1/')
 export GH ?= $(INSTALL_PATH)/gh
-export SEMVER ?= $(INSTALL_PATH)/semver
-export GITVERSION ?= $(INSTALL_PATH)/gitversion
+#export SEMVER ?= $(INSTALL_PATH)/semver
+#export GITVERSION ?= $(INSTALL_PATH)/gitversion
 
 ## Git-Flow Initialize develop branch
 gitflow/init:
