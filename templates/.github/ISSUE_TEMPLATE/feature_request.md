@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-Have a question? Please checkout our [Slack Community](https://slack.cloudops.works) in the `#geodesic` channel or visit our [Slack Archive](https://archive.sweetops.com/geodesic/). 
+Have a question? Please checkout our [Slack Community](https://slack.cloudops.works) in the `#tronador` channel or visit our [Slack Archive](https://archive.cloudops.works/tronador/). 
 
 [![Slack Community](https://slack.cloudops.works/badge.svg)](https://slack.cloudops.works)
 
