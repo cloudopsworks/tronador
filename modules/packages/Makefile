@@ -19,7 +19,7 @@ packages/reinstall: packages/delete packages/install
 ## Install packages 
 packages/install:
 	@if [ ! -d $(PACKAGES_PATH) ]; then \
-	  echo "Installing packages $(PACKAGES_VERSION)..."; \
+	  echo "Installing packages $(PACKAGES_VERSION)..." >&2; \
 	  rm -rf $(PACKAGES_PATH); \
 	  $(GIT) clone -c advice.detachedHead=false --depth=1 -b $(PACKAGES_VERSION) https://github.com/$(CUSTOMER_PACKAGES_OWNER)/$(CUSTOMER_PACKAGES_REPO).git $(PACKAGES_PATH); \
 	  rm -rf $(PACKAGES_PATH)/.git; \
@@ -30,7 +30,7 @@ packages/install/%: packages/install
 	@if [ ! -x $(INSTALL_PATH)/$(subst packages/install/,,$@) ]; then \
 		$(MAKE) -C $(PACKAGES_PATH)/install $(subst packages/install/,,$@); \
 	else \
-		echo "Package $(subst packages/install/,,$@) already installed"; \
+		echo "Package $(subst packages/install/,,$@) already installed" >&2; \
 	fi;
 
 ## Reinstall package (e.g. helm, helmfile, kubectl)
