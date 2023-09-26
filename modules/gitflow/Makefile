@@ -100,9 +100,9 @@ ifeq ($(GIT_BRANCH_PREFIX),release)
 		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(MAIN_BRANCH) -b "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
-			-t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release; \
+			-t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
 		$(GH) pr create -B develop -b "Development Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
-			-t "Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release ; \
+			-t "Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
 	else \
 		echo "You must be in the latest commit of the release branch to publish"; \
 	fi
