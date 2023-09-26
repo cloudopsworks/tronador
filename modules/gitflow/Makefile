@@ -137,6 +137,13 @@ gitflow/version/publish:
 	$(call assert-set,GIT)
 	@$(GIT) push origin --tags
 
+gitflow/version/semver: gitflow/deps
+	$(call assert-set,GITVERSION)
+	@$(GITVERSION) -output json -showvariable SemVer
+
+gitflow/version/semver/full: gitflow/deps
+	$(call assert-set,GITVERSION)
+	@$(GITVERSION) -output json -showvariable FullSemVer
 
 # Ignore any additional arguments that come from MAKECMDGOALS
 #gitflow/%:
