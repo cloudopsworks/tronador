@@ -1,6 +1,7 @@
 GIT:= $(shell which git)
 MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "master|main")
 export GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
+export GIT_REMOTE ?= $(shell $(GIT) ls-remote --get-url 2>/dev/null)
 export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null | sed -e 's/\(.*\)\/.*/\1/')
 export GH ?= $(INSTALL_PATH)/gh
 #export SEMVER ?= $(INSTALL_PATH)/semver
@@ -87,14 +88,24 @@ else
 	$(error "You must be in a release branch to publish")
 endif
 
+
+
 ## Git-Flow release publish Pull-Request against MAIN and DEVELOP branches
 gitflow/release/publish/pr:
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(call assert-set,GH)
 ifeq ($(GIT_BRANCH_PREFIX),release)
-	@$(GH) pr create -B $(MAIN_BRANCH) -b "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
-	@$(GH) pr create -B develop -b "Development Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -t "Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release
+	@if [[ \
+		"$$(git -C ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+	]]; then \
+		$(GH) pr create -B $(MAIN_BRANCH) -b "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
+			-t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release; \
+		$(GH) pr create -B develop -b "Development Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
+			-t "Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release ; \
+	else \
+		echo "You must be in the latest commit of the release branch to publish"; \
+	fi
 else
 	$(error "You must be in a release branch to publish")
 endif
@@ -133,13 +144,25 @@ endif
 gitflow/version/tag: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
-	@echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..." >&2
-	@$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)"
+	@if [[ \
+		"$$(git -C ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+	]]; then \
+		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)" ; \
+		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..."; \
+	else \
+		echo "You must be in the latest commit of the branch to tag"; \
+	fi
 
 ## Git-Flow version publish to remote (push tags
 gitflow/version/publish:
 	$(call assert-set,GIT)
-	@$(GIT) push origin --tags
+	@if [[ \
+		"$$(git -C ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+	]]; then \
+		$(GIT) push origin --tags ; \
+	else \
+	  echo "You must be in the latest commit of the branch to push tags!"; \
+	fi
 
 ## Retrieve the SemVer version with GitVersion tool
 gitflow/version/semver: gitflow/deps
