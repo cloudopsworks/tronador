@@ -25,7 +25,7 @@ endef
 
 define tronador_auto_init
 if [[ \
-	-f "/tronador/Makefile" || -f "/$(TRONADOR_PROJECT/Makefile" \
+	-f "/tronador/Makefile" || -f "/$(TRONADOR_PROJECT)/Makefile" \
 ]]; then \
 	echo "[.tronador] Tronador already installed, skip auto init..."; \
 elif [[ \
