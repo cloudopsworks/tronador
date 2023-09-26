@@ -91,13 +91,13 @@ endif
 
 
 ## Git-Flow release publish Pull-Request against MAIN and DEVELOP branches
-gitflow/release/publish/pr:
+gitflow/release/publish/pr: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(call assert-set,GH)
 ifeq ($(GIT_BRANCH_PREFIX),release)
 	@if [[ \
-		"$$(git -C ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(MAIN_BRANCH) -b "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
 			-t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" -l release; \
@@ -129,7 +129,7 @@ gitflow/support/start:
 	@$(GIT) checkout -b support/$(filter-out $@,$(MAKECMDGOALS)) $(filter-out $@,$(MAKECMDGOALS))
 
 ## Git-Flow support publish
-gitflow/support/publish: gitflow/deps
+gitflow/support/publish:
 	$(call assert-set,GIT)
 ifeq ($(filter-out $@,$(MAKECMDGOALS)),)
 	@$(GIT) checkout support/$(filter-out $@,$(MAKECMDGOALS))
@@ -145,7 +145,7 @@ gitflow/version/tag: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	@if [[ \
-		"$$(git -C ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
 	]]; then \
 		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)" ; \
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..."; \
@@ -157,7 +157,7 @@ gitflow/version/tag: gitflow/deps
 gitflow/version/publish:
 	$(call assert-set,GIT)
 	@if [[ \
-		"$$(git -C ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
 	]]; then \
 		$(GIT) push origin --tags ; \
 	else \
