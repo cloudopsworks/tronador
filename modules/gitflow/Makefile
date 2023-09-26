@@ -22,6 +22,7 @@ gitflow/init:
 	fi
 
 gitflow/deps: packages/install/gitversion packages/install/gh packages/install/semver
+	exit(0)
 
 ## Git-Flow feature start
 gitflow/feature/start:
