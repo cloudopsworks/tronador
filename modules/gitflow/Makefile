@@ -132,6 +132,7 @@ endif
 gitflow/version/tag: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
+	@echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..." >&2
 	@$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)"
 
 gitflow/version/publish:
