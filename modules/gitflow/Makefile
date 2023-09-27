@@ -173,10 +173,10 @@ gitflow/version/semver: gitflow/deps
 	$(call assert-set,GITVERSION)
 	@$(GITVERSION) -output json -showvariable SemVer
 
-## Retrieve the Full SemVer version (commits count) with GitVersion tool
+## Retrieve the Full SemVer version (commits count) with GitVersion tool translate + to - for compatibility with Helm/Docker
 gitflow/version/semver/full: gitflow/deps
 	$(call assert-set,GITVERSION)
-	@$(GITVERSION) -output json -showvariable FullSemVer
+	@$(GITVERSION) -output json -showvariable FullSemVer | tr '+' '-'
 
 # Ignore any additional arguments that come from MAKECMDGOALS
 #gitflow/%:
