@@ -3,7 +3,7 @@ MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "maste
 export GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
 export GIT_REMOTE ?= $(shell $(GIT) ls-remote --get-url 2>/dev/null)
 export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null | sed -e 's/\(.*\)\/.*/\1/')
-export GH ?= $(INSTALL_PATH)/gh
+#export GH ?= $(INSTALL_PATH)/gh
 #export SEMVER ?= $(INSTALL_PATH)/semver
 #export GITVERSION ?= $(INSTALL_PATH)/gitversion
 
@@ -53,8 +53,14 @@ gitflow/release/start/%: gitflow/deps
 	@$(GIT) pull origin develop
 	@$(GIT) checkout -b release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g) develop
 
-## Git-Flow release start
-gitflow/release/start: gitflow/release/start/minor
+## Git-Flow release start - this process uses the GitVersion tool to infer the next version
+gitflow/release/start: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	@$(GIT) checkout develop
+	@$(GIT) pull origin develop
+	@$(GIT) checkout -b release/$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
+
 
 ## Git-Flow release finish (manual)
 gitflow/release/manual/finish:
