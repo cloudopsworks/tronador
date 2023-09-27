@@ -86,8 +86,6 @@ gitflow/release/manual/publish:
 ## Git-Flow release publish
 gitflow/release/publish:
 	$(call assert-set,GIT)
-	$(call assert-set,GITVERSION)
-	$(call assert-set,GH)
 ifeq ($(GIT_BRANCH_PREFIX),release)
 	@$(GIT) push -u origin $(GIT_BRANCH)
 else
