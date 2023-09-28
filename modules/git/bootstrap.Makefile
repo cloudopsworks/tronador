@@ -30,6 +30,9 @@ endif
 
 ifeq ($(GIT_BRANCH),)
   export GIT_IS_BRANCH := 0
+else ifeq ($(GIT_BRANCH),HEAD)
+  export GIT_BRANCH :=
+  export GIT_IS_BRANCH := 0
 else
   export GIT_IS_BRANCH := 1
 endif
