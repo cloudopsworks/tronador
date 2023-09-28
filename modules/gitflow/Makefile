@@ -92,8 +92,6 @@ else
 	$(error "You must be in a release branch to publish")
 endif
 
-
-
 ## Git-Flow release publish Pull-Request against MAIN and DEVELOP branches
 gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
@@ -124,6 +122,14 @@ gitflow/release/finish/comment: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
+
+## Git-Flow release purge
+gitflow/release/purge: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	@$(GIT) branch -D release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
+	@$(GIT) push -d release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
+
 
 ## Git-Flow support start
 gitflow/support/start:
