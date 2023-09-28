@@ -128,7 +128,7 @@ gitflow/release/purge: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	@$(GIT) branch -D release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
-	@$(GIT) push -d release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
+	@$(GIT) push origin -d release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 
 
 ## Git-Flow support start
