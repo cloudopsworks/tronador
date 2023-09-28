@@ -59,7 +59,7 @@ gitflow/release/start: gitflow/deps
 	$(call assert-set,GITVERSION)
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
-	@$(GIT) checkout -b release/$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
+	@$(GIT) checkout -b release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
 
 
 ## Git-Flow release finish (manual)
@@ -122,7 +122,6 @@ LIST ?= $(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDG
 # Creates a PR to merge automatically into master and
 gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
-	$(call assert-set,GITVERSION)
 	$(call assert-set,GH)
 	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
 
