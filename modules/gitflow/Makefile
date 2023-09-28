@@ -95,7 +95,7 @@ endif
 
 
 ## Git-Flow release publish Pull-Request against MAIN and DEVELOP branches
-gitflow/release/publish/pr: gitflow/deps
+gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(call assert-set,GH)
@@ -118,9 +118,9 @@ endif
 LIST ?= $(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDGOALS)) --json number -q '.[].number')
 
 ## Git-Flow release finish (automatic via pr)
+gitflow/release/finish/comment: gitflow/deps
 # Creates a milestone on github
 # Creates a PR to merge automatically into master and
-gitflow/release/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
