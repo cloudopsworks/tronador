@@ -147,6 +147,16 @@ endif
 gitflow/version/tag: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
+ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
+	@if [[ \
+		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+	]]; then \
+		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
+		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)..."; \
+	else \
+		echo "You must be in the latest commit of the branch to tag"; \
+	fi
+else
 	@if [[ \
 		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
 	]]; then \
@@ -155,6 +165,7 @@ gitflow/version/tag: gitflow/deps
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
 	fi
+endif
 
 ## Git-Flow version publish to remote (push tags
 gitflow/version/publish:
