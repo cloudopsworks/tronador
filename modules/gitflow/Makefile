@@ -27,8 +27,8 @@ gitflow/deps: packages/install/gitversion packages/install/gh packages/install/s
 
 ## Git-Flow feature start
 gitflow/feature/start:
-FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS))
 	$(call assert-set,GIT)
+	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
 ifneq ($(FEAT_NAME),)
 	@$(GIT) checkout -b feature/$(FEAT_NAME) develop
 else
