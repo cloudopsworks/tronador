@@ -83,6 +83,14 @@ else
 	$(error "You must specify a feature name to publish, or being working on a feature branch")
 endif
 
+## Git-Flow feature purge
+gitflow/feature/purge: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	@$(GIT) branch -D feature/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) push origin -d feature/$(filter-out $@,$(MAKECMDGOALS))
+
+
 ## GIt-Flow Hotfix start
 gitflow/hotfix/start%: gitflow/deps
 	$(call assert-set,GIT)
@@ -145,6 +153,13 @@ ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 else
 	$(error "You must be in a hotfix branch to finish")
 endif
+
+## Git-Flow hotfix purge
+gitflow/hotfix/purge: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	@$(GIT) branch -D hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
+	@$(GIT) push origin -d hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 
 
 ## Git-Flow release start next version, type inferred from input. (major, minor, patch)
