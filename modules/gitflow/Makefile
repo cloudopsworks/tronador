@@ -27,23 +27,105 @@ gitflow/deps: packages/install/gitversion packages/install/gh packages/install/s
 
 ## Git-Flow feature start
 gitflow/feature/start:
+FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS))
 	$(call assert-set,GIT)
-	@$(GIT) checkout -b feature/$(filter-out $@,$(MAKECMDGOALS)) develop
+ifneq ($(FEAT_NAME),)
+	@$(GIT) checkout -b feature/$(FEAT_NAME) develop
+else
+	$(error "You must specify a feature name")
+endif
 
-## Git-Flow feature finish
+## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish <feature_name>, defaults PR to develop
 gitflow/feature/finish:
 	$(call assert-set,GIT)
+	$(call assert-set,GH)
+	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
+ifneq ($(FEAT_NAME),)
+	$(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature feature/$(FEAT_NAME) Finish, will merge the code into develop." \
+		-t "Feature feature/$(FEAT_NAME) Finish" ; \
+else ifneq ($(GIT_BRANCH_PREFIX),feature)
+	@if [[ \
+		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+	]]; then \
+		$(GH) pr create -B $(TARGET_BRANCH) -b "Feature $(GIT_BRANCH) Finish, will merge the code into $(TARGET_BRANCH)" \
+			-t "Feature $(GIT_BRANCH) Finish" ; \
+	else \
+		echo "You must be in the latest commit of the release branch to publish"; \
+	fi
+else
+	$(error "You must specify a feature name to publish, or being working on a feature branch")
+endif
+
+## Git-Flow feature finish (manual)
+gitflow/feature/manual/finish:
+	$(call assert-set,GIT)
+	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
+ifneq ($(FEAT_NAME),)
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
-	@$(GIT) merge --no-ff feature/$(filter-out $@,$(MAKECMDGOALS))
-	@$(GIT) branch -d feature/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) merge --no-ff feature/$(FEAT_NAME)
+	@$(GIT) branch -d feature/$(FEAT_NAME)
 	@$(GIT) push origin develop
+else
+	$(error "You must specify a feature name")
+endif
 
 ## Git-Flow feature publish
 gitflow/feature/publish:
+	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
 	$(call assert-set,GIT)
+ifneq ($(FEAT_NAME),)
 	@$(GIT) checkout feature/$(filter-out $@,$(MAKECMDGOALS))
 	@$(GIT) push origin feature/$(filter-out $@,$(MAKECMDGOALS))
+else ifeq ($(GIT_BRANCH_PREFIX),feature)
+	@$(GIT) push origin $(GIT_BRANCH)
+else
+	$(error "You must specify a feature name to publish, or being working on a feature branch")
+endif
+
+## GIt-Flow Hotfix start
+gitflow/hotfix/start: gitflow/deps
+	$(call assert-set,GIT)
+	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
+	$(eval HOTFIX_NAME := $(if $(filter 2 3,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
+	$(eval HOTFIX_TARGET := $(if $(filter 3,$(WORD_COUNT)),$(word 3,$(MAKECMDGOALS)),$(MAIN_BRANCH)))
+	@$(GIT) checkout $(HOTFIX_TARGET)
+	@$(GIT) pull origin $(HOTFIX_TARGET)
+ifneq ($(HOTFIX_NAME),)
+	@$(GIT) checkout -b hotfix/$(HOTFIX_NAME) $(HOTFIX_TARGET)
+else
+	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch -g) $(HOTFIX_TARGET)
+endif
+
+## GIt-Flow Hotfix publishing
+gitflow/hotfix/publish:
+	$(call assert-set,GIT)
+	$(eval HOTFIX_NAME := $(filter-out $@,$(MAKECMDGOALS)))
+ifneq ($(HOTFIX_NAME),)
+	@$(GIT) checkout hotfix/$(HOTFIX_NAME)
+	@$(GIT) push origin hotfix/$(HOTFIX_NAME)
+else ifeq ($(GIT_BRANCH_PREFIX),hotfix)
+	@$(GIT) push origin $(GIT_BRANCH)
+else
+	$(error "You must specify a hotfix name to publish, or being working on a hotfix branch")
+endif
+
+## Git-Flow Hotfix finish (manual)
+gitflow/hotfix/manual/finish:
+	$(call assert-set,GIT)
+	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
+	$(eval HOTFIX_NAME := $(if $(filter 2 3,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
+	$(eval HOTFIX_TARGET := $(if $(filter 3,$(WORD_COUNT)),$(word 3,$(MAKECMDGOALS)),$(MAIN_BRANCH)))
+ifneq ($(HOTFIX_NAME),)
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+	@$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME)
+	@$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)"
+	@$(GIT) push origin $(MAIN_BRANCH)
+	@$(GIT) push origin $(MAIN_BRANCH) --tags
+else
+	$(error "You must specify a hotfix name to publish")
+endif
 
 ## Git-Flow release start next version, type inferred from input. (major, minor, patch)
 gitflow/release/start/%: gitflow/deps
