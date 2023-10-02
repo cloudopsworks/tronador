@@ -45,7 +45,7 @@ ifneq ($(FEAT_NAME),)
 		-t "Feature feature/$(FEAT_NAME) Finish" ; \
 else ifneq ($(GIT_BRANCH_PREFIX),feature)
 	@if [[ \
-		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(TARGET_BRANCH) -b "Feature $(GIT_BRANCH) Finish, will merge the code into $(TARGET_BRANCH)" \
 			-t "Feature $(GIT_BRANCH) Finish" ; \
@@ -128,13 +128,14 @@ else
 endif
 
 ## Git-Flow Hotfix finish (automatic via PR)
-gitflow/hotfix/finish:
+gitflow/hotfix/finish: gitflow/deps
 	$(call assert-set,GIT)
+	$(call assert-set,GH)
 	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
 	$(eval TARGET_BRANCH := $(if $(filter 2,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS)),$(MAIN_BRANCH)))
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	@if [[ \
-		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(TARGET_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(TARGET_BRANCH)" \
 			-t "Hotfix Release $(GIT_BRANCH)" ; \
@@ -200,7 +201,7 @@ gitflow/release/finish: gitflow/deps
 	$(call assert-set,GH)
 ifeq ($(GIT_BRANCH_PREFIX),release)
 	@if [[ \
-		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(MAIN_BRANCH) -b "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
 			-t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
@@ -256,7 +257,7 @@ gitflow/version/tag: gitflow/deps
 	$(call assert-set,GITVERSION)
 ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
 	@if [[ \
-		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)..."; \
@@ -265,7 +266,7 @@ ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
 	fi
 else
 	@if [[ \
-		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)" ; \
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..."; \
@@ -278,7 +279,7 @@ endif
 gitflow/version/publish:
 	$(call assert-set,GIT)
 	@if [[ \
-		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GIT) push origin --tags ; \
 	else \
