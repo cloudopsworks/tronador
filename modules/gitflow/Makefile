@@ -127,6 +127,25 @@ else
 	$(error "You must specify a hotfix name to publish")
 endif
 
+## Git-Flow Hotfix finish (automatic via PR)
+gitflow/hotfix/finish:
+	$(call assert-set,GIT)
+	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
+	$(eval TARGET_BRANCH := $(if $(filter 2,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS)),$(MAIN_BRANCH)))
+ifeq ($(GIT_BRANCH_PREFIX),hotfix)
+	@if [[ \
+		"$$(git ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$(git rev-parse HEAD)" \
+	]]; then \
+		$(GH) pr create -B $(TARGET_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(TARGET_BRANCH)" \
+			-t "Hotfix Release $(GIT_BRANCH)" ; \
+	else \
+		echo "You must be in the latest commit of the release branch to publish"; \
+	fi
+else
+	$(error "You must be in a hotfix branch to finish")
+endif
+
+
 ## Git-Flow release start next version, type inferred from input. (major, minor, patch)
 gitflow/release/start/%: gitflow/deps
 	$(call assert-set,GIT)
