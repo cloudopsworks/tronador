@@ -136,7 +136,7 @@ else
 endif
 
 ## Git-Flow Hotfix finish (automatic via PR)
-gitflow/hotfix/finish%: gitflow/deps
+gitflow/hotfix/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
