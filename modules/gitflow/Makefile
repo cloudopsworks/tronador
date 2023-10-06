@@ -92,7 +92,7 @@ gitflow/feature/purge: gitflow/deps
 
 
 ## GIt-Flow Hotfix start
-gitflow/hotfix/start%: gitflow/deps
+gitflow/hotfix/start: gitflow/deps
 	$(call assert-set,GIT)
 	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
 	$(eval HOTFIX_NAME := $(if $(filter 2 3,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
