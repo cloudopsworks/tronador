@@ -161,33 +161,33 @@ gitflow/hotfix/purge: gitflow/deps
 	@$(GIT) branch -D hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 	@$(GIT) push origin -d hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 
-## Git-Flow release start next version, type inferred from input. (major, minor, patch)
+## Git-Flow release start next version, type inferred from input. (major, minor, patch), for forced version the call is gitflow/release/start:<version>
 gitflow/release/start/%: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
+	$(eval BUMP_VERSION := $(subst gitflow/release/start/,,$@))
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
-	@$(GIT) checkout -b release/$(shell $(SEMVER) bump $(subst gitflow/release/start/,,$@) -g) develop
+# if BUMP_VERSION is major or minor orpatch then use it, otherwise the version is inferred from the input
+ifeq ($(BUMP_VERSION),major)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump major -g) develop
+else ifeq ($(BUMP_VERSION),minor)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump minor -g) develop
+else ifeq ($(BUMP_VERSION),patch)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump patch -g) develop
+else
+	# check that BUMP_VERSION is prefixed with v if not add it
+	$(eval BUMP_VERSION := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
+	@$(GIT) checkout -b release/$(BUMP_VERSION) develop
+endif
 
 ## Git-Flow release start - this process uses the GitVersion tool to infer the next version
 gitflow/release/start: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
-	$(call assert-set,SEMVER)
-	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
-	$(eval BUMP_VERSION := $(if $(filter 2,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
-ifeq ($(BUMP_VERSION),)
 	@$(GIT) checkout -b release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
-else
-# check if the first character in $(BUMP_VERSION) is a 'v'
-	@if [[ "$(BUMP_VERSION)" =~ ^v ]]; then \
-		$(GIT) checkout -b release/$(BUMP_VERSION) develop; \
-	else \
-		$(GIT) checkout -b release/v$(BUMP_VERSION) develop; \
-	fi
-endif
 
 ## Git-Flow release finish (manual)
 gitflow/release/manual/finish:
