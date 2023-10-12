@@ -161,7 +161,6 @@ gitflow/hotfix/purge: gitflow/deps
 	@$(GIT) branch -D hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 	@$(GIT) push origin -d hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 
-
 ## Git-Flow release start next version, type inferred from input. (major, minor, patch)
 gitflow/release/start/%: gitflow/deps
 	$(call assert-set,GIT)
@@ -174,10 +173,21 @@ gitflow/release/start/%: gitflow/deps
 gitflow/release/start: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
+	$(call assert-set,SEMVER)
+	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
+	$(eval BUMP_VERSION := $(if $(filter 2,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
+ifeq ($(BUMP_VERSION),)
 	@$(GIT) checkout -b release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
-
+else
+# check if the first character in $(BUMP_VERSION) is a 'v'
+	@if [[ "$(BUMP_VERSION)" =~ ^v ]]; then \
+		$(GIT) checkout -b release/$(BUMP_VERSION) develop; \
+	else \
+		$(GIT) checkout -b release/v$(BUMP_VERSION) develop; \
+	fi
+endif
 
 ## Git-Flow release finish (manual)
 gitflow/release/manual/finish:
