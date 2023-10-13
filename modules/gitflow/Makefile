@@ -58,8 +58,8 @@ ifeq ($(GIT_BRANCH_PREFIX),feature)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GH) pr create -B $(TARGET_BRANCH) -b "Feature $(GIT_BRANCH) Finish, will merge the code into $(TARGET_BRANCH)" \
-			-t "Feature $(GIT_BRANCH) Finish" ; \
+		$(GH) pr create -B develop -b "Feature '$(GIT_BRANCH)' Finish, will merge the code into 'develop'." \
+			-t "Feature '$(GIT_BRANCH)' Finish" ; \
 	else \
 		echo "You must be in the latest commit of the feature branch to publish"; \
 	fi
@@ -73,8 +73,8 @@ gitflow/feature/finish/%: gitflow/deps
 	$(call assert-set,GH)
 	$(eval FEAT_NAME := $(subst gitflow/feature/finish/,,$@))
 	@if [[ "$(FEAT_NAME)" != "" ]]
-	  $(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature feature/$(FEAT_NAME) Finish, will merge the code into develop." \
-		-t "Feature feature/$(FEAT_NAME) Finish" ; \
+	  $(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature 'feature/$(FEAT_NAME)' Finish, will merge the code into 'develop'." \
+		-t "Feature 'feature/$(FEAT_NAME)' Finish" ; \
 	else \
 	  echo "You must specify a feature name." ; \
 	  exit 1 ; \
