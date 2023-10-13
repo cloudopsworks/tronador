@@ -54,7 +54,7 @@ gitflow/feature/start/%:
 gitflow/feature/finish:
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
-ifneq ($(GIT_BRANCH_PREFIX),feature)
+ifeq ($(GIT_BRANCH_PREFIX),feature)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
