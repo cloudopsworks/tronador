@@ -51,7 +51,7 @@ gitflow/feature/start/%:
 	fi
 
 ## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish must be on a feature branch
-gitflow/feature/finish:
+gitflow/feature/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq ($(GIT_BRANCH_PREFIX),feature)
@@ -68,7 +68,7 @@ else
 endif
 
 ## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish:<feature_name>
-gitflow/feature/finish/%:
+gitflow/feature/finish/%: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 	$(eval FEAT_NAME := $(subst gitflow/feature/finish/,,$@))
