@@ -25,25 +25,21 @@ gitflow/init:
 gitflow/deps: packages/install/gitversion packages/install/gh packages/install/semver
 	@exit 0
 
-## Git-Flow feature start
-gitflow/feature/start:
+## Git-Flow feature start, this receives the following call pattern: make gitflow/feature/start:<feature_name>
+gitflow/feature/start/%:
 	$(call assert-set,GIT)
-$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
-ifneq ($(FEAT_NAME),)
+	$(eval FEAT_NAME := $(subst gitflow/feature/start/,,$@))
+ifneq ($(subst gitflow/feature/start/,,$@),)
 	@$(GIT) checkout -b feature/$(FEAT_NAME) develop
 else
 	$(error "You must specify a feature name")
 endif
 
-## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish <feature_name>, defaults PR to develop
+## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish must be on a feature branch
 gitflow/feature/finish:
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
-	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
-ifneq ($(FEAT_NAME),)
-	$(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature feature/$(FEAT_NAME) Finish, will merge the code into develop." \
-		-t "Feature feature/$(FEAT_NAME) Finish" ; \
-else ifneq ($(GIT_BRANCH_PREFIX),feature)
+ifneq ($(GIT_BRANCH_PREFIX),feature)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
@@ -56,11 +52,23 @@ else
 	$(error "You must specify a feature name to publish, or being working on a feature branch")
 endif
 
-## Git-Flow feature finish (manual)
-gitflow/feature/manual/finish:
+## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish:<feature_name>
+gitflow/feature/finish/%:
 	$(call assert-set,GIT)
-	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
-ifneq ($(FEAT_NAME),)
+	$(call assert-set,GH)
+	$(eval FEAT_NAME := $(subst gitflow/feature/finish/,,$@))
+ifneq ($(subst gitflow/feature/finish/,,$@),)
+	$(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature feature/$(FEAT_NAME) Finish, will merge the code into develop." \
+		-t "Feature feature/$(FEAT_NAME) Finish" ; \
+else
+	$(error "You must specify a feature name")
+endif
+
+## Git-Flow feature finish (manual), this receives the following call pattern: make gitflow/feature/manual/finish:<feature_name>
+gitflow/feature/manual/finish/%:
+	$(call assert-set,GIT)
+	$(eval FEAT_NAME := $(subst gitflow/feature/manual/finish/,,$@))
+ifneq ($(subst gitflow/feature/manual/finish/,,$@),)
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
 	@$(GIT) merge --no-ff feature/$(FEAT_NAME)
@@ -70,25 +78,32 @@ else
 	$(error "You must specify a feature name")
 endif
 
+## Git-Flow feature publish, this receives the following call pattern: make gitflow/feature/publish:<feature_name>
+gitflow/feature/publish/%:
+	$(call assert-set,GIT)
+	$(eval FEAT_NAME := $(subst gitflow/feature/publish/,,$@))
+ifneq ($(subst gitflow/feature/publish/,,$@),)
+	@$(GIT) checkout feature/$(FEAT_NAME)
+	@$(GIT) push origin feature/$(FEAT_NAME)
+else
+	$(error "You must specify a feature name")
+endif
+
 ## Git-Flow feature publish
 gitflow/feature/publish:
-	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
 	$(call assert-set,GIT)
-ifneq ($(FEAT_NAME),)
-	@$(GIT) checkout feature/$(filter-out $@,$(MAKECMDGOALS))
-	@$(GIT) push origin feature/$(filter-out $@,$(MAKECMDGOALS))
-else ifeq ($(GIT_BRANCH_PREFIX),feature)
+ifeq ($(GIT_BRANCH_PREFIX),feature)
 	@$(GIT) push origin $(GIT_BRANCH)
 else
 	$(error "You must specify a feature name to publish, or being working on a feature branch")
 endif
 
-## Git-Flow feature purge
-gitflow/feature/purge: gitflow/deps
+## Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge:<feature_name>
+gitflow/feature/purge/%:
 	$(call assert-set,GIT)
-	$(call assert-set,GITVERSION)
-	@$(GIT) branch -D feature/$(filter-out $@,$(MAKECMDGOALS))
-	@$(GIT) push origin -d feature/$(filter-out $@,$(MAKECMDGOALS))
+	$(eval FEAT_NAME := $(subst gitflow/feature/purge/,,$@))
+	@$(GIT) branch -D feature/$(FEAT_NAME)
+	@$(GIT) push origin -d feature/$(FEAT_NAME)
 
 
 ## GIt-Flow Hotfix start
@@ -169,11 +184,11 @@ gitflow/release/start/%: gitflow/deps
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
 # if BUMP_VERSION is major or minor orpatch then use it, otherwise the version is inferred from the input
-ifeq ($(BUMP_VERSION),major)
+ifeq ($(subst gitflow/release/start/,,$@),major)
 	@$(GIT) checkout -b release/$(shell $(SEMVER) bump major -g) develop
-else ifeq ($(BUMP_VERSION),minor)
+else ifeq ($(subst gitflow/release/start/,,$@),minor)
 	@$(GIT) checkout -b release/$(shell $(SEMVER) bump minor -g) develop
-else ifeq ($(BUMP_VERSION),patch)
+else ifeq ($(subst gitflow/release/start/,,$@),patch)
 	@$(GIT) checkout -b release/$(shell $(SEMVER) bump patch -g) develop
 else
 	# check that BUMP_VERSION is prefixed with v if not add it
@@ -189,26 +204,28 @@ gitflow/release/start: gitflow/deps
 	@$(GIT) pull origin develop
 	@$(GIT) checkout -b release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
 
-## Git-Flow release finish (manual)
+## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
 gitflow/release/manual/finish:
 	$(call assert-set,GIT)
+	$(eval RELVERSION := $(subst gitflow/release/manual/finish/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) pull origin $(MAIN_BRANCH)
-	@$(GIT) merge --no-ff release/$(filter-out $@,$(MAKECMDGOALS))
-	@$(GIT) tag -a $(filter-out $@,$(MAKECMDGOALS)) -m "Release $(filter-out $@,$(MAKECMDGOALS))"
+	@$(GIT) merge --no-ff release/$(RELVERSION)
+	@$(GIT) tag -a $(filter-out $@,$(MAKECMDGOALS)) -m "Release $(RELVERSION)"
 	@$(GIT) push origin $(MAIN_BRANCH)
 	@$(GIT) push origin $(MAIN_BRANCH) --tags
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
-	@$(GIT) merge --no-ff release/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) merge --no-ff release/$(RELVERSION)
 	@$(GIT) push origin develop
-	@$(GIT) branch -d release/$(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) branch -d release/$(RELVERSION)
 
-## Git-Flow release publish (manual)
-gitflow/release/manual/publish:
+## Git-Flow release publish (manual), this receives the following call pattern: make gitflow/release/manual/publish:<version>
+gitflow/release/manual/publish/%:
 	$(call assert-set,GIT)
-	@$(GIT) checkout release/$(filter-out $@,$(MAKECMDGOALS))
-	@$(GIT) push origin release/$(filter-out $@,$(MAKECMDGOALS))
+	$(eval RELVERSION := $(subst gitflow/release/manual/publish/,,$@))
+	@$(GIT) checkout release/$(RELVERSION)
+	@$(GIT) push origin release/$(RELVERSION)
 
 ## Git-Flow release publish
 gitflow/release/publish:
@@ -258,19 +275,26 @@ gitflow/release/purge: gitflow/deps
 	@$(GIT) push origin -d release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 
 
-## Git-Flow support start
-gitflow/support/start:
+## Git-Flow support start, this receives the following call pattern: make gitflow/support/start:<version>
+gitflow/support/start/%:
 	$(call assert-set,GIT)
+	$(eval RELVERSION := $(subst gitflow/support/start/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
-	@$(GIT) checkout -b support/$(filter-out $@,$(MAKECMDGOALS)) $(filter-out $@,$(MAKECMDGOALS))
+	@$(GIT) checkout -b support/$(RELVERSION)) $(RELVERSION)
+
+## Git-Flow support publish, this receives the following call pattern: make gitflow/support/publish:<version>
+gitflow/support/publish/%:
+	$(call assert-set,GIT)
+	$(eval RELVERSION := $(subst gitflow/support/publish/,,$@))
+ifeq ($(subst gitflow/support/publish/,,$@),)
+	@$(GIT) checkout support/$(RELVERSION)
+	@$(GIT) push origin support/$(RELVERSION)
+endif
 
 ## Git-Flow support publish
 gitflow/support/publish:
 	$(call assert-set,GIT)
-ifeq ($(filter-out $@,$(MAKECMDGOALS)),)
-	@$(GIT) checkout support/$(filter-out $@,$(MAKECMDGOALS))
-	@$(GIT) push origin support/$(filter-out $@,$(MAKECMDGOALS))
-else ifeq ($(GIT_BRANCH_PREFIX),support)
+ifeq ($(GIT_BRANCH_PREFIX),support)
 	@$(GIT) push origin $(GIT_BRANCH)
 else
 	$(error "You must specify a support version to publish, or being working on a support branch")
