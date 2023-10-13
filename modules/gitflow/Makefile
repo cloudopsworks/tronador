@@ -28,7 +28,7 @@ gitflow/deps: packages/install/gitversion packages/install/gh packages/install/s
 ## Git-Flow feature start
 gitflow/feature/start:
 	$(call assert-set,GIT)
-	$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
+$(eval FEAT_NAME := $(filter-out $@,$(MAKECMDGOALS)))
 ifneq ($(FEAT_NAME),)
 	@$(GIT) checkout -b feature/$(FEAT_NAME) develop
 else
@@ -50,7 +50,7 @@ else ifneq ($(GIT_BRANCH_PREFIX),feature)
 		$(GH) pr create -B $(TARGET_BRANCH) -b "Feature $(GIT_BRANCH) Finish, will merge the code into $(TARGET_BRANCH)" \
 			-t "Feature $(GIT_BRANCH) Finish" ; \
 	else \
-		echo "You must be in the latest commit of the release branch to publish"; \
+		echo "You must be in the latest commit of the feature branch to publish"; \
 	fi
 else
 	$(error "You must specify a feature name to publish, or being working on a feature branch")
