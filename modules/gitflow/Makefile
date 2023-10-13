@@ -10,30 +10,45 @@ GITVERSION ?= $(INSTALL_PATH)/gitversion
 ## Git-Flow Initialize develop branch
 gitflow/init:
 	$(call assert-set,GIT)
-	@if [ "$(MAIN_BRANCH)" = "" ]; then \
-		$(GIT) checkout -b main; \
-		$(GIT) push -u origin main; \
-		$(GIT) checkout -b develop; \
-		$(GIT) push -u origin develop; \
-	else \
-		$(GIT) checkout $(MAIN_BRANCH); \
-		$(GIT) pull origin $(MAIN_BRANCH); \
-		$(GIT) checkout -b develop; \
-		$(GIT) push -u origin develop; \
-	fi
+ifeq ($(MAIN_BRANCH),)
+	@$(GIT) checkout -b main
+	@$(GIT) push -u origin main
+	@$(GIT) checkout -b develop
+	@$(GIT) push -u origin develop
+else
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+	@$(GIT) checkout -b develop
+	@$(GIT) push -u origin develop
+endif
 
+# Chceckout develop branch
+gitflow/co/develop:
+	$(call assert-set,GIT)
+	@$(GIT) checkout develop
+	@$(GIT) pull origin develop
+
+# Chceckout main branch
+gitflow/co/main:
+	$(call assert-set,GIT)
+	$(eval RELVERSION := $(subst gitflow/release/manual/finish/,,$@))
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+
+# Install gitflow dependencies
 gitflow/deps: packages/install/gitversion packages/install/gh packages/install/semver
 	@exit 0
 
 ## Git-Flow feature start, this receives the following call pattern: make gitflow/feature/start:<feature_name>
 gitflow/feature/start/%:
 	$(call assert-set,GIT)
-	$(eval FEAT_NAME := $(subst gitflow/feature/start/,,$@))
-ifneq ($(subst gitflow/feature/start/,,$@),)
-	@$(GIT) checkout -b feature/$(FEAT_NAME) develop
-else
-	$(error "You must specify a feature name")
-endif
+	$(eval FEAT_NAME ?= $(subst gitflow/feature/start/,,$@))
+	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
+	  $(GIT) checkout -b feature/$(FEAT_NAME) develop ; \
+	else \
+	  echo "You must specify a feature name." ; \
+	  exit 1 ; \
+	fi
 
 ## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish must be on a feature branch
 gitflow/feature/finish:
@@ -57,37 +72,40 @@ gitflow/feature/finish/%:
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 	$(eval FEAT_NAME := $(subst gitflow/feature/finish/,,$@))
-ifneq ($(subst gitflow/feature/finish/,,$@),)
-	$(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature feature/$(FEAT_NAME) Finish, will merge the code into develop." \
+	@if [[ "$(FEAT_NAME)" != "" ]]
+	  $(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature feature/$(FEAT_NAME) Finish, will merge the code into develop." \
 		-t "Feature feature/$(FEAT_NAME) Finish" ; \
-else
-	$(error "You must specify a feature name")
-endif
+	else \
+	  echo "You must specify a feature name." ; \
+	  exit 1 ; \
+	fi
 
 ## Git-Flow feature finish (manual), this receives the following call pattern: make gitflow/feature/manual/finish:<feature_name>
 gitflow/feature/manual/finish/%:
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/manual/finish/,,$@))
-ifneq ($(subst gitflow/feature/manual/finish/,,$@),)
-	@$(GIT) checkout develop
-	@$(GIT) pull origin develop
-	@$(GIT) merge --no-ff feature/$(FEAT_NAME)
-	@$(GIT) branch -d feature/$(FEAT_NAME)
-	@$(GIT) push origin develop
-else
-	$(error "You must specify a feature name")
-endif
+	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
+	  $(GIT) checkout develop ; \
+	  $(GIT) pull origin develop ; \
+	  $(GIT) merge --no-ff feature/$(FEAT_NAME) ; \
+	  $(GIT) branch -d feature/$(FEAT_NAME) ; \
+	  $(GIT) push origin develop ; \
+	else \
+	  echo "You must specify a feature name." ; \
+	  exit 1 ; \
+	fi
 
 ## Git-Flow feature publish, this receives the following call pattern: make gitflow/feature/publish:<feature_name>
 gitflow/feature/publish/%:
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/publish/,,$@))
-ifneq ($(subst gitflow/feature/publish/,,$@),)
-	@$(GIT) checkout feature/$(FEAT_NAME)
-	@$(GIT) push origin feature/$(FEAT_NAME)
-else
-	$(error "You must specify a feature name")
-endif
+	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
+	  @$(GIT) checkout feature/$(FEAT_NAME) ; \
+	  @$(GIT) push origin feature/$(FEAT_NAME) ; \
+	else \
+	  echo "You must specify a feature name." ; \
+	  exit 1 ; \
+	fi
 
 ## Git-Flow feature publish
 gitflow/feature/publish:
@@ -99,7 +117,7 @@ else
 endif
 
 ## Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge:<feature_name>
-gitflow/feature/purge/%:
+gitflow/feature/purge/%: gitflow/co/develop
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/purge/,,$@))
 	@$(GIT) branch -D feature/$(FEAT_NAME)
@@ -176,36 +194,41 @@ gitflow/hotfix/purge: gitflow/deps
 	@$(GIT) branch -D hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 	@$(GIT) push origin -d hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 
-## Git-Flow release start next version, type inferred from input. (major, minor, patch), for forced version the call is gitflow/release/start:<version>
-gitflow/release/start/%: gitflow/deps
+## Git-Flow release start next  minor version.
+gitflow/release/start/minor: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,SEMVER)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump minor -g) develop
+
+## Git-Flow release start next  major version.
+gitflow/release/start/major: gitflow/deps gitflow/co/develop
+	$(call assert-set,GIT)
+	$(call assert-set,SEMVER)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump major -g) develop
+
+## Git-Flow release start next  patch version.
+gitflow/release/start/patch: gitflow/deps gitflow/co/develop
+	$(call assert-set,GIT)
+	$(call assert-set,SEMVER)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump patch -g) develop
+
+## Git-Flow release start next version, for forced version the call is gitflow/release/start:<version>
+gitflow/release/start/%: gitflow/deps gitflow/co/develop
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(eval BUMP_VERSION := $(subst gitflow/release/start/,,$@))
-	@$(GIT) checkout develop
-	@$(GIT) pull origin develop
-# if BUMP_VERSION is major or minor orpatch then use it, otherwise the version is inferred from the input
-ifeq ($(subst gitflow/release/start/,,$@),major)
-	@$(GIT) checkout -b release/$(shell $(SEMVER) bump major -g) develop
-else ifeq ($(subst gitflow/release/start/,,$@),minor)
-	@$(GIT) checkout -b release/$(shell $(SEMVER) bump minor -g) develop
-else ifeq ($(subst gitflow/release/start/,,$@),patch)
-	@$(GIT) checkout -b release/$(shell $(SEMVER) bump patch -g) develop
-else
 	# check that BUMP_VERSION is prefixed with v if not add it
-	$(eval BUMP_VERSION := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
-	@$(GIT) checkout -b release/$(BUMP_VERSION) develop
-endif
+	$(eval BUMP_VER := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
+	@$(GIT) checkout -b release/$(BUMP_VER) develop
 
 ## Git-Flow release start - this process uses the GitVersion tool to infer the next version
-gitflow/release/start: gitflow/deps
+gitflow/release/start: gitflow/deps gitflow/co/develop
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
-	@$(GIT) checkout develop
-	@$(GIT) pull origin develop
 	@$(GIT) checkout -b release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
 
 ## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
-gitflow/release/manual/finish:
+gitflow/release/manual/finish: gitflow/co/main
 	$(call assert-set,GIT)
 	$(eval RELVERSION := $(subst gitflow/release/manual/finish/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
@@ -276,20 +299,22 @@ gitflow/release/purge: gitflow/deps
 
 
 ## Git-Flow support start, this receives the following call pattern: make gitflow/support/start:<version>
-gitflow/support/start/%:
+gitflow/support/start/%: gitflow/co/main
 	$(call assert-set,GIT)
 	$(eval RELVERSION := $(subst gitflow/support/start/,,$@))
-	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) checkout -b support/$(RELVERSION)) $(RELVERSION)
 
 ## Git-Flow support publish, this receives the following call pattern: make gitflow/support/publish:<version>
 gitflow/support/publish/%:
 	$(call assert-set,GIT)
 	$(eval RELVERSION := $(subst gitflow/support/publish/,,$@))
-ifeq ($(subst gitflow/support/publish/,,$@),)
-	@$(GIT) checkout support/$(RELVERSION)
-	@$(GIT) push origin support/$(RELVERSION)
-endif
+	@if [[ "$(RELVERSION)" != "" ]] ; then \
+  	  $(GIT) checkout support/$(RELVERSION) ; \
+	  $(GIT) push origin support/$(RELVERSION) ; \
+	else \
+	  echo "You must specify a support version to publish." ; \
+	  exit 1 ; \
+	fi
 
 ## Git-Flow support publish
 gitflow/support/publish:
