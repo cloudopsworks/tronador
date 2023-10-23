@@ -31,7 +31,6 @@ gitflow/co/develop:
 # Chceckout main branch
 gitflow/co/main:
 	$(call assert-set,GIT)
-	$(eval RELVERSION := $(subst gitflow/release/manual/finish/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) pull origin $(MAIN_BRANCH)
 
@@ -228,7 +227,7 @@ gitflow/release/start: gitflow/deps gitflow/co/develop
 	@$(GIT) checkout -b release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
 
 ## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
-gitflow/release/manual/finish: gitflow/co/main
+gitflow/release/manual/finish/%: gitflow/co/main
 	$(call assert-set,GIT)
 	$(eval RELVERSION := $(subst gitflow/release/manual/finish/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
