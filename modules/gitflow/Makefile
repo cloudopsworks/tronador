@@ -233,7 +233,7 @@ gitflow/release/manual/finish/%: gitflow/co/main
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) pull origin $(MAIN_BRANCH)
 	@$(GIT) merge --no-ff release/$(RELVERSION)
-	@$(GIT) tag -a $(filter-out $@,$(MAKECMDGOALS)) -m "Release $(RELVERSION)"
+	@$(GIT) tag -a $(RELVERSION) -m "Release $(RELVERSION)"
 	@$(GIT) push origin $(MAIN_BRANCH)
 	@$(GIT) push origin $(MAIN_BRANCH) --tags
 	@$(GIT) checkout develop
