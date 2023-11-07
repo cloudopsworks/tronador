@@ -369,7 +369,7 @@ else
 	]]; then \
 		VER="$(shell $(GITVERSION) -output json -showvariable SemVer)+deploy-$(META_TAG)" ; \
 		$(GIT) tag v$$VER -m "Pre Release Version Tagging: v$$VER" ; \
-		echo "Tagged v$$$VER ..."; \
+		echo "Tagged v$$VER ..."; \
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
 	fi
