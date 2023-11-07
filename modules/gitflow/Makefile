@@ -348,6 +348,34 @@ else
 	fi
 endif
 
+## Git-Flow version tagging with meta tagging for release&pre-release, meta tag is in form of <meta_tag>(. or -)<meta_tag_value>
+gitflow/version/tag/%: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	$(eval META_TAG := $(subst gitflow/version/tag/,,$@))
+ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
+	@if [[ \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
+	]]; then \
+		VER="$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)+deploy-$(META_TAG)" ; \
+		$(GIT) tag v$$VER -m "Version Tagging: v$$VER" ; \
+		echo "Tagged v$$VER ..."; \
+	else \
+		echo "You must be in the latest commit of the branch to tag"; \
+	fi
+else
+	@if [[ \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
+	]]; then \
+		VER="$(shell $(GITVERSION) -output json -showvariable SemVer)+deploy-$(META_TAG)" ; \
+		$(GIT) tag v$$VER -m "Pre Release Version Tagging: v$$VER" ; \
+		echo "Tagged v$$$VER ..."; \
+	else \
+		echo "You must be in the latest commit of the branch to tag"; \
+	fi
+endif
+
+
 ## Git-Flow version publish to remote (push tags
 gitflow/version/publish:
 	$(call assert-set,GIT)
