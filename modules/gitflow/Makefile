@@ -245,9 +245,10 @@ gitflow/release/manual/finish/%: gitflow/co/main
 ## Git-Flow release publish (manual), this receives the following call pattern: make gitflow/release/manual/publish:<version>
 gitflow/release/manual/publish/%:
 	$(call assert-set,GIT)
-	$(eval RELVERSION := $(subst gitflow/release/manual/publish/,,$@))
-	@$(GIT) checkout release/$(RELVERSION)
-	@$(GIT) push origin release/$(RELVERSION)
+	$(eval BUMP_VERSION := $(subst gitflow/release/manual/publish/,,$@))
+	$(eval BUMP_VER := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
+	@$(GIT) checkout release/$(BUMP_VER)
+	@$(GIT) push origin release/$(BUMP_VER)
 
 ## Git-Flow release publish
 gitflow/release/publish:
@@ -290,11 +291,12 @@ gitflow/release/finish/comment: gitflow/deps
 	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
 
 ## Git-Flow release purge
-gitflow/release/purge: gitflow/deps
+gitflow/release/purge/%: gitflow/deps
 	$(call assert-set,GIT)
-	$(call assert-set,GITVERSION)
-	@$(GIT) branch -D release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
-	@$(GIT) push origin -d release/v$(shell $(GITVERSION) -output json -showvariable SemVer)
+	$(eval BUMP_VERSION := $(subst gitflow/release/purge/,,$@))
+	$(eval BUMP_VER := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
+	@$(GIT) branch -D release/$(BUMP_VER)
+	@$(GIT) push origin -d release/$(BUMP_VER)
 
 
 ## Git-Flow support start, this receives the following call pattern: make gitflow/support/start:<version>
