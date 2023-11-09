@@ -291,7 +291,7 @@ gitflow/release/finish/comment: gitflow/deps
 	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
 
 ## Git-Flow release purge on current tag
-gitflow/release/purge:
+gitflow/release/purge: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(eval BUMP_VER := v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch))
