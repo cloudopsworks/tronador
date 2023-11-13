@@ -151,21 +151,20 @@ else
 endif
 
 ## Git-Flow Hotfix finish (manual)
-gitflow/hotfix/manual/finish:
+gitflow/hotfix/manual/finish/%:
 	$(call assert-set,GIT)
-	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
-	$(eval HOTFIX_NAME := $(if $(filter 2 3,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
-	$(eval HOTFIX_TARGET := $(if $(filter 3,$(WORD_COUNT)),$(word 3,$(MAKECMDGOALS)),$(MAIN_BRANCH)))
-ifneq ($(HOTFIX_NAME),)
-	@$(GIT) checkout $(MAIN_BRANCH)
-	@$(GIT) pull origin $(MAIN_BRANCH)
-	@$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME)
-	@$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)"
-	@$(GIT) push origin $(MAIN_BRANCH)
-	@$(GIT) push origin $(MAIN_BRANCH) --tags
-else
-	$(error "You must specify a hotfix name to publish")
-endif
+	$(eval HOTFIX_NAME := $(subst gitflow/hotfix/manual/finish/,,$@))
+	@if [[ "$(HOTFIX_NAME)" != "" ]] ; then \
+	$(GIT) checkout $(MAIN_BRANCH) ; \
+	$(GIT) pull origin $(MAIN_BRANCH) ; \
+	$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME) ; \
+	$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)" ; \
+	$(GIT) push origin $(MAIN_BRANCH) ; \
+	$(GIT) push origin $(MAIN_BRANCH) --tags ; \
+	else \
+		echo "You must specify a hotfix name to publish" ; \
+		exit 1 ; \
+	fi
 
 ## Git-Flow Hotfix finish (automatic via PR)
 gitflow/hotfix/finish: gitflow/deps
