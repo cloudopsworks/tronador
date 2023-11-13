@@ -151,7 +151,7 @@ else
 endif
 
 ## Git-Flow Hotfix finish (manual)
-gitflow/hotfix/manual/finish%:
+gitflow/hotfix/manual/finish:
 	$(call assert-set,GIT)
 	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
 	$(eval HOTFIX_NAME := $(if $(filter 2 3,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
