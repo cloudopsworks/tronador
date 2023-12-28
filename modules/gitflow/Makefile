@@ -240,6 +240,7 @@ gitflow/release/manual/finish/%: gitflow/co/main
 	@$(GIT) merge --no-ff release/$(RELVERSION)
 	@$(GIT) push origin develop
 	@$(GIT) branch -d release/$(RELVERSION)
+	@$(GIT) push -d origin release/$(RELVERSION)
 
 ## Git-Flow release publish (manual), this receives the following call pattern: make gitflow/release/manual/publish:<version>
 gitflow/release/manual/publish/%:
