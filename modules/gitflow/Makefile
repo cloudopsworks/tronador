@@ -234,7 +234,7 @@ gitflow/release/manual/finish/%: gitflow/co/main
 	@$(GIT) merge --no-ff release/$(RELVERSION)
 	@$(GIT) tag -a $(RELVERSION) -m "Release $(RELVERSION)"
 	@$(GIT) push origin $(MAIN_BRANCH)
-	@$(GIT) push origin $(MAIN_BRANCH) --tags
+	@$(GIT) push origin $(RELVERSION)
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
 	@$(GIT) merge --no-ff release/$(RELVERSION)
@@ -389,10 +389,11 @@ endif
 ## Git-Flow version publish to remote (push tags
 gitflow/version/publish:
 	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GIT) push origin --tags ; \
+		$(GIT) push origin v$(shell $(GITVERSION) -output json -showvariable SemVer) ; \
 	else \
 	  echo "You must be in the latest commit of the branch to push tags!"; \
 	fi
