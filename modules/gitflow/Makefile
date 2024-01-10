@@ -387,7 +387,7 @@ endif
 
 
 ## Git-Flow version publish to remote (push tags
-gitflow/version/publish:
+gitflow/version/publish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	@if [[ \
