@@ -393,7 +393,7 @@ gitflow/version/publish: gitflow/deps
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GIT) push origin v$(shell $(GIT) describe --tags --abbrev=0) ; \
+		$(GIT) push origin $(shell $(GIT) describe --tags --abbrev=0) ; \
 	else \
 	  echo "You must be in the latest commit of the branch to push tags!"; \
 	fi
