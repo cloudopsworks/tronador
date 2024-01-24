@@ -160,7 +160,7 @@ gitflow/hotfix/manual/finish/%:
 	$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME) ; \
 	$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)" ; \
 	$(GIT) push origin $(MAIN_BRANCH) ; \
-	$(GIT) push origin $(MAIN_BRANCH) --tags ; \
+	$(GIT) push origin $(MAIN_BRANCH) $(HOTFIX_NAME) ; \
 	else \
 		echo "You must specify a hotfix name to publish" ; \
 		exit 1 ; \
