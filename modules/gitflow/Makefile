@@ -154,19 +154,14 @@ endif
 gitflow/hotfix/manual/finish/%:
 	$(call assert-set,GIT)
 	$(eval HOTFIX_NAME := $(subst gitflow/hotfix/manual/finish/,,$@))
-	@if [[ "$(HOTFIX_NAME)" != "" ]] ; then \
-	$(GIT) checkout $(MAIN_BRANCH) ; \
-	$(GIT) pull origin $(MAIN_BRANCH) ; \
-	$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME) ; \
-	$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)" ; \
-	$(GIT) push origin $(MAIN_BRANCH) ; \
-	$(GIT) push origin $(HOTFIX_NAME) ; \
-	$(GIT) branch -d hotfix/$(HOTFIX_NAME) ; \
-	$(GIT) push origin -d hotfix/$(HOTFIX_NAME) ; \
-	else \
-		echo "You must specify a hotfix name to publish" ; \
-		exit 1 ; \
-	fi
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+	@$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME)
+	@$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)"
+	@$(GIT) push origin $(MAIN_BRANCH)
+	@$(GIT) push origin $(HOTFIX_NAME)
+	@$(GIT) branch -d hotfix/$(HOTFIX_NAME)
+	@$(GIT) push origin -d hotfix/$(HOTFIX_NAME)
 
 ## Git-Flow Hotfix finish (automatic via PR)
 gitflow/hotfix/finish: gitflow/deps
