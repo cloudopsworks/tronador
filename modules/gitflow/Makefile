@@ -25,6 +25,7 @@ endif
 # Chceckout develop branch
 gitflow/co/develop:
 	$(call assert-set,GIT)
+	@$(GIT) fetch origin --prune
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
 
@@ -189,8 +190,21 @@ gitflow/hotfix/purge: gitflow/deps
 	@$(GIT) branch -D hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 	@$(GIT) push origin -d hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
 
+# Git check Develop branch
+gitflow/check/develop:
+	$(call assert-set,GIT)
+	@$(GIT) fetch origin
+	@if [[ \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
+	]]; then \
+		echo "You are in the latest commit of the develop branch, Validation Complete."; \
+	else \
+		echo "You must be in the latest commit of the develop branch to create release"; \
+	  	exit 1
+	fi
+
 ## Git-Flow release start next  minor version.
-gitflow/release/start/minor: gitflow/deps
+gitflow/release/start/minor: gitflow/deps gitflow/co/develop
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	@$(GIT) checkout -b release/$(shell $(SEMVER) bump minor -g) develop
