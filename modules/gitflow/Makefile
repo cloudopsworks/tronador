@@ -127,25 +127,14 @@ gitflow/feature/purge/%: gitflow/co/develop
 ## GIt-Flow Hotfix start
 gitflow/hotfix/start: gitflow/deps
 	$(call assert-set,GIT)
-	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
-	$(eval HOTFIX_NAME := $(if $(filter 2 3,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS))))
-	$(eval HOTFIX_TARGET := $(if $(filter 3,$(WORD_COUNT)),$(word 3,$(MAKECMDGOALS)),$(MAIN_BRANCH)))
-	@$(GIT) checkout $(HOTFIX_TARGET)
-	@$(GIT) pull origin $(HOTFIX_TARGET)
-ifneq ($(HOTFIX_NAME),)
-	@$(GIT) checkout -b hotfix/$(HOTFIX_NAME) $(HOTFIX_TARGET)
-else
-	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch -g) $(HOTFIX_TARGET)
-endif
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch -g) $(MAIN_BRANCH)
 
 ## GIt-Flow Hotfix publishing
 gitflow/hotfix/publish:
 	$(call assert-set,GIT)
-	$(eval HOTFIX_NAME := $(filter-out $@,$(MAKECMDGOALS)))
-ifneq ($(HOTFIX_NAME),)
-	@$(GIT) checkout hotfix/$(HOTFIX_NAME)
-	@$(GIT) push origin hotfix/$(HOTFIX_NAME)
-else ifeq ($(GIT_BRANCH_PREFIX),hotfix)
+ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	@$(GIT) push origin $(GIT_BRANCH)
 else
 	$(error "You must specify a hotfix name to publish, or being working on a hotfix branch")
@@ -168,13 +157,11 @@ gitflow/hotfix/manual/finish/%:
 gitflow/hotfix/finish: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
-	$(eval WORD_COUNT := $(words $(MAKECMDGOALS)))
-	$(eval TARGET_BRANCH := $(if $(filter 2,$(WORD_COUNT)),$(word 2,$(MAKECMDGOALS)),$(MAIN_BRANCH)))
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GH) pr create -B $(TARGET_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(TARGET_BRANCH)" \
+		$(GH) pr create -B $(MAIN_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(MAIN_BRANCH)" \
 			-t "Hotfix Release $(GIT_BRANCH)" ; \
 	else \
 		echo "You must be in the latest commit of the release branch to publish"; \
