@@ -171,11 +171,20 @@ else
 endif
 
 ## Git-Flow hotfix purge
-gitflow/hotfix/purge: gitflow/deps
+gitflow/hotfix/purge: gitflow/deps gitflow/co/main
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
-	@$(GIT) branch -D hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
-	@$(GIT) push origin -d hotfix/v$(shell $(GITVERSION) -output json -showvariable SemVer)
+	$(eval BUMP_VER := v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch))
+	@$(GIT) branch -D hotfix/$(BUMP_VER)
+	@$(GIT) push origin -d hotfix/$(BUMP_VER)
+
+## Git-Flow hotfix purge with hotfix-version
+gitflow/hotfix/purge/%: gitflow/deps gitflow/co/main
+	$(call assert-set,GIT)
+	$(eval BUMP_VERSION := $(subst gitflow/hotfix/purge/,,$@))
+	$(eval BUMP_VER := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
+	@$(GIT) branch -D hotfix/$(BUMP_VER)
+	@$(GIT) push origin -d hotfix/$(BUMP_VER)
 
 # Git check Develop branch
 gitflow/check/develop:
@@ -289,7 +298,7 @@ gitflow/release/finish/comment: gitflow/deps
 	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
 
 ## Git-Flow release purge on current tag
-gitflow/release/purge: gitflow/deps
+gitflow/release/purge: gitflow/deps gitflow/co/main
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(eval BUMP_VER := v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch))
