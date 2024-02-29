@@ -67,23 +67,10 @@ else
 	$(error "You must specify a feature name to publish, or being working on a feature branch")
 endif
 
-## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish:<feature_name>
-gitflow/feature/finish/%: gitflow/deps
-	$(call assert-set,GIT)
-	$(call assert-set,GH)
-	$(eval FEAT_NAME := $(subst gitflow/feature/finish/,,$@))
-	@if [[ "$(FEAT_NAME)" != "" ]]
-	  $(GH) pr create -B develop -H feature/$(FEAT_NAME) -b "Feature 'feature/$(FEAT_NAME)' Finish, will merge the code into 'develop'." \
-		-t "Feature 'feature/$(FEAT_NAME)' Finish" ; \
-	else \
-	  echo "You must specify a feature name." ; \
-	  exit 1 ; \
-	fi
-
 ## Git-Flow feature finish (manual), this receives the following call pattern: make gitflow/feature/manual/finish:<feature_name>
-gitflow/feature/manual/finish/%:
+gitflow/feature/finish/%:
 	$(call assert-set,GIT)
-	$(eval FEAT_NAME := $(subst gitflow/feature/manual/finish/,,$@))
+	$(eval FEAT_NAME := $(subst gitflow/feature/finish/,,$@))
 	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
 	  $(GIT) checkout develop ; \
 	  $(GIT) pull origin develop ; \
@@ -232,10 +219,24 @@ gitflow/release/start: gitflow/deps gitflow/co/develop
 	$(call assert-set,GITVERSION)
 	@$(GIT) checkout -b release/v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) develop
 
-## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
-gitflow/release/manual/finish/%: gitflow/co/main
+## Git-Flow release finish (automatic via pr)
+gitflow/release/finish/comment: gitflow/deps
+# Creates a milestone on github
+# Creates a PR to merge automatically into master and
 	$(call assert-set,GIT)
-	$(eval RELVERSION := $(subst gitflow/release/manual/finish/,,$@))
+	$(call assert-set,GH)
+	# Recover the list of PRs from the release branch
+ifeq ($(GIT_BRANCH_PREFIX),release)
+	$(eval LIST := $(shell $(GH) pr list --state open -H $(GIT_BRANCH)) --json number -q '.[].number'))
+	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/approved";)
+else
+	$(error "You must be in a release branch to approve the PRs")
+endif
+
+## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
+gitflow/release/finish/%: gitflow/co/main
+	$(call assert-set,GIT)
+	$(eval RELVERSION := $(subst gitflow/release/finish/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) pull origin $(MAIN_BRANCH)
 	@$(GIT) merge --no-ff release/$(RELVERSION)
@@ -250,9 +251,9 @@ gitflow/release/manual/finish/%: gitflow/co/main
 	@$(GIT) push -d origin release/$(RELVERSION)
 
 ## Git-Flow release publish (manual), this receives the following call pattern: make gitflow/release/manual/publish:<version>
-gitflow/release/manual/publish/%:
+gitflow/release/publish/%:
 	$(call assert-set,GIT)
-	$(eval BUMP_VERSION := $(subst gitflow/release/manual/publish/,,$@))
+	$(eval BUMP_VERSION := $(subst gitflow/release/publish/,,$@))
 	$(eval BUMP_VER := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
 	@$(GIT) checkout release/$(BUMP_VER)
 	@$(GIT) push origin release/$(BUMP_VER)
@@ -285,17 +286,6 @@ ifeq ($(GIT_BRANCH_PREFIX),release)
 else
 	$(error "You must be in a release branch to publish")
 endif
-
-# Recover the list of PRs from the release branch
-LIST ?= $(shell $(GH) pr list --state open -H release/$(filter-out $@,$(MAKECMDGOALS)) --json number -q '.[].number')
-
-## Git-Flow release finish (automatic via pr)
-gitflow/release/finish/comment: gitflow/deps
-# Creates a milestone on github
-# Creates a PR to merge automatically into master and
-	$(call assert-set,GIT)
-	$(call assert-set,GH)
-	@$(foreach var, $(LIST), $(GH) pr comment $(var) -b "/finish";)
 
 ## Git-Flow release purge on current tag
 gitflow/release/purge: gitflow/deps gitflow/co/main
