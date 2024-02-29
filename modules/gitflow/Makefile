@@ -128,7 +128,7 @@ else
 endif
 
 ## Git-Flow Hotfix finish (manual)
-gitflow/hotfix/manual/finish/%:
+gitflow/hotfix/finish/%:
 	$(call assert-set,GIT)
 	$(eval HOTFIX_NAME := $(subst gitflow/hotfix/manual/finish/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
