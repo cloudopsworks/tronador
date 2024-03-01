@@ -1,7 +1,7 @@
-modules/apps: modules/apps/**
 modules/bash: modules/bash/**
 modules/docs: modules/docs/**
 modules/git: modules/git/**
+modules/gitflow: modules/gitflow/**
 modules/github: modules/github/**
 modules/make: modules/make/**
 modules/packages: modules/packages/**
