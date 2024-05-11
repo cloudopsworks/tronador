@@ -408,7 +408,7 @@ gitflow/version/semver/full: gitflow/deps
 ## Creates _VERSION FILE from the MajorMinorPatch version (strip newline) with GitVersion tool, location sent on .github folder
 gitflow/version/file: gitflow/deps
 	$(call assert-set,GITVERSION)
-	@echo -n "$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" > .github/_VERSION
+	@echo -n "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" > .github/_VERSION
 
 
 # Ignore any additional arguments that come from MAKECMDGOALS
