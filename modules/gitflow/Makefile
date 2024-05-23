@@ -130,7 +130,7 @@ endif
 ## Git-Flow Hotfix finish (manual)
 gitflow/hotfix/finish/%:
 	$(call assert-set,GIT)
-	$(eval HOTFIX_NAME := $(subst gitflow/hotfix/manual/finish/,,$@))
+	$(eval HOTFIX_NAME := $(subst gitflow/hotfix/finish/,,$@))
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) pull origin $(MAIN_BRANCH)
 	@$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME)
