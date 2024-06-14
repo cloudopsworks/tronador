@@ -427,10 +427,13 @@ gitflow/version/semver/full: gitflow/deps
 	$(call assert-set,GITVERSION)
 	@$(GITVERSION) -output json -showvariable FullSemVer | tr '+' '-'
 
-## Creates _VERSION FILE from the MajorMinorPatch version (strip newline) with GitVersion tool, location sent on .github folder
+## Creates _VERSION FILE from the MajorMinorPatch version (strip newline) with GitVersion tool, location sent on .github folder commit and push to repo
 gitflow/version/file: gitflow/deps
 	$(call assert-set,GITVERSION)
 	@echo -n "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" > .github/_VERSION
+	@$(GIT) add .github/_VERSION
+	@$(GIT) commit -m "chore: Version Bump"
+	@$(GIT) push origin $(GIT_BRANCH)
 
 
 # Ignore any additional arguments that come from MAKECMDGOALS
