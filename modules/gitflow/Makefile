@@ -234,6 +234,28 @@ else
 endif
 
 ## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
+gitflow/release/finish/local: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	$(eval RELVERSION := "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)")
+ifeq ($(GIT_BRANCH_PREFIX),release)
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+	@$(GIT) merge --no-ff release/$(RELVERSION)
+	@$(GIT) tag -a $(RELVERSION) -m "Release $(RELVERSION)"
+	@$(GIT) push origin $(MAIN_BRANCH)
+	@$(GIT) push origin $(RELVERSION)
+	@$(GIT) checkout develop
+	@$(GIT) pull origin develop
+	@$(GIT) merge --no-ff release/$(RELVERSION)
+	@$(GIT) push origin develop
+	@$(GIT) branch -d release/$(RELVERSION)
+	@$(GIT) push -d origin release/$(RELVERSION)
+else
+	$(error "You must be in a release branch to finish locally")
+endif
+
+## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
 gitflow/release/finish/%: gitflow/co/main
 	$(call assert-set,GIT)
 	$(eval RELVERSION := $(subst gitflow/release/finish/,,$@))
