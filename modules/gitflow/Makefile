@@ -110,6 +110,12 @@ gitflow/feature/purge/%: gitflow/co/develop
 	@$(GIT) branch -D feature/$(FEAT_NAME)
 	@$(GIT) push origin -d feature/$(FEAT_NAME)
 
+## Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge-no-develop:<feature_name> # This will not checkout develop branch
+gitflow/feature/purge-no-develop/%: gitflow/co/main
+	$(call assert-set,GIT)
+	$(eval FEAT_NAME := $(subst gitflow/feature/purge-no-develop/,,$@))
+	@$(GIT) branch -D feature/$(FEAT_NAME)
+	@$(GIT) push origin -d feature/$(FEAT_NAME)
 
 ## GIt-Flow Hotfix start
 gitflow/hotfix/start: gitflow/deps
