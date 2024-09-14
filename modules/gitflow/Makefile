@@ -1,5 +1,5 @@
 GIT:= $(shell which git)
-MAIN_BRANCH:=$(shell $(GIT) branch -l --format "%(refname:short)" | egrep "master|main")
+MAIN_BRANCH:=$(shell $(GIT) branch -r --format "%(refname:short)" | grep origin | egrep "master|main" | sed -e 's/origin\///')
 export GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
 export GIT_REMOTE ?= $(shell $(GIT) ls-remote --get-url 2>/dev/null)
 export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null | sed -e 's/\(.*\)\/.*/\1/')
