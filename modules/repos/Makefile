@@ -11,7 +11,7 @@ CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 
 repos/template/java:
 ifneq (,$(wildcard .github/.java))
-ifneq (,$(CURR_TEMPLATE))
+ifeq (,$(CURR_TEMPLATE))
 	@echo "Java Project Template will be pulled"
 	$(GIT) remote add template $(JAVA_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
@@ -22,7 +22,7 @@ endif
 
 repos/template/node:
 ifneq (,$(wildcard .github/.node))
-ifneq (,$(CURR_TEMPLATE))
+ifeq (,$(CURR_TEMPLATE))
 	@echo "NodeJS Project Template will be pulled"
 	$(GIT) remote add template $(NODE_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
@@ -33,7 +33,7 @@ endif
 
 repos/template/docker:
 ifneq (,$(wildcard .github/.docker))
-ifneq (,$(CURR_TEMPLATE))
+ifeq (,$(CURR_TEMPLATE))
 	@echo "Docker Project Template will be pulled"
 	$(GIT) remote add template $(DOCKER_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
@@ -44,7 +44,7 @@ endif
 
 repos/template/python:
 ifneq (,$(wildcard .github/.python))
-ifneq (,$(CURR_TEMPLATE))
+ifeq (,$(CURR_TEMPLATE))
 	@echo "Python Project Template will be pulled"
 	$(GIT) remote add template $(PYTHON_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
