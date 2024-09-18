@@ -40,6 +40,8 @@ GH ?= $(INSTALL_PATH)/gh
 
 ## Upgrade Repository from Templates
 repos/upgrade: packages/install/gh
+	$(call assert-set,GIT)
+	$(call assert-set,GH)
 ifeq(1,$(MERGE_TEMPLATE))
 	@echo "Upgrading repository, current Version: $(shell cat .github/_VERSION)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
