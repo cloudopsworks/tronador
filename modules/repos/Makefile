@@ -39,7 +39,7 @@ ifeq (,$(CURR_TEMPLATE))
 else
 	@echo "Docker Project Template already pulled"
 endif
-MERGE_TEMPLATE ?= 1
+MERGE_TEMPLATE := 1
 endif
 
 repos/template/python:
