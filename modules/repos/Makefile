@@ -10,30 +10,30 @@ GH ?= $(INSTALL_PATH)/gh
 
 repos/template/java:
 ifneq (,$(wildcard .github/.java))
-MERGE_TEMPLATE ?= 1
 	@echo "Java Project Template will be pulled"
 	$(GIT) remote add template $(JAVA_TEMPLATE)
+MERGE_TEMPLATE ?= 1
 endif
 
 repos/template/node:
 ifneq (,$(wildcard .github/.node))
-MERGE_TEMPLATE ?= 1
 	@echo "NodeJS Project Template will be pulled"
 	$(GIT) remote add template $(NODE_TEMPLATE)
+MERGE_TEMPLATE ?= 1
 endif
 
 repos/template/docker:
 ifneq (,$(wildcard .github/.docker))
-MERGE_TEMPLATE ?= 1
 	@echo "Docker Project Template will be pulled"
 	$(GIT) remote add template $(DOCKER_TEMPLATE)
+MERGE_TEMPLATE ?= 1
 endif
 
 repos/template/python:
 ifneq (,$(wildcard .github/.python))
-MERGE_TEMPLATE ?= 1
 	@echo "Python Project Template will be pulled"
 	$(GIT) remote add template $(PYTHON_TEMPLATE)
+MERGE_TEMPLATE ?= 1
 endif
 
 
