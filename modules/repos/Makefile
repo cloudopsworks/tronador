@@ -8,7 +8,7 @@ PYTHON_TEMPLATE := "https://github.com/cloudopsworks/python-app-template.git"
 MERGE_TEMPLATE ?= 0
 
 repos/template/java:
-ifneq(,$(wildcard .github/.java))
+ifneq("","$(wildcard .github/.java)")
 MERGE_TEMPLATE ?= 1
 	@echo "Java Project Template will be pulled"
 	$(GIT) remote add template $(JAVA_TEMPLATE)
