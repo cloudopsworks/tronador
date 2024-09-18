@@ -11,45 +11,45 @@ CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 
 repos/template/java:
 ifneq (,$(wildcard .github/.java))
-	ifneq (,$(CURR_TEMPLATE))
-		@echo "Java Project Template will be pulled"
-		$(GIT) remote add template $(JAVA_TEMPLATE) --no-tags --no-mirror --no-fetch
-	else
-		@echo "Java Project Template already pulled"
-	endif
+ifneq (,$(CURR_TEMPLATE))
+	@echo "Java Project Template will be pulled"
+	$(GIT) remote add template $(JAVA_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "Java Project Template already pulled"
+endif
 MERGE_TEMPLATE ?= 1
 endif
 
 repos/template/node:
 ifneq (,$(wildcard .github/.node))
-	ifneq (,$(CURR_TEMPLATE))
-		@echo "NodeJS Project Template will be pulled"
-		$(GIT) remote add template $(NODE_TEMPLATE) --no-tags --no-mirror --no-fetch
-	else
-		@echo "NodeJS Project Template already pulled"
-	endif
+ifneq (,$(CURR_TEMPLATE))
+	@echo "NodeJS Project Template will be pulled"
+	$(GIT) remote add template $(NODE_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "NodeJS Project Template already pulled"
+endif
 MERGE_TEMPLATE ?= 1
 endif
 
 repos/template/docker:
 ifneq (,$(wildcard .github/.docker))
-	ifneq (,$(CURR_TEMPLATE))
-		@echo "Docker Project Template will be pulled"
-		$(GIT) remote add template $(DOCKER_TEMPLATE) --no-tags --no-mirror --no-fetch
-	else
-		@echo "Docker Project Template already pulled"
-	endif
+ifneq (,$(CURR_TEMPLATE))
+	@echo "Docker Project Template will be pulled"
+	$(GIT) remote add template $(DOCKER_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "Docker Project Template already pulled"
+endif
 MERGE_TEMPLATE ?= 1
 endif
 
 repos/template/python:
 ifneq (,$(wildcard .github/.python))
-	ifneq (,$(CURR_TEMPLATE))
-		@echo "Python Project Template will be pulled"
-		$(GIT) remote add template $(PYTHON_TEMPLATE) --no-tags --no-mirror --no-fetch
-	else
-		@echo "Python Project Template already pulled"
-	endif
+ifneq (,$(CURR_TEMPLATE))
+	@echo "Python Project Template will be pulled"
+	$(GIT) remote add template $(PYTHON_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "Python Project Template already pulled"
+endif
 MERGE_TEMPLATE ?= 1
 endif
 
