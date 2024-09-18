@@ -8,41 +8,40 @@ PYTHON_TEMPLATE=https://github.com/cloudopsworks/python-app-template.git
 MERGE_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 
-#repos/template/java:
-#ifneq(,$(wildcard .github/.java))
-#MERGE_TEMPLATE ?= 1
-#	@echo "Java Project Template will be pulled"
-#	$(GIT) remote add template $(JAVA_TEMPLATE)
-#endif
-#
-#repos/template/node:
-#ifneq(,$(wildcard .github/.node))
-#MERGE_TEMPLATE ?= 1
-#	@echo "NodeJS Project Template will be pulled"
-#	$(GIT) remote add template $(NODE_TEMPLATE)
-#endif
-#
-#repos/template/docker:
-#ifneq(,$(wildcard .github/.docker))
-#MERGE_TEMPLATE ?= 1
-#	@echo "Docker Project Template will be pulled"
-#	$(GIT) remote add template $(DOCKER_TEMPLATE)
-#endif
-#
-#repos/template/python:
-#ifneq(,$(wildcard .github/.python))
-#MERGE_TEMPLATE ?= 1
-#	@echo "Python Project Template will be pulled"
-#	$(GIT) remote add template $(PYTHON_TEMPLATE)
-#endif
+repos/template/java:
+ifneq (,$(wildcard .github/.java))
+MERGE_TEMPLATE ?= 1
+	@echo "Java Project Template will be pulled"
+	$(GIT) remote add template $(JAVA_TEMPLATE)
+endif
 
-#repos/template/java repos/template/docker repos/template/node repos/template/python
+repos/template/node:
+ifneq (,$(wildcard .github/.node))
+MERGE_TEMPLATE ?= 1
+	@echo "NodeJS Project Template will be pulled"
+	$(GIT) remote add template $(NODE_TEMPLATE)
+endif
+
+repos/template/docker:
+ifneq (,$(wildcard .github/.docker))
+MERGE_TEMPLATE ?= 1
+	@echo "Docker Project Template will be pulled"
+	$(GIT) remote add template $(DOCKER_TEMPLATE)
+endif
+
+repos/template/python:
+ifneq (,$(wildcard .github/.python))
+MERGE_TEMPLATE ?= 1
+	@echo "Python Project Template will be pulled"
+	$(GIT) remote add template $(PYTHON_TEMPLATE)
+endif
+
 
 ## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh
+repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
-ifeq(1,$(MERGE_TEMPLATE))
+ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Upgrading repository, current Version: $(shell cat .github/_VERSION)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
