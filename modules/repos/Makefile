@@ -35,8 +35,10 @@ MERGE_TEMPLATE ?= 1
 	$(GIT) remote add template $(PYTHON_TEMPLATE)
 endif
 
+#repos/template/java repos/template/docker repos/template/node repos/template/python
+
 ## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
+repos/upgrade: packages/install/gh
 ifeq(1,$(MERGE_TEMPLATE))
 	@echo "Upgrading repository, current Version: $(shell cat .github/_VERSION)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
