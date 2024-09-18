@@ -5,7 +5,7 @@ JAVA_TEMPLATE=https://github.com/cloudopsworks/java-app-template.git
 DOCKER_TEMPLATE=https://github.com/cloudopsworks/docker-app-template.git
 NODE_TEMPLATE=https://github.com/cloudopsworks/node-app-template.git
 PYTHON_TEMPLATE=https://github.com/cloudopsworks/python-app-template.git
-MERGE_TEMPLATE ?= 0
+MERGE_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 
 #repos/template/java:
