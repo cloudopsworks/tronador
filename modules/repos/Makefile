@@ -66,15 +66,15 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GIT) fetch template master
 	@$(GIT) checkout template/master -- .github/workflows Makefile .github/_VERSION
 	@echo "Copying workflows from version: $(shell cat .github/_VERSION)"
-ifeq ($(OS),darwin)
-	@find .github/workflows/.template -type f -name '*.yml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-	@find .github/workflows/.template -type f -name '*.yaml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-else
-	@find .github/workflows/.template -type f -name '*.yml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-	@find .github/workflows/.template -type f -name '*.yaml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-endif
 	@cp .github/workflows/.template/*.yml .github/workflows
 	@cp .github/workflows/.template/*.yaml .github/workflows
+ifeq ($(OS),darwin)
+	@find .github/workflows -depth 0 -type f -name '*.yml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+	@find .github/workflows -depth 0 -type f -name '*.yaml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+else
+	@find .github/workflows -depth 0 -type f -name '*.yml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+	@find .github/workflows -depth 0 -type f -name '*.yaml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+endif
 	@echo "Removing Initial.yml script, only needed upon creation."
 	@rm -f .github/workflows/initial.yml
 	@echo "Committing changes"
