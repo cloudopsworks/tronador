@@ -65,7 +65,7 @@ endif
 
 
 ## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/cicd/update
+repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
@@ -92,6 +92,7 @@ endif
 	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
 	@echo "Please review changes and push to remote repository"
+	$(MAKE) repos/cicd/update
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
 endif
