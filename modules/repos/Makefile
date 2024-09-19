@@ -53,9 +53,18 @@ endif
 MERGE_TEMPLATE := 1
 endif
 
+repos/cicd/update:
+	@echo "Updating CICD Pipeline cloudopsworks-ci.yaml"
+	@grep -q "#workflow-version-tag" .github/cloudopsworks-ci.yaml || echo "\n\n############ DO NOT MODIFY BELOW ############\n#workflow-version-tag: 1.0.0" >> .github/cloudopsworks-ci.yaml
+ifeq ($(OS),darwin)
+	@sed -i '' "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $$(git for-each-ref refs/remotes/template --sort="-committerdate" | head -1 | cut -d ' ' -f 1)|g" .github/cloudopsworks-ci.yaml
+else
+	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $$(git for-each-ref refs/remotes/template --sort="-committerdate" | head -1 | cut -d ' ' -f 1)|g" .github/cloudopsworks-ci.yaml
+endif
+
 
 ## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
+repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/cicd/update
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
