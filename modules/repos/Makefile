@@ -87,12 +87,12 @@ else
 endif
 	@echo "Removing Initial.yml script, only needed upon creation."
 	@rm -f .github/workflows/initial.yml
+	$(MAKE) repos/cicd/update
 	@echo "Committing changes"
 	@$(GIT) add .github/workflows Makefile .github/_VERSION .github/cloudopsworks-ci.yaml
 	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
 	@echo "Please review changes and push to remote repository"
-	$(MAKE) repos/cicd/update
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
 endif
