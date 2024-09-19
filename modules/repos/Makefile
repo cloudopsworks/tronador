@@ -59,13 +59,13 @@ repos/upgrade: packages/install/gh repos/template/java repos/template/docker rep
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
-	@echo "Upgrading repository, current Version: $(shell cat .github/_VERSION)"
+	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
 	@$(GIT) fetch template master
 	@$(GIT) checkout template/master -- .github/workflows Makefile .github/_VERSION
-	@echo "Copying workflows from version: $(shell cat .github/_VERSION)"
+	@echo "Copying workflows from version: $$(cat .github/_VERSION)"
 	@cp .github/workflows/.template/*.yml .github/workflows
 	@cp .github/workflows/.template/*.yaml .github/workflows
 ifeq ($(OS),darwin)
@@ -79,8 +79,8 @@ endif
 	@rm -f .github/workflows/initial.yml
 	@echo "Committing changes"
 	@$(GIT) add .github/workflows Makefile
-	@$(GIT) commit -m "chore: Upgrade repository from template, version: $(shell cat .github/_VERSION)"
-	@echo "Repository upgraded to version: $(shell cat .github/_VERSION)"
+	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
+	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
 	@echo "Please review changes and push to remote repository"
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
