@@ -53,6 +53,7 @@ endif
 MERGE_TEMPLATE := 1
 endif
 
+## Update CICD Pipeline footer versioning
 repos/cicd/update:
 	@echo "Updating CICD Pipeline cloudopsworks-ci.yaml"
 	@grep -q "#workflow-version-tag" .github/cloudopsworks-ci.yaml || echo "\n\n############ DO NOT MODIFY BELOW ############\n#workflow-version-tag: 1.0.0" >> .github/cloudopsworks-ci.yaml
