@@ -17,7 +17,7 @@ ifeq (,$(CURR_TEMPLATE))
 else
 	@echo "Java Project Template already pulled"
 endif
-MERGE_TEMPLATE ?= 1
+MERGE_TEMPLATE := 1
 endif
 
 repos/template/node:
@@ -28,7 +28,7 @@ ifeq (,$(CURR_TEMPLATE))
 else
 	@echo "NodeJS Project Template already pulled"
 endif
-MERGE_TEMPLATE ?= 1
+MERGE_TEMPLATE := 1
 endif
 
 repos/template/docker:
@@ -50,7 +50,7 @@ ifeq (,$(CURR_TEMPLATE))
 else
 	@echo "Python Project Template already pulled"
 endif
-MERGE_TEMPLATE ?= 1
+MERGE_TEMPLATE := 1
 endif
 
 
