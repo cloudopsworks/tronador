@@ -74,7 +74,7 @@ repos/upgrade: packages/install/gh repos/template/java repos/template/docker rep
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
-	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION)"
+	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION) from $(PULL_BRANCH)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
