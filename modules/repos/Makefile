@@ -8,6 +8,7 @@ PYTHON_TEMPLATE=https://github.com/cloudopsworks/python-app-template.git
 MERGE_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
+PULL_BRANCH ?= master
 
 repos/template/java:
 ifneq (,$(wildcard .github/.java))
@@ -63,6 +64,10 @@ else
 	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $$(git for-each-ref refs/remotes/template --sort="-committerdate" | head -1 | cut -d ' ' -f 1)|g" .github/cloudopsworks-ci.yaml
 endif
 
+## Upgrade Repository from Templates but for DEV!
+repos/upgrade/dev:
+	$(MAKE) repos/upgrade PULL_BRANCH=develop
+
 
 ## Upgrade Repository from Templates
 repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
@@ -73,7 +78,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
-	@$(GIT) fetch template master
+	@$(GIT) fetch template $(PULL_BRANCH)
 	@$(GIT) checkout template/master -- .github/workflows Makefile .github/_VERSION
 	@echo "Copying workflows from version: $$(cat .github/_VERSION)"
 	@cp .github/workflows/.template/*.yml .github/workflows
