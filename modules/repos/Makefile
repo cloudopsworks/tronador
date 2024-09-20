@@ -64,22 +64,7 @@ else
 	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $$(git for-each-ref refs/remotes/template --sort="-committerdate" | head -1 | cut -d ' ' -f 1)|g" .github/cloudopsworks-ci.yaml
 endif
 
-## Upgrade Repository from Templates but for DEV!
-repos/upgrade/dev:
-	$(MAKE) PULL_BRANCH=develop repos/upgrade
-
-
-## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
-	$(call assert-set,GIT)
-	$(call assert-set,GH)
-ifeq (1,$(MERGE_TEMPLATE))
-	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION) from $(PULL_BRANCH)"
-	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
-	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
-	@echo "Fetching template repository"
-	@$(GIT) fetch template $(PULL_BRANCH)
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION
+repos/copy/workflow:
 	@echo "Copying workflows from version: $$(cat .github/_VERSION)"
 	@cp .github/workflows/.template/*.yml .github/workflows
 	@cp .github/workflows/.template/*.yaml .github/workflows
@@ -92,12 +77,51 @@ else
 endif
 	@echo "Removing Initial.yml script, only needed upon creation."
 	@rm -f .github/workflows/initial.yml
-	$(MAKE) repos/cicd/update
+
+repos/push:
+	$(call assert-set,GIT)
 	@echo "Committing changes"
 	@$(GIT) add .github/workflows Makefile .github/_VERSION .github/cloudopsworks-ci.yaml
 	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
+
+## Upgrade Repository from Templates but for DEV!
+repos/upgrade/dev:
+	$(MAKE) PULL_BRANCH=develop repos/upgrade
+
+## Upgrade Repository from Templates
+repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
+	$(call assert-set,GIT)
+	$(call assert-set,GH)
+ifeq (1,$(MERGE_TEMPLATE))
+	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION) from $(PULL_BRANCH)"
+	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
+	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
+	@echo "Fetching template repository"
+	@$(GIT) fetch template $(PULL_BRANCH)
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION
+	$(MAKE) repos/copy/workflow
+	$(MAKE) repos/cicd/update
+	$(MAKE) repos/push
 	@echo "Please review changes and push to remote repository"
+else
+	@echo "No templates supported to upgrade by this script, skipping upgrade"
+endif
+
+## Upgrade Repository from Templates
+repos/recover: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
+	$(call assert-set,GIT)
+	$(call assert-set,GH)
+ifeq (1,$(MERGE_TEMPLATE))
+	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION) from $(PULL_BRANCH)"
+	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
+	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
+	@echo "Fetching template repository"
+	@$(GIT) fetch template $(PULL_BRANCH)
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION
+	$(MAKE) repos/copy/workflow
+	$(MAKE) repos/cicd/update
+	@echo "!!WARNING!! Some files may have been overwritten, please review changes and push to remote repository"
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
 endif
