@@ -66,7 +66,7 @@ endif
 
 ## Upgrade Repository from Templates but for DEV!
 repos/upgrade/dev:
-	$(MAKE) repos/upgrade PULL_BRANCH=develop
+	$(MAKE) PULL_BRANCH=develop repos/upgrade
 
 
 ## Upgrade Repository from Templates
