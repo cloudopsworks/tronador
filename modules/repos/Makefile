@@ -99,7 +99,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
 	@$(GIT) fetch template $(PULL_BRANCH)
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION .github/Makefile
 	$(MAKE) repos/copy/workflow
 	$(MAKE) repos/cicd/update
 	$(MAKE) repos/push
