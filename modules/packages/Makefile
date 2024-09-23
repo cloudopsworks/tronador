@@ -21,7 +21,7 @@ packages/install:
 	@if [ ! -d $(PACKAGES_PATH) ]; then \
 	  echo "Installing packages $(PACKAGES_VERSION)..." >&2; \
 	  rm -rf $(PACKAGES_PATH); \
-	  $(GIT) clone -q -c advice.detachedHead=false --depth=1 -b $(PACKAGES_VERSION) https://github.com/$(CUSTOMER_PACKAGES_OWNER)/$(CUSTOMER_PACKAGES_REPO).git $(PACKAGES_PATH) 2>/dev/nul; \
+	  $(GIT) clone -q -c advice.detachedHead=false --depth=1 -b $(PACKAGES_VERSION) https://github.com/$(CUSTOMER_PACKAGES_OWNER)/$(CUSTOMER_PACKAGES_REPO).git $(PACKAGES_PATH) 2>/dev/null; \
 	  rm -rf $(PACKAGES_PATH)/.git; \
 	fi 
 
