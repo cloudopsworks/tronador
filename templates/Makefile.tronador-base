@@ -51,7 +51,7 @@ endef
 init::
 	@ $(tronador_install)
 
-.PHONY : clean
+
 ## Clean Accelerate Tooling
 clean::
 	@if [ -d "$(TRONADOR_PATH)" ] ; then \
