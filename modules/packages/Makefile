@@ -28,6 +28,7 @@ packages/install:
 ## Install package (e.g. helm, helmfile, kubectl)
 packages/install/%: packages/install
 	@if [ ! -x $(INSTALL_PATH)/$(subst packages/install/,,$@) ]; then \
+	    echo "Installing package $(subst packages/install/,,$@)..."; \
 		$(MAKE) -C $(PACKAGES_PATH)/install $(subst packages/install/,,$@); \
 	else \
 		echo "Package $(subst packages/install/,,$@) already installed" >&2; \
