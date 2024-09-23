@@ -10,4 +10,4 @@ if [ "$TRONADOR_PROJECT" ] && [ -d "$TRONADOR_PROJECT" ]; then
 fi
 
 echo "Cloning ${GITHUB_REPO}#${TRONADOR_BRANCH}..."
-git clone -b $TRONADOR_BRANCH $GITHUB_REPO
+git clone -q -b $TRONADOR_BRANCH $GITHUB_REPO
