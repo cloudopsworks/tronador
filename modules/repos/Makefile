@@ -64,6 +64,10 @@ else
 	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $$(git for-each-ref refs/remotes/template --sort="-committerdate" | head -1 | cut -d ' ' -f 1)|g" .github/cloudopsworks-ci.yaml
 endif
 
+repos/clean:
+	@echo "Cleaning up repository"
+	@rm -rf .github/workflows/*.yml .github/workflows/*.yaml
+
 repos/copy/workflow:
 	@echo "Copying workflows from version: $$(cat .github/_VERSION)"
 	@cp .github/workflows/.template/*.yml .github/workflows
@@ -100,6 +104,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Fetching template repository"
 	@$(GIT) fetch template $(PULL_BRANCH)
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION .github/Makefile
+	$(MAKE) repos/clean
 	$(MAKE) repos/copy/workflow
 	$(MAKE) repos/cicd/update
 	$(MAKE) repos/push
