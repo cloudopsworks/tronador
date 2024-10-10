@@ -316,10 +316,11 @@ else
 endif
 
 ## Git-Flow release purge on current tag
-gitflow/release/purge: gitflow/deps gitflow/co/main
+gitflow/release/purge: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(eval BUMP_VER := v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch))
+	@$(MAKE) gitflow/co/main
 	@$(GIT) branch -D release/$(BUMP_VER)
 	@$(GIT) push origin -d release/$(BUMP_VER)
 
