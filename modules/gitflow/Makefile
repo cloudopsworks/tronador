@@ -329,6 +329,7 @@ gitflow/release/purge/%: gitflow/deps
 	$(call assert-set,GIT)
 	$(eval BUMP_VERSION := $(subst gitflow/release/purge/,,$@))
 	$(eval BUMP_VER := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
+	@$(MAKE) gitflow/co/main
 	@$(GIT) branch -D release/$(BUMP_VER)
 	@$(GIT) push origin -d release/$(BUMP_VER)
 
