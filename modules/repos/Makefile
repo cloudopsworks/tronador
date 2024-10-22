@@ -94,6 +94,11 @@ repos/push:
 repos/upgrade/dev:
 	$(MAKE) PULL_BRANCH=develop repos/upgrade
 
+## Upgrade Repository from Templates for specific version as part of the last / (%) argument
+repos/upgrade/%:
+	$(eval RELVERSION := $(subst repos/upgrade/,,$@))
+	$(MAKE) PULL_BRANCH=$(RELVERSION) repos/upgrade
+
 ## Upgrade Repository from Templates
 repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
 	$(call assert-set,GIT)
