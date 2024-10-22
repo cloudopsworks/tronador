@@ -66,7 +66,8 @@ endif
 
 repos/clean:
 	@echo "Cleaning up repository"
-	@rm -rf .github/workflows/*
+	@rm -rf .github/workflows
+	@mkdir -p .github/workflows
 
 # Deprecated on v5
 #repos/copy/workflow:
