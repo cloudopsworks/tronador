@@ -68,19 +68,20 @@ repos/clean:
 	@echo "Cleaning up repository"
 	@rm -rf .github/workflows/*.yml .github/workflows/*.yaml
 
-repos/copy/workflow:
-	@echo "Copying workflows from version: $$(cat .github/_VERSION)"
-	@cp .github/workflows/.template/*.yml .github/workflows
-	@cp .github/workflows/.template/*.yaml .github/workflows
-ifeq ($(OS),darwin)
-	@find .github/workflows -depth 1 -type f -name '*.yml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-	@find .github/workflows -depth 1 -type f -name '*.yaml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-else
-	@find .github/workflows -maxdepth 1 -type f -name '*.yml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-	@find .github/workflows -maxdepth 1 -type f -name '*.yaml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
-endif
-	@echo "Removing Initial.yml script, only needed upon creation."
-	@rm -f .github/workflows/initial.yml
+# Deprecated on v5
+#repos/copy/workflow:
+#	@echo "Copying workflows from version: $$(cat .github/_VERSION)"
+#	@cp .github/workflows/.template/*.yml .github/workflows
+#	@cp .github/workflows/.template/*.yaml .github/workflows
+#ifeq ($(OS),darwin)
+#	@find .github/workflows -depth 1 -type f -name '*.yml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+#	@find .github/workflows -depth 1 -type f -name '*.yaml' -print -exec sed -i '' 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+#else
+#	@find .github/workflows -maxdepth 1 -type f -name '*.yml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+#	@find .github/workflows -maxdepth 1 -type f -name '*.yaml' -print -exec sed -i 's|{{REPO_OWNER}}/base-app-template|$(GIT_ORG)/base-app-template|g' {} \;
+#endif
+#	@echo "Removing Initial.yml script, only needed upon creation."
+#	@rm -f .github/workflows/initial.yml
 
 repos/push:
 	$(call assert-set,GIT)
@@ -103,9 +104,9 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
 	@$(GIT) fetch template $(PULL_BRANCH)
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION .github/Makefile
 	$(MAKE) repos/clean
-	$(MAKE) repos/copy/workflow
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION .github/Makefile
+	#$(MAKE) repos/copy/workflow
 	$(MAKE) repos/cicd/update
 	$(MAKE) repos/push
 	@echo "Please review changes and push to remote repository"
@@ -123,8 +124,9 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
 	@$(GIT) fetch template $(PULL_BRANCH)
+	$(MAKE) repos/clean
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .
-	$(MAKE) repos/copy/workflow
+	#$(MAKE) repos/copy/workflow
 	$(MAKE) repos/cicd/update
 	@echo "!!WARNING!! Some files may have been overwritten, please review changes and push to remote repository"
 else
