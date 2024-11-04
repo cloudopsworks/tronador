@@ -5,6 +5,7 @@ JAVA_TEMPLATE=https://github.com/cloudopsworks/java-app-template.git
 DOCKER_TEMPLATE=https://github.com/cloudopsworks/docker-app-template.git
 NODE_TEMPLATE=https://github.com/cloudopsworks/node-app-template.git
 PYTHON_TEMPLATE=https://github.com/cloudopsworks/python-app-template.git
+TERRAGRUNT_TEMPLATE=https://github.com/cloudopsworks/terragrunt-project-template.git
 MERGE_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
@@ -54,6 +55,18 @@ endif
 MERGE_TEMPLATE := 1
 endif
 
+repos/template/terragrunt:
+ifneq (,$(wildcard .github/.iac))
+ifeq (,$(CURR_TEMPLATE))
+	@echo "Python Project Template will be pulled"
+	$(GIT) remote add template $(TERRAGRUNT_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "Terragrunt Project Template already pulled"
+endif
+MERGE_TEMPLATE := 1
+endif
+
+
 ## Update CICD Pipeline footer versioning
 repos/cicd/update:
 	@echo "Updating CICD Pipeline cloudopsworks-ci.yaml"
@@ -101,7 +114,7 @@ repos/upgrade/%:
 	$(MAKE) PULL_BRANCH=$(RELVERSION) repos/upgrade
 
 ## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python
+repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
