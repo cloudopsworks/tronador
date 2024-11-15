@@ -338,7 +338,7 @@ gitflow/release/purge/%: gitflow/deps
 gitflow/support/start/%: gitflow/co/main
 	$(call assert-set,GIT)
 	$(eval RELVERSION := $(subst gitflow/support/start/,,$@))
-	@$(GIT) checkout -b support/$(RELVERSION)) $(RELVERSION)
+	@$(GIT) checkout -b support/$(RELVERSION) $(RELVERSION)
 
 ## Git-Flow support publish, this receives the following call pattern: make gitflow/support/publish:<version>
 gitflow/support/publish/%:
