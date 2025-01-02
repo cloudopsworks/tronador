@@ -71,7 +71,7 @@ endif
 repos/template/terragrunt:
 ifneq (,$(wildcard .github/.iac))
 ifeq (,$(CURR_TEMPLATE))
-	@echo "Python Project Template will be pulled"
+	@echo "Terragrunt Project Template will be pulled"
 	$(GIT) remote add template $(TERRAGRUNT_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
 	@echo "Terragrunt Project Template already pulled"
@@ -82,7 +82,7 @@ endif
 repos/template/terraform-module:
 ifneq (,$(wildcard .github/.terraform-module))
 ifeq (,$(CURR_TEMPLATE))
-	@echo "Python Project Template will be pulled"
+	@echo "Terraform Module Project Template will be pulled"
 	$(GIT) remote add template $(TERRAFORM_MODULE) --no-tags --no-mirror --no-fetch
 else
 	@echo "Terraform Module Project Template already pulled"
