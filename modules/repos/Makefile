@@ -138,7 +138,7 @@ repos/upgrade/%:
 	$(MAKE) PULL_BRANCH=$(RELVERSION) repos/upgrade
 
 ## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode
+repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
