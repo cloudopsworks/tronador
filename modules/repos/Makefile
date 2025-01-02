@@ -7,6 +7,7 @@ NODE_TEMPLATE=https://github.com/cloudopsworks/node-app-template.git
 PYTHON_TEMPLATE=https://github.com/cloudopsworks/python-app-template.git
 TERRAGRUNT_TEMPLATE=https://github.com/cloudopsworks/terragrunt-project-template.git
 XCODE_TEMPLATE=https://github.com/cloudopsworks/xcode-app-template.git
+TERRAFORM_MODULE=https://github.com/cloudopsworks/terraform-module-template.git
 MERGE_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
@@ -74,6 +75,17 @@ ifeq (,$(CURR_TEMPLATE))
 	$(GIT) remote add template $(TERRAGRUNT_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
 	@echo "Terragrunt Project Template already pulled"
+endif
+MERGE_TEMPLATE := 1
+endif
+
+repos/template/terraform-module:
+ifneq (,$(wildcard .github/.terraform-module))
+ifeq (,$(CURR_TEMPLATE))
+	@echo "Python Project Template will be pulled"
+	$(GIT) remote add template $(TERRAFORM_MODULE) --no-tags --no-mirror --no-fetch
+else
+	@echo "Terraform Module Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
 endif
