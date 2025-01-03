@@ -22,7 +22,7 @@ ifeq (,$(CURR_TEMPLATE))
 	$(GIT) remote add template $(XCODE_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
 	@echo "XCode Project Template already pulled"
-endif
+
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -138,7 +138,11 @@ repos/clean:
 repos/push:
 	$(call assert-set,GIT)
 	@echo "Committing changes"
+ifeq (1,$(CICD_TEMPLATE))
 	@$(GIT) add .github/workflows Makefile .github/_VERSION .github/cloudopsworks-ci.yaml
+else
+ 	@$(GIT) add .github/workflows Makefile .github/_VERSION
+endif
 	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
 
