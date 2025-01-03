@@ -141,7 +141,7 @@ repos/push:
 ifeq (1,$(CICD_TEMPLATE))
 	@$(GIT) add .github/workflows Makefile .github/_VERSION .github/cloudopsworks-ci.yaml
 else
- 	@$(GIT) add .github/workflows Makefile .github/_VERSION
+	@$(GIT) add .github/workflows Makefile .github/_VERSION
 endif
 	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
