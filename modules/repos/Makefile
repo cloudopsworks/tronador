@@ -22,7 +22,7 @@ ifeq (,$(CURR_TEMPLATE))
 	$(GIT) remote add template $(XCODE_TEMPLATE) --no-tags --no-mirror --no-fetch
 else
 	@echo "XCode Project Template already pulled"
-
+endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -166,14 +166,14 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Fetching template repository"
 	@$(GIT) fetch template $(PULL_BRANCH)
 	$(MAKE) repos/clean
-ifeq (1,$(VERSIONED_TEMPLATE))
+  ifeq (1,$(VERSIONED_TEMPLATE))
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION .github/Makefile
-else
+  else
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
-endif
-ifeq (1,$(CICD_TEMPLATE))
+  endif
+  ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
-endif
+  endif
 	$(MAKE) repos/push
 	@echo "Please review changes and push to remote repository"
 else
@@ -192,9 +192,9 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GIT) fetch template $(PULL_BRANCH)
 	$(MAKE) repos/clean
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .
-ifeq (1,$(CICD_TEMPLATE))
+  ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
-endif
+  endif
 	@echo "!!WARNING!! Some files may have been overwritten, please review changes and push to remote repository"
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
