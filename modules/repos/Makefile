@@ -10,6 +10,7 @@ XCODE_TEMPLATE=https://github.com/cloudopsworks/xcode-app-template.git
 TERRAFORM_MODULE=https://github.com/cloudopsworks/terraform-module-template.git
 MERGE_TEMPLATE := 0
 VERSIONED_TEMPLATE := 0
+CICD_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 PULL_BRANCH ?= master
@@ -24,6 +25,7 @@ else
 endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
 endif
 
 repos/template/java:
@@ -36,6 +38,7 @@ else
 endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
 endif
 
 repos/template/node:
@@ -48,6 +51,7 @@ else
 endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
 endif
 
 repos/template/docker:
@@ -60,6 +64,7 @@ else
 endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
 endif
 
 repos/template/python:
@@ -72,6 +77,7 @@ else
 endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
 endif
 
 repos/template/terragrunt:
@@ -84,6 +90,7 @@ else
 endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
 endif
 
 repos/template/terraform-module:
@@ -160,8 +167,9 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 else
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
 endif
-	#$(MAKE) repos/copy/workflow
+ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
+endif
 	$(MAKE) repos/push
 	@echo "Please review changes and push to remote repository"
 else
@@ -180,8 +188,9 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GIT) fetch template $(PULL_BRANCH)
 	$(MAKE) repos/clean
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .
-	#$(MAKE) repos/copy/workflow
+ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
+endif
 	@echo "!!WARNING!! Some files may have been overwritten, please review changes and push to remote repository"
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
