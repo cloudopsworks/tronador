@@ -9,6 +9,7 @@ TERRAGRUNT_TEMPLATE=https://github.com/cloudopsworks/terragrunt-project-template
 XCODE_TEMPLATE=https://github.com/cloudopsworks/xcode-app-template.git
 TERRAFORM_MODULE=https://github.com/cloudopsworks/terraform-module-template.git
 MERGE_TEMPLATE := 0
+VERSIONED_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 PULL_BRANCH ?= master
@@ -22,6 +23,7 @@ else
 	@echo "XCode Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
 endif
 
 repos/template/java:
@@ -33,6 +35,7 @@ else
 	@echo "Java Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
 endif
 
 repos/template/node:
@@ -44,6 +47,7 @@ else
 	@echo "NodeJS Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
 endif
 
 repos/template/docker:
@@ -55,6 +59,7 @@ else
 	@echo "Docker Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
 endif
 
 repos/template/python:
@@ -66,6 +71,7 @@ else
 	@echo "Python Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
 endif
 
 repos/template/terragrunt:
@@ -77,6 +83,7 @@ else
 	@echo "Terragrunt Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
 endif
 
 repos/template/terraform-module:
@@ -148,7 +155,11 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Fetching template repository"
 	@$(GIT) fetch template $(PULL_BRANCH)
 	$(MAKE) repos/clean
+ifeq (1,$(VERSIONED_TEMPLATE))
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION .github/Makefile
+else
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
+endif
 	#$(MAKE) repos/copy/workflow
 	$(MAKE) repos/cicd/update
 	$(MAKE) repos/push
@@ -158,7 +169,7 @@ else
 endif
 
 ## Upgrade Repository from Templates
-repos/recover: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/xcode
+repos/recover: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/xcode repos/template/terraform-module
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
