@@ -242,7 +242,7 @@ endif
 export BEACON_STATUS ?= ""
 gitflow/check/beacon:
 	@touch /tmp/.gitflow_release_beacon
-	BEACON_STATUS:=$(shell cat /tmp/.gitflow_release_beacon)
+	export BEACON_STATUS := $(shell cat /tmp/.gitflow_release_beacon)
 
 ## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
 gitflow/release/finish/local: gitflow/deps gitflow/check/beacon
