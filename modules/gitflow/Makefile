@@ -245,7 +245,7 @@ gitflow/check/beacon:
 	BEACON_STATUS:=$(shell cat /tmp/.gitflow_release_beacon)
 
 ## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
-gitflow/release/finish/local: gitflow/deps check/beacon
+gitflow/release/finish/local: gitflow/deps gitflow/check/beacon
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(eval RELVERSION := "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)")
