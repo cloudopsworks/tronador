@@ -239,7 +239,7 @@ else
 	$(error "You must be in a release branch to approve the PRs")
 endif
 
-export BEACON_STATUS ?= ""
+export BEACON_STATUS ?= "no"
 gitflow/check/beacon:
 	@touch /tmp/.gitflow_release_beacon
 	BEACON_STATUS := $(shell cat /tmp/.gitflow_release_beacon)
