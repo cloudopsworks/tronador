@@ -275,7 +275,7 @@ ifneq ($(BEACON_STATUS),push_develop)
 	@$(GIT) push origin develop
 	@$(GIT) branch -d release/$(RELVERSION)
 	@$(GIT) push -d origin release/$(RELVERSION)
-	rm -fr $(TMP)
+	rm -fr /tmp/.gitflow_release_beacon
 endif
 #else
 #	$(error "You must be in a release branch to finish locally")
