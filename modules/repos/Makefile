@@ -102,7 +102,7 @@ else
 	@echo "Terraform Module Project Template already pulled"
 endif
 MERGE_TEMPLATE := 1
-CICD_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
 endif
 
 
