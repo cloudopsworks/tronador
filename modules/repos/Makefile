@@ -168,7 +168,10 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GIT) fetch template $(PULL_BRANCH)
 	$(MAKE) repos/clean
   ifeq (1,$(VERSIONED_TEMPLATE))
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION .github/Makefile
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION
+	@if [ -f .github/Makefile ]; then \
+		$(GIT) checkout template/$(PULL_BRANCH) -- .github/Makefile; \
+	fi
   else
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
   endif
