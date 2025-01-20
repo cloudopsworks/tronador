@@ -239,27 +239,47 @@ else
 	$(error "You must be in a release branch to approve the PRs")
 endif
 
+BEACON_STATUS ?= ""
+gitflow/check/beacon:
+	@touch /tmp/.gitflow_release_beacon
+	BEACON_STATUS:=$(shell cat /tmp/.gitflow_release_beacon)
+
 ## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
-gitflow/release/finish/local: gitflow/deps
+gitflow/release/finish/local: gitflow/deps check/beacon
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(eval RELVERSION := "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)")
-ifeq ($(GIT_BRANCH_PREFIX),release)
+#ifeq ($(GIT_BRANCH_PREFIX),release)
+ifneq($(BEACON_STATUS),merge_master)
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) pull origin $(MAIN_BRANCH)
 	@$(GIT) merge --no-ff release/$(RELVERSION)
+	@echo "merge_master" > /tmp/.gitflow_release_beacon
+endif
+ifneq($(BEACON_STATUS),tag_release)
 	@$(GIT) tag -a $(RELVERSION) -m "Release $(RELVERSION)"
+	@echo "tag_release" > /tmp/.gitflow_release_beacon
+endif
+ifneq($(BEACON_STATUS),push_master)
 	@$(GIT) push origin $(MAIN_BRANCH)
 	@$(GIT) push origin $(RELVERSION)
+	@echo "push_master" > /tmp/.gitflow_release_beacon
+endif
+ifneq($(BEACON_STATUS),merge_develop)
 	@$(GIT) checkout develop
 	@$(GIT) pull origin develop
 	@$(GIT) merge --no-ff release/$(RELVERSION)
+	@echo "merge_develop" > /tmp/.gitflow_release_beacon
+endif
+ifneq($(BEACON_STATUS),push_develop)
 	@$(GIT) push origin develop
 	@$(GIT) branch -d release/$(RELVERSION)
 	@$(GIT) push -d origin release/$(RELVERSION)
-else
-	$(error "You must be in a release branch to finish locally")
+	rm -fr $(TMP)
 endif
+#else
+#	$(error "You must be in a release branch to finish locally")
+#endif
 
 ## Git-Flow release finish (manual), this receives the following call pattern: make gitflow/release/manual/finish:<version>
 gitflow/release/finish/%: gitflow/co/main
