@@ -147,6 +147,9 @@ ifeq (1,$(CICD_TEMPLATE))
 else
 	@$(GIT) add .github/workflows Makefile .github/_VERSION
 endif
+ifeq (1,$(BOILERPLATE_TEMPLATE))
+	@$(GIT) add .boilerplate
+endif
 	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
 
