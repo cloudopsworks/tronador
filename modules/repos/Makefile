@@ -11,6 +11,7 @@ TERRAFORM_MODULE=https://github.com/cloudopsworks/terraform-module-template.git
 MERGE_TEMPLATE := 0
 VERSIONED_TEMPLATE := 0
 CICD_TEMPLATE := 0
+BOILERPLATE_TEMPLATE := 0
 GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 PULL_BRANCH ?= master
@@ -91,6 +92,7 @@ endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
+BOILERPLATE_TEMPLATE := 1
 endif
 
 repos/template/terraform-module:
@@ -103,6 +105,7 @@ else
 endif
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
+BOILERPLATE_TEMPLATE := 1
 endif
 
 
@@ -174,6 +177,9 @@ ifeq (1,$(MERGE_TEMPLATE))
 	fi
   else
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
+  endif
+  ifeq (1,$(BOILERPLATE_TEMPLATE))
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .boilerplate
   endif
   ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
