@@ -25,3 +25,7 @@ tofu/lint:
 ## Upgrade all opentofu module sources
 tofu/upgrade-modules: packages/install/json2hcl
 	@$(TRONADOR_PATH)/bin/upgrade_opentofu_modules.sh all
+
+## Format terraform/opentofu code
+tofu/fmt:
+	$(OPENTOFU) fmt
