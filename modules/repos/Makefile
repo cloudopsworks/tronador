@@ -12,9 +12,11 @@ MERGE_TEMPLATE := 0
 VERSIONED_TEMPLATE := 0
 CICD_TEMPLATE := 0
 BOILERPLATE_TEMPLATE := 0
+BOILERPLATE_PATH := .boilerplate
 GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 PULL_BRANCH ?= master
+
 
 repos/template/xcode:
 ifneq (,$(wildcard .github/.xcode))
@@ -93,6 +95,7 @@ MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
+BOILERPLATE_PATH := .cloudopsworks
 endif
 
 repos/template/terraform-module:
@@ -148,7 +151,7 @@ else
 	@$(GIT) add .github/workflows Makefile .github/_VERSION
 endif
 ifeq (1,$(BOILERPLATE_TEMPLATE))
-	@$(GIT) add .boilerplate
+	@$(GIT) add $(BOILERPLATE_PATH)
 endif
 	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
@@ -182,7 +185,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
   endif
   ifeq (1,$(BOILERPLATE_TEMPLATE))
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .cloudopsworks
+	@$(GIT) checkout template/$(PULL_BRANCH) -- $(BOILERPLATE_PATH)
   endif
   ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
