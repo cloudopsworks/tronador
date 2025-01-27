@@ -182,7 +182,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
   endif
   ifeq (1,$(BOILERPLATE_TEMPLATE))
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .boilerplate
+	@$(GIT) checkout template/$(PULL_BRANCH) -- .cloudopsworks
   endif
   ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
