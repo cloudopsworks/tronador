@@ -196,19 +196,22 @@ gitflow/check/develop:
 gitflow/release/start/minor: gitflow/deps gitflow/co/develop
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
-	@$(GIT) checkout -b release/$(shell $(SEMVER) bump minor -g) develop
+	$(call assert-set,GITVERSION)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump minor $(shell $(GITVERSION) -showvariable MajorMinorPatch)) develop
 
 ## Git-Flow release start next  major version.
 gitflow/release/start/major: gitflow/deps gitflow/co/develop
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
-	@$(GIT) checkout -b release/$(shell $(SEMVER) bump major -g) develop
+	$(call assert-set,GITVERSION)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump major $(shell $(GITVERSION) -showvariable MajorMinorPatch)) develop
 
 ## Git-Flow release start next  patch version.
 gitflow/release/start/patch: gitflow/deps gitflow/co/develop
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
-	@$(GIT) checkout -b release/$(shell $(SEMVER) bump patch -g) develop
+	$(call assert-set,GITVERSION)
+	@$(GIT) checkout -b release/$(shell $(SEMVER) bump patch $(shell $(GITVERSION) -showvariable MajorMinorPatch)) develop
 
 ## Git-Flow release start next version, for forced version the call is gitflow/release/start:<version>
 gitflow/release/start/%: gitflow/deps gitflow/co/develop
