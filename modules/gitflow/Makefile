@@ -118,15 +118,15 @@ gitflow/feature/purge-no-develop/%: gitflow/co/main
 	@$(GIT) push origin -d feature/$(FEAT_NAME)
 
 ## GIt-Flow Hotfix start
-gitflow/hotfix/start: gitflow/deps
+gitflow/hotfix/start: gitflow/deps gitflow/co/main
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(call assert-set,GITVERSION)
-	@$(GIT) checkout $(MAIN_BRANCH)
-	@$(GIT) pull origin $(MAIN_BRANCH)
-	@REV=$$($(GITVERSION) -output json -showvariable MajorMinorPatch) ; \
-		BUMP=$$($(SEMVER) bump patch v$$REV) ; \
-		$(GIT) checkout -b hotfix/$$BUMP $(MAIN_BRANCH)
+	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)) $(MAIN_BRANCH)
+#
+#	@REV=$$($(GITVERSION) -output json -showvariable MajorMinorPatch) ; \
+#		BUMP=$$($(SEMVER) bump patch v$$REV) ; \
+#		$(GIT) checkout -b hotfix/$$BUMP $(MAIN_BRANCH)
 
 ## GIt-Flow Hotfix publishing
 gitflow/hotfix/publish:
