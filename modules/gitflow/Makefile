@@ -168,12 +168,16 @@ else
 endif
 
 ## Git-Flow hotfix purge
-gitflow/hotfix/purge: gitflow/deps gitflow/co/main
+gitflow/hotfix/purge: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
-	$(eval BUMP_VER := v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch))
-	@$(GIT) branch -D hotfix/$(BUMP_VER)
-	@$(GIT) push origin -d hotfix/$(BUMP_VER)
+ifeq ($(GIT_BRANCH_PREFIX),hotfix)
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) branch -D $(GIT_BRANCH)
+	@$(GIT) push origin -d $(GIT_BRANCH)
+else
+	$(error "You must be in a hotfix branch to purge")
+endif
 
 ## Git-Flow hotfix purge with hotfix-version
 gitflow/hotfix/purge/%: gitflow/deps gitflow/co/main
