@@ -404,6 +404,7 @@ ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)..."; \
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
+		exit 1 ; \
 	fi
 else
 	@if [[ \
@@ -413,6 +414,7 @@ else
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..."; \
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
+		exit 1 ; \
 	fi
 endif
 
