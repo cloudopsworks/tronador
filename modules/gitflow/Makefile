@@ -88,7 +88,7 @@ gitflow/feature/publish/%:
 	$(eval FEAT_NAME := $(subst gitflow/feature/publish/,,$@))
 	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
 	  @$(GIT) checkout feature/$(FEAT_NAME) ; \
-	  @$(GIT) push origin feature/$(FEAT_NAME) ; \
+	  @$(GIT) push --set-upstream origin feature/$(FEAT_NAME) ; \
 	else \
 	  echo "You must specify a feature name." ; \
 	  exit 1 ; \
@@ -98,7 +98,7 @@ gitflow/feature/publish/%:
 gitflow/feature/publish:
 	$(call assert-set,GIT)
 ifeq ($(GIT_BRANCH_PREFIX),feature)
-	@$(GIT) push origin $(GIT_BRANCH)
+	@$(GIT) push --set-upstream origin $(GIT_BRANCH)
 else
 	$(error "You must specify a feature name to publish, or being working on a feature branch")
 endif
@@ -132,7 +132,7 @@ gitflow/hotfix/start: gitflow/deps gitflow/co/main
 gitflow/hotfix/publish:
 	$(call assert-set,GIT)
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
-	@$(GIT) push origin $(GIT_BRANCH)
+	@$(GIT) push --set-upstream origin $(GIT_BRANCH)
 else
 	$(error "You must specify a hotfix name to publish, or being working on a hotfix branch")
 endif
@@ -315,13 +315,13 @@ gitflow/release/publish/%:
 	$(eval BUMP_VERSION := $(subst gitflow/release/publish/,,$@))
 	$(eval BUMP_VER := $(if $(filter v%,$(BUMP_VERSION)),$(BUMP_VERSION),v$(BUMP_VERSION)))
 	@$(GIT) checkout release/$(BUMP_VER)
-	@$(GIT) push origin release/$(BUMP_VER)
+	@$(GIT) push --set-upstream origin release/$(BUMP_VER)
 
 ## Git-Flow release publish
 gitflow/release/publish:
 	$(call assert-set,GIT)
 ifeq ($(GIT_BRANCH_PREFIX),release)
-	@$(GIT) push -u origin $(GIT_BRANCH)
+	@$(GIT) push --set-upstream origin $(GIT_BRANCH)
 else
 	$(error "You must be in a release branch to publish")
 endif
@@ -377,7 +377,7 @@ gitflow/support/publish/%:
 	$(eval RELVERSION := $(subst gitflow/support/publish/,,$@))
 	@if [[ "$(RELVERSION)" != "" ]] ; then \
   	  $(GIT) checkout support/$(RELVERSION) ; \
-	  $(GIT) push origin support/$(RELVERSION) ; \
+	  $(GIT) push --set-upstream origin support/$(RELVERSION) ; \
 	else \
 	  echo "You must specify a support version to publish." ; \
 	  exit 1 ; \
@@ -387,7 +387,7 @@ gitflow/support/publish/%:
 gitflow/support/publish:
 	$(call assert-set,GIT)
 ifeq ($(GIT_BRANCH_PREFIX),support)
-	@$(GIT) push origin $(GIT_BRANCH)
+	@$(GIT) push --set-upstream origin $(GIT_BRANCH)
 else
 	$(error "You must specify a support version to publish, or being working on a support branch")
 endif
