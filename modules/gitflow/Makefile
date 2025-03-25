@@ -172,6 +172,24 @@ else
 	$(error "You must be in a hotfix branch to finish")
 endif
 
+## Git-Flow Hotfix finish (local)
+gitflow/hotfix/finish/local: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GITVERSION)
+	$(eval RELVERSION := "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)")
+ifeq ($(GIT_BRANCH_PREFIX),hotfix)
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) pull origin $(MAIN_BRANCH)
+	@$(GIT) merge --no-ff hotfix/$(RELVERSION)
+	@$(GIT) tag -a $(RELVERSION) -m "HotFix Release $(HOTFIX_NAME)"
+	@$(GIT) push origin $(MAIN_BRANCH)
+	@$(GIT) push origin $(RELVERSION)
+	@$(GIT) branch -d hotfix/$(RELVERSION)
+	@$(GIT) push origin -d hotfix/$(RELVERSION)
+else
+	$(error "You must be in a hotfix branch to finish")
+endif
+
 ## Git-Flow hotfix purge
 gitflow/hotfix/purge: gitflow/deps
 	$(call assert-set,GIT)
