@@ -7,6 +7,11 @@ GH ?= $(INSTALL_PATH)/gh
 SEMVER ?= $(INSTALL_PATH)/semver
 GITVERSION ?= $(INSTALL_PATH)/gitversion
 
+# Gitflow shorcut for gitflow/ commands
+gf/%:
+	$(call assert-set,GIT)
+	@$(MAKE) gitflow/$*
+
 ## Git-Flow Initialize develop branch
 gitflow/init:
 	$(call assert-set,GIT)
