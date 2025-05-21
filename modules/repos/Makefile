@@ -8,6 +8,9 @@ PYTHON_TEMPLATE=https://github.com/cloudopsworks/python-app-template.git
 TERRAGRUNT_TEMPLATE=https://github.com/cloudopsworks/terragrunt-project-template.git
 XCODE_TEMPLATE=https://github.com/cloudopsworks/xcode-app-template.git
 TERRAFORM_MODULE=https://github.com/cloudopsworks/terraform-module-template.git
+DOTNET_TEMPLATE=https://github.com/cloudopsworks/dotnet-app-template.git
+GO_TEMPLATE=https://github.com/cloudopsworks/go-app-template.git
+RUST_TEMPLATE=https://github.com/cloudopsworks/rust-app-template.git
 MERGE_TEMPLATE := 0
 VERSIONED_TEMPLATE := 0
 CICD_TEMPLATE := 0
@@ -17,6 +20,44 @@ GH ?= $(INSTALL_PATH)/gh
 CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 PULL_BRANCH ?= master
 
+repos/template/dotnet:
+ifneq (,$(wildcard .github/.dotnet))
+ifeq (,$(CURR_TEMPLATE))
+	@echo "DotNet Project Template will be pulled"
+	$(GIT) remote add template $(DOTNET_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "DotNet Project Template already pulled"
+endif
+MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
+endif
+
+repos/template/go:
+ifneq (,$(wildcard .github/.golang))
+ifeq (,$(CURR_TEMPLATE))
+	@echo "Go Project Template will be pulled"
+	$(GIT) remote add template $(GO_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "Go Project Template already pulled"
+endif
+MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
+endif
+
+repos/template/rust:
+ifneq (,$(wildcard .github/.rust))
+ifeq (,$(CURR_TEMPLATE))
+	@echo "Rust Project Template will be pulled"
+	$(GIT) remote add template $(RUST_TEMPLATE) --no-tags --no-mirror --no-fetch
+else
+	@echo "Rust Project Template already pulled"
+endif
+MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
+endif
 
 repos/template/xcode:
 ifneq (,$(wildcard .github/.xcode))
@@ -166,7 +207,7 @@ repos/upgrade/%:
 	$(MAKE) PULL_BRANCH=$(RELVERSION) repos/upgrade
 
 ## Upgrade Repository from Templates
-repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module
+repos/upgrade: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
@@ -197,7 +238,7 @@ else
 endif
 
 ## Upgrade Repository from Templates
-repos/recover: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/xcode repos/template/terraform-module
+repos/recover: packages/install/gh repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
