@@ -1,19 +1,19 @@
-export TMP := /tmp
-export TRONADOR_PATH := $(shell 'pwd')
-export OS := $(shell uname -s | tr '[:upper:]' '[:lower:]')
-export OS_ARCH := $(shell uname -m)
+export TMP ?= /tmp
+export TRONADOR_PATH ?= $(shell 'pwd')
+export OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
+export OS_ARCH ?= $(shell uname -m)
 ifeq ($(OS_ARCH),x86_64)
-export ARCH := amd64
+export ARCH ?= amd64
 else
-export ARCH := $(OS_ARCH)
+export ARCH ?= $(OS_ARCH)
 endif
-export SELF := $(MAKE)
+export SELF ?= $(MAKE)
 # Rewrite the path with vendor folder
 export PATH := $(TRONADOR_PATH)/vendor:$(PATH)
 
 ifeq ($(CURDIR),$(realpath $(TRONADOR_PATH)))
 # List of targets the `readme` target should call before generating the readme
-export README_DEPS := docs/targets.md auto-label
+export README_DEPS ?= docs/targets.md auto-label
 export DEFAULT_HELP_TARGET = help/all
 endif
 
