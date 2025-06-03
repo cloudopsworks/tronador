@@ -123,7 +123,14 @@ REPO_NAME := $(TERRAFORM_MODULE)
 endif
 
 .PHONY: repos/template/init
-repos/template/init: repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust
+repos/template/init: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust
+
+.PHONY: repos/clean/template
+repos/clean/template:
+	echo "Cleaning up template repository"
+	@if [ -d .template ]; then \
+		rm -rf .template ; \
+	fi
 
 ## Update CICD Pipeline footer versioning
 repos/cicd/update:
