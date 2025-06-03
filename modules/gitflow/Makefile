@@ -148,19 +148,6 @@ else
 	$(error "You must specify a hotfix name to publish, or being working on a hotfix branch")
 endif
 
-## Git-Flow Hotfix finish (manual)
-gitflow/hotfix/finish/%:
-	$(call assert-set,GIT)
-	$(eval HOTFIX_NAME := $(subst gitflow/hotfix/finish/,,$@))
-	@$(GIT) checkout $(MAIN_BRANCH)
-	@$(GIT) pull origin $(MAIN_BRANCH)
-	@$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME)
-	@$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)"
-	@$(GIT) push origin $(MAIN_BRANCH)
-	@$(GIT) push origin $(HOTFIX_NAME)
-	@$(GIT) branch -d hotfix/$(HOTFIX_NAME)
-	@$(GIT) push origin -d hotfix/$(HOTFIX_NAME)
-
 ## Git-Flow Hotfix finish (automatic via PR)
 gitflow/hotfix/finish: gitflow/deps
 	$(call assert-set,GIT)
@@ -183,12 +170,17 @@ gitflow/hotfix/finish/local: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 	$(eval RELVERSION := "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)")
+	$(eval MAJOR_VERSION := $(shell echo "$(RELVERSION)" | cut -d. -f1))
+	$(eval MINOR_VERSION := $(shell echo "$(RELVERSION)" | cut -d. -f2))
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
-	@$(GIT) checkout $(MAIN_BRANCH)
-	@$(GIT) pull origin $(MAIN_BRANCH)
+	# Check if we have a support branch with the same major.minor version on the git tree
+	$(eval SUPPORT_BRANCH := $(shell $(GIT) branch --list 'support/v$(MAJOR_VERSION).$(MINOR_VERSION)*'  --format '%(refname:short)'))
+	$(eval WORKING_BRANCH := $(if $(filter support/%, $(SUPPORT_BRANCH)),$(SUPPORT_BRANCH),$(MAIN_BRANCH))
+	@$(GIT) checkout $(WORKING_BRANCH)
+	@$(GIT) pull origin $(WORKING_BRANCH)
 	@$(GIT) merge --no-ff hotfix/$(RELVERSION)
 	@$(GIT) tag -a $(RELVERSION) -m "HotFix Release $(HOTFIX_NAME)"
-	@$(GIT) push origin $(MAIN_BRANCH)
+	@$(GIT) push origin $(WORKING_BRANCH)
 	@$(GIT) push origin $(RELVERSION)
 	@$(GIT) branch -d hotfix/$(RELVERSION)
 	@$(GIT) push origin -d hotfix/$(RELVERSION)
@@ -196,7 +188,21 @@ else
 	$(error "You must be in a hotfix branch to finish")
 endif
 
-## Git-Flow hotfix purge
+### Git-Flow Hotfix finish (manual) UNSUPPORTED!
+#gitflow/hotfix/finish/%:
+#	$(call assert-set,GIT)
+#	$(eval HOTFIX_NAME := $(subst gitflow/hotfix/finish/,,$@))
+#	@$(GIT) checkout $(MAIN_BRANCH)
+#	@$(GIT) pull origin $(MAIN_BRANCH)
+#	@$(GIT) merge --no-ff hotfix/$(HOTFIX_NAME)
+#	@$(GIT) tag -a $(HOTFIX_NAME) -m "HotFix Release $(HOTFIX_NAME)"
+#	@$(GIT) push origin $(MAIN_BRANCH)
+#	@$(GIT) push origin $(HOTFIX_NAME)
+#	@$(GIT) branch -d hotfix/$(HOTFIX_NAME)
+#	@$(GIT) push origin -d hotfix/$(HOTFIX_NAME)
+#
+
+### Git-Flow hotfix purge
 gitflow/hotfix/purge: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
