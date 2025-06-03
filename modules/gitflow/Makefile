@@ -174,7 +174,7 @@ gitflow/hotfix/finish/local: gitflow/deps
 	$(eval MINOR_VERSION := $(shell echo "$(RELVERSION)" | cut -d. -f2))
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	# Check if we have a support branch with the same major.minor version on the git tree
-	$(eval SUPPORT_BRANCH := $(shell $(GIT) branch --list 'support/v$(MAJOR_VERSION).$(MINOR_VERSION)*'  --format '%(refname:short)'))
+	$(eval SUPPORT_BRANCH := $(shell $(GIT) branch --list 'support/$(MAJOR_VERSION).$(MINOR_VERSION)*'  --format '%(refname:short)'))
 	$(eval WORKING_BRANCH := $(if $(SUPPORT_BRANCH),$(SUPPORT_BRANCH),$(MAIN_BRANCH)))
 	@echo "Major Version is: $(MAJOR_VERSION)"
 	@echo "Minor Version is: $(MINOR_VERSION)"
