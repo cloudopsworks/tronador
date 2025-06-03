@@ -221,12 +221,13 @@ repos/upgrade: packages/install/gh repos/template/init
 	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' .github/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
-	$(eval ALLTAGS := $(shell $(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo ""))
-	$(eval THETAG= $(shell echo "$(ALLTAGS)" | grep -E '^v$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$$' | sort -V | tail -n1))
-	echo "repo: $(REPO_NAME)"
-	echo "version: $(VERSION_STRING) = $(MAJOR_VERSION) . $(MINOR_VERSION)"
-	echo "all tags: $(ALLTAGS)"
-	echo "the tag: $(THETAG)"
+	$(eval THETAG= $(shell ))
+	tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
+	the_tag=$$(echo "$$tags" | grep -E '^v$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$$' | sort -V | tail -n1) ; \
+	echo "repo: $(REPO_NAME)" ; \
+	echo "version: $(VERSION_STRING) = $(MAJOR_VERSION) . $(MINOR_VERSION)" ; \
+	echo "all tags: $$tags" ; \
+	echo "the tag: $$the_tag" ; \
 	$(MAKE) PULL_BRANCH=$(THETAG) repos/upgrade/stack
 
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
