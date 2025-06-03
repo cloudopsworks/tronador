@@ -222,7 +222,7 @@ repos/upgrade: packages/install/gh repos/template/init
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
 	$(eval ALLTAGS := $(shell $(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo ""))
-	$(eval THETAG= $(shell echo "$(ALLTAGS)" | grep -E '^v$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$' | sort -V | tail -n1))
+	$(eval THETAG= $(shell echo "$(ALLTAGS)" | grep -E '^v$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$$' | sort -V | tail -n1))
 	echo "repo: $(REPO_NAME)"
 	echo "version: $(VERSION_STRING) = $(MAJOR_VERSION) . $(MINOR_VERSION)"
 	echo "all tags: $(ALLTAGS)"
@@ -232,8 +232,8 @@ repos/upgrade: packages/install/gh repos/template/init
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
 repos/upgrade/major: packages/install/gh repos/template/init
 	$(call assert-set,GH)
-	$(eval VERSION_STRING := $(shell cat _VERSION))
-	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' _VERSION))
+	$(eval VERSION_STRING := $(shell cat .github/_VERSION))
+	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' .github/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
 	$(eval ALLTAGS := $(shell $(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo ""))
