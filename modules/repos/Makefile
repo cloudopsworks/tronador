@@ -25,7 +25,7 @@ repos/template/dotnet:
 ifneq (,$(wildcard .github/.dotnet))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "DotNet Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(DOTNET_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template
 else
 	@echo "DotNet Project Template already pulled"
 endif
@@ -39,7 +39,7 @@ repos/template/go:
 ifneq (,$(wildcard .github/.golang))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "Go Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(GO_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(GO_TEMPLATE).git .template
 else
 	@echo "Go Project Template already pulled"
 endif
@@ -53,7 +53,7 @@ repos/template/rust:
 ifneq (,$(wildcard .github/.rust))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "Rust Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(RUST_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(RUST_TEMPLATE).git .template
 else
 	@echo "Rust Project Template already pulled"
 endif
@@ -67,7 +67,7 @@ repos/template/xcode:
 ifneq (,$(wildcard .github/.xcode))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "XCode Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(XCODE_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(XCODE_TEMPLATE).git .template
 else
 	@echo "XCode Project Template already pulled"
 endif
@@ -81,7 +81,7 @@ repos/template/java:
 ifneq (,$(wildcard .github/.java))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "Java Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(JAVA_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(JAVA_TEMPLATE).git .template
 else
 	@echo "Java Project Template already pulled"
 endif
@@ -95,7 +95,7 @@ repos/template/node:
 ifneq (,$(wildcard .github/.node))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "NodeJS Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(NODE_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(NODE_TEMPLATE).git .template
 else
 	@echo "NodeJS Project Template already pulled"
 endif
@@ -109,7 +109,7 @@ repos/template/docker:
 ifneq (,$(wildcard .github/.docker))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "Docker Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(DOCKER_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(DOCKER_TEMPLATE).git .template
 else
 	@echo "Docker Project Template already pulled"
 endif
@@ -123,7 +123,7 @@ repos/template/python:
 ifneq (,$(wildcard .github/.python))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "Python Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(PYTHON_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(PYTHON_TEMPLATE).git .template
 else
 	@echo "Python Project Template already pulled"
 endif
@@ -137,7 +137,7 @@ repos/template/terragrunt:
 ifneq (,$(wildcard .github/.iac))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "Terragrunt Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(TERRAGRUNT_TEMPLATE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(TERRAGRUNT_TEMPLATE).git .template
 else
 	@echo "Terragrunt Project Template already pulled"
 endif
@@ -153,7 +153,7 @@ repos/template/terraform-module:
 ifneq (,$(wildcard .github/.terraform-module))
 ifeq (,$(CURR_TEMPLATE))
 	@echo "Terraform Module Project Template will be pulled"
-	$(GIT) remote add template https://github.com/$(TERRAFORM_MODULE).git --no-tags --no-mirror --no-fetch
+	$(GIT) clone https://github.com/$(TERRAFORM_MODULE).git .template
 else
 	@echo "Terraform Module Project Template already pulled"
 endif
@@ -247,7 +247,14 @@ repos/upgrade/major: packages/install/gh repos/template/init
 repos/upgrade/master: repos/template/init
 	$(MAKE) repos/upgrade/stack
 
-repos/upgrade/stack: packages/install/gh
+repos/upgrade/fetch:
+	$(call assert-set,PULL_BRANCH)
+	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
+	@cd .template && \
+		$(GIT) checkout $(PULL_BRANCH) && \
+		rm -fr .git
+
+repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
@@ -255,18 +262,21 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
-	@$(GIT) fetch template $(PULL_BRANCH)
+	@git remote | grep -q template && git remote remove template
 	$(MAKE) repos/clean
   ifeq (1,$(VERSIONED_TEMPLATE))
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile .github/_VERSION
-	@if [ -f .github/Makefile ]; then \
-		$(GIT) checkout template/$(PULL_BRANCH) -- .github/Makefile; \
+	@cp -pfR .template/.github/workflows .github
+	@cp -pf .template/Makefile Makefile
+	@cp -pf .template/.github/_VERSION .github/_VERSION
+	@if [ -f .template/.github/Makefile ]; then \
+		cp -pf .template/.github/Makefile .github/Makefile ; \
 	fi
   else
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .github/workflows Makefile
+	@cp -pfr .template/.github/workflows .github/workflows
+	@cp -pfr .template/Makefile Makefile
   endif
   ifeq (1,$(BOILERPLATE_TEMPLATE))
-	@$(GIT) checkout template/$(PULL_BRANCH) -- $(BOILERPLATE_PATH)
+	@cp -pfR .template/$(BOILERPLATE_PATH) .
   endif
   ifeq (1,$(CICD_TEMPLATE))
 	$(MAKE) repos/cicd/update
