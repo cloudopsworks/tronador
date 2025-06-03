@@ -123,10 +123,15 @@ gitflow/feature/purge-no-develop/%: gitflow/co/main
 	@$(GIT) push origin -d feature/$(FEAT_NAME)
 
 ## GIt-Flow Hotfix start
-gitflow/hotfix/start: gitflow/deps gitflow/co/main
+gitflow/hotfix/start: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,SEMVER)
 	$(call assert-set,GITVERSION)
+ifeq ($(GIT_BRANCH_PREFIX),support)
+	@echo "You are in a support branch, we are not checking out $(MAIN_BRANCH) to start a hotfix, skipping checkout."
+else
+	@$(MAKE) gitflow/co/main
+endif
 	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)) $(MAIN_BRANCH)
 #
 #	@REV=$$($(GITVERSION) -output json -showvariable MajorMinorPatch) ; \
