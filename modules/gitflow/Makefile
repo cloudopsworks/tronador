@@ -128,11 +128,12 @@ gitflow/hotfix/start: gitflow/deps
 	$(call assert-set,SEMVER)
 	$(call assert-set,GITVERSION)
 ifeq ($(GIT_BRANCH_PREFIX),support)
-	@echo "You are in a support branch, we are not checking out $(MAIN_BRANCH) to start a hotfix, skipping checkout."
+	@echo "You are in a support branch, we are checking out from $(GIT_BRANCH) to start a hotfix."
+	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)) $(GIT_BRANCH)
 else
 	@$(MAKE) gitflow/co/main
-endif
 	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)) $(MAIN_BRANCH)
+endif
 #
 #	@REV=$$($(GITVERSION) -output json -showvariable MajorMinorPatch) ; \
 #		BUMP=$$($(SEMVER) bump patch v$$REV) ; \
