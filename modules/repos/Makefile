@@ -214,11 +214,6 @@ endif
 repos/upgrade/dev: repos/template/init
 	$(MAKE) PULL_BRANCH=develop repos/upgrade/stack
 
-## Upgrade Repository from Templates for specific version as part of the last / (%) argument
-repos/upgrade/%: repos/template/init
-	$(eval RELVERSION := $(subst repos/upgrade/,,$@))
-	$(MAKE) PULL_BRANCH=$(RELVERSION) repos/upgrade/stack
-
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
 repos/upgrade: packages/install/gh repos/template/init
 	$(call assert-set,GH)
@@ -274,6 +269,11 @@ ifeq (1,$(MERGE_TEMPLATE))
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
 endif
+
+## Upgrade Repository from Templates for specific version as part of the last / (%) argument
+repos/upgrade/%: repos/template/init
+	$(eval RELVERSION := $(subst repos/upgrade/,,$@))
+	$(MAKE) PULL_BRANCH=$(RELVERSION) repos/upgrade/stack
 
 ## Upgrade Repository from Templates
 repos/recover: packages/install/gh repos/template/init
