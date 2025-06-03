@@ -132,7 +132,7 @@ ifeq ($(GIT_BRANCH_PREFIX),support)
 	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)) $(GIT_BRANCH)
 else
 	@$(MAKE) gitflow/co/main
-	@$(GIT) checkout -b hotfix/$(shell $(SEMVER) bump patch v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)) $(MAIN_BRANCH)
+	@$(GIT) checkout -b hotfix/$$($(SEMVER) bump patch v$$($(GITVERSION) -output json -showvariable MajorMinorPatch)) $(MAIN_BRANCH)
 endif
 #
 #	@REV=$$($(GITVERSION) -output json -showvariable MajorMinorPatch) ; \
