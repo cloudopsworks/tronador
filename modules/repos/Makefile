@@ -23,7 +23,7 @@ REPO_NAME ?= ""
 repos/template/dotnet:
 ifneq (,$(wildcard .github/.dotnet))
 	@echo "DotNet Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -33,7 +33,7 @@ endif
 repos/template/go:
 ifneq (,$(wildcard .github/.golang))
 	@echo "Go Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(GO_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(GO_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -43,7 +43,7 @@ endif
 repos/template/rust:
 ifneq (,$(wildcard .github/.rust))
 	@echo "Rust Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(RUST_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(RUST_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -53,7 +53,7 @@ endif
 repos/template/xcode:
 ifneq (,$(wildcard .github/.xcode))
 	@echo "XCode Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(XCODE_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(XCODE_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -63,7 +63,7 @@ endif
 repos/template/java:
 ifneq (,$(wildcard .github/.java))
 	@echo "Java Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(JAVA_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(JAVA_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -73,7 +73,7 @@ endif
 repos/template/node:
 ifneq (,$(wildcard .github/.node))
 	@echo "NodeJS Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(NODE_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(NODE_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -83,7 +83,7 @@ endif
 repos/template/docker:
 ifneq (,$(wildcard .github/.docker))
 	@echo "Docker Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(DOCKER_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(DOCKER_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -93,7 +93,7 @@ endif
 repos/template/python:
 ifneq (,$(wildcard .github/.python))
 	@echo "Python Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(PYTHON_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(PYTHON_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -103,7 +103,7 @@ endif
 repos/template/terragrunt:
 ifneq (,$(wildcard .github/.iac))
 	@echo "Terragrunt Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(TERRAGRUNT_TEMPLATE).git .template
+	@$(GIT) clone https://github.com/$(TERRAGRUNT_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -115,7 +115,7 @@ endif
 repos/template/terraform-module:
 ifneq (,$(wildcard .github/.terraform-module))
 	@echo "Terraform Module Project Template will be pulled"
-	@$(GIT) clone https://github.com/$(TERRAFORM_MODULE).git .template
+	@$(GIT) clone https://github.com/$(TERRAFORM_MODULE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
@@ -127,7 +127,7 @@ repos/template/init: repos/clean/template repos/template/java repos/template/doc
 
 .PHONY: repos/clean/template
 repos/clean/template:
-	echo "Cleaning up template repository"
+	@echo "Cleaning up template repository"
 	@if [ -d .template ]; then \
 		rm -rf .template ; \
 	fi
