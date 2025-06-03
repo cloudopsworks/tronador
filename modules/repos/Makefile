@@ -189,12 +189,12 @@ repos/upgrade: packages/install/gh repos/template/init
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
 	$(eval THETAG= $(shell ))
-	tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
-	the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$$' | sort -V | tail -n1) ; \
-	echo "Repo: $(REPO_NAME)" ; \
-	echo "Version: $(VERSION_STRING) = $(MAJOR_VERSION).$(MINOR_VERSION)" ; \
-	echo "Last Version: $$the_tag" ; \
-	$(MAKE) PULL_BRANCH=$$the_tag repos/upgrade/stack
+	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
+		the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$$' | sort -V | tail -n1) ; \
+		echo "Repo: $(REPO_NAME)" ; \
+		echo "Version: $(VERSION_STRING) = $(MAJOR_VERSION).$(MINOR_VERSION)" ; \
+		echo "Last Version: $$the_tag" ; \
+		$(MAKE) PULL_BRANCH=$$the_tag repos/upgrade/stack
 
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
 repos/upgrade/major: packages/install/gh repos/template/init
@@ -203,12 +203,12 @@ repos/upgrade/major: packages/install/gh repos/template/init
 	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' .github/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
-	tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
-	the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.[0-9]+\.[0-9]+$$' | sort -V | tail -n1) ; \
-	echo "Repo: $(REPO_NAME)" ; \
-	echo "Version: $(VERSION_STRING) = $(MAJOR_VERSION).$(MINOR_VERSION)" ; \
-	echo "Last Version: $$the_tag" ; \
-	$(MAKE) PULL_BRANCH=$$the_tag repos/upgrade/stack
+	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
+		the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.[0-9]+\.[0-9]+$$' | sort -V | tail -n1) ; \
+		echo "Repo: $(REPO_NAME)" ; \
+		echo "Version: $(VERSION_STRING) = $(MAJOR_VERSION).$(MINOR_VERSION)" ; \
+		echo "Last Version: $$the_tag" ; \
+		$(MAKE) PULL_BRANCH=$$the_tag repos/upgrade/stack
 
 ## Upgrade Repository from master Templates (Major upgrade, can contain breaking changes)
 repos/upgrade/master: repos/template/init
@@ -229,7 +229,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Updating from template repository"
-	$(MAKE) repos/clean
+	@$(MAKE) repos/clean
   ifeq (1,$(VERSIONED_TEMPLATE))
 	@cp -pfR .template/.github/workflows .github
 	@cp -pf .template/Makefile Makefile
@@ -245,9 +245,10 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@cp -pfR .template/$(BOILERPLATE_PATH) .
   endif
   ifeq (1,$(CICD_TEMPLATE))
-	$(MAKE) repos/cicd/update
+	@$(MAKE) repos/cicd/update
   endif
-	$(MAKE) repos/push
+	@rm -fr .template/
+	@$(MAKE) repos/push
 	@echo "Please review changes and push to remote repository"
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
