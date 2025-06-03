@@ -17,18 +17,13 @@ CICD_TEMPLATE := 0
 BOILERPLATE_TEMPLATE := 0
 BOILERPLATE_PATH := .boilerplate
 GH ?= $(INSTALL_PATH)/gh
-CURR_TEMPLATE := $(shell $(GIT) remote | grep template)
 PULL_BRANCH ?= master
 REPO_NAME ?= ""
 
 repos/template/dotnet:
 ifneq (,$(wildcard .github/.dotnet))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "DotNet Project Template will be pulled"
-	$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template
-else
-	@echo "DotNet Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -37,12 +32,8 @@ endif
 
 repos/template/go:
 ifneq (,$(wildcard .github/.golang))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "Go Project Template will be pulled"
-	$(GIT) clone https://github.com/$(GO_TEMPLATE).git .template
-else
-	@echo "Go Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(GO_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -51,12 +42,8 @@ endif
 
 repos/template/rust:
 ifneq (,$(wildcard .github/.rust))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "Rust Project Template will be pulled"
-	$(GIT) clone https://github.com/$(RUST_TEMPLATE).git .template
-else
-	@echo "Rust Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(RUST_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -65,12 +52,8 @@ endif
 
 repos/template/xcode:
 ifneq (,$(wildcard .github/.xcode))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "XCode Project Template will be pulled"
-	$(GIT) clone https://github.com/$(XCODE_TEMPLATE).git .template
-else
-	@echo "XCode Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(XCODE_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -79,12 +62,8 @@ endif
 
 repos/template/java:
 ifneq (,$(wildcard .github/.java))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "Java Project Template will be pulled"
-	$(GIT) clone https://github.com/$(JAVA_TEMPLATE).git .template
-else
-	@echo "Java Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(JAVA_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -93,12 +72,8 @@ endif
 
 repos/template/node:
 ifneq (,$(wildcard .github/.node))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "NodeJS Project Template will be pulled"
-	$(GIT) clone https://github.com/$(NODE_TEMPLATE).git .template
-else
-	@echo "NodeJS Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(NODE_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -107,12 +82,8 @@ endif
 
 repos/template/docker:
 ifneq (,$(wildcard .github/.docker))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "Docker Project Template will be pulled"
-	$(GIT) clone https://github.com/$(DOCKER_TEMPLATE).git .template
-else
-	@echo "Docker Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(DOCKER_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -121,12 +92,8 @@ endif
 
 repos/template/python:
 ifneq (,$(wildcard .github/.python))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "Python Project Template will be pulled"
-	$(GIT) clone https://github.com/$(PYTHON_TEMPLATE).git .template
-else
-	@echo "Python Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(PYTHON_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -135,12 +102,8 @@ endif
 
 repos/template/terragrunt:
 ifneq (,$(wildcard .github/.iac))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "Terragrunt Project Template will be pulled"
-	$(GIT) clone https://github.com/$(TERRAGRUNT_TEMPLATE).git .template
-else
-	@echo "Terragrunt Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(TERRAGRUNT_TEMPLATE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
@@ -151,12 +114,8 @@ endif
 
 repos/template/terraform-module:
 ifneq (,$(wildcard .github/.terraform-module))
-ifeq (,$(CURR_TEMPLATE))
 	@echo "Terraform Module Project Template will be pulled"
-	$(GIT) clone https://github.com/$(TERRAFORM_MODULE).git .template
-else
-	@echo "Terraform Module Project Template already pulled"
-endif
+	@$(GIT) clone https://github.com/$(TERRAFORM_MODULE).git .template
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
