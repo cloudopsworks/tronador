@@ -131,6 +131,7 @@ repos/clean/template:
 	@if [ -d .template ]; then \
 		rm -rf .template ; \
 	fi
+	@$(GIT) remote remove template > /dev/null 2>&1 || true
 
 ## Update CICD Pipeline footer versioning
 repos/cicd/update:
@@ -217,7 +218,7 @@ repos/upgrade/fetch:
 	$(call assert-set,PULL_BRANCH)
 	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
 	@cd .template && \
-		$(GIT) checkout $(PULL_BRANCH) && \
+		$(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1 && \
 		rm -fr .git
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
@@ -227,8 +228,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION) from $(PULL_BRANCH)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
-	@echo "Fetching template repository"
-	@git remote | grep -q template && git remote remove template
+	@echo "Updating from template repository"
 	$(MAKE) repos/clean
   ifeq (1,$(VERSIONED_TEMPLATE))
 	@cp -pfR .template/.github/workflows .github
