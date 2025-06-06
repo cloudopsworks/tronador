@@ -268,12 +268,15 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
-	@$(GIT) fetch template $(PULL_BRANCH)
-	$(MAKE) repos/clean
-	@$(GIT) checkout template/$(PULL_BRANCH) -- .
-  ifeq (1,$(CICD_TEMPLATE))
-	$(MAKE) repos/cicd/update
+	@$(MAKE) repos/clean
+	@cp -pfr .template/ .
+  ifeq (1,$(BOILERPLATE_TEMPLATE))
+	@cp -pfR .template/$(BOILERPLATE_PATH) .
   endif
+  ifeq (1,$(CICD_TEMPLATE))
+	@$(MAKE) repos/cicd/update
+  endif
+	@rm -fr .template/
 	@echo "!!WARNING!! Some files may have been overwritten, please review changes and push to remote repository"
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
