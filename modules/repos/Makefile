@@ -260,7 +260,7 @@ repos/upgrade/%: repos/template/init
 	$(MAKE) PULL_BRANCH=$(RELVERSION) repos/upgrade/stack
 
 ## Upgrade Repository from Templates
-repos/recover: packages/install/gh repos/template/init
+repos/recover: packages/install/gh repos/template/init repos/upgrade/fetch
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
