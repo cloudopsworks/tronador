@@ -247,7 +247,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@cp -pfR .template/$(BOILERPLATE_PATH) .
   endif
   ifeq (1,$(CICD_TEMPLATE))
-	@$(MAKE) repos/cicd/update
+	@$(MAKE) TEMPLATE_HASH=$(TEMPLATE_HASH) repos/cicd/update
   endif
 	@rm -fr .template/
 	@$(MAKE) repos/push
