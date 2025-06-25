@@ -221,6 +221,7 @@ repos/upgrade/fetch:
 	cd .template && $(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1
 	$(eval TEMPLATE_HASH := $(shell cd .template && $(GIT) rev-parse HEAD))
 	cd .template && rm -fr .git
+	echo "Template repository hash: $(TEMPLATE_HASH)"
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
