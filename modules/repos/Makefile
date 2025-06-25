@@ -218,10 +218,10 @@ repos/upgrade/master: repos/template/init
 repos/upgrade/fetch:
 	$(call assert-set,PULL_BRANCH)
 	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
-	cd .template && $(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1
+	@cd .template && $(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1
 	$(eval TEMPLATE_HASH := $(shell cd .template && $(GIT) rev-parse HEAD))
-	cd .template && rm -fr .git
-	echo "Template repository hash: $(TEMPLATE_HASH)"
+	@cd .template && rm -fr .git
+	@echo "Template repository hash: $(TEMPLATE_HASH)"
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
