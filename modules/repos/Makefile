@@ -19,6 +19,7 @@ BOILERPLATE_PATH := .boilerplate
 GH ?= $(INSTALL_PATH)/gh
 PULL_BRANCH ?= master
 REPO_NAME ?= ""
+TEMPLATE_HASH ?= ""
 
 repos/template/dotnet:
 ifneq (,$(wildcard .github/.dotnet))
@@ -138,9 +139,9 @@ repos/cicd/update:
 	@echo "Updating CICD Pipeline cloudopsworks-ci.yaml"
 	@grep -q "#workflow-version-tag" .github/cloudopsworks-ci.yaml || printf "\n\n############ DO NOT MODIFY BELOW ############\n#workflow-version-tag: 1.0.0" >> .github/cloudopsworks-ci.yaml
 ifeq ($(OS),darwin)
-	@sed -i '' "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $$(git for-each-ref refs/remotes/template --sort="-committerdate" | head -1 | cut -d ' ' -f 1)|g" .github/cloudopsworks-ci.yaml
+	@sed -i '' "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $(TEMPLATE_HASH)|g" .github/cloudopsworks-ci.yaml
 else
-	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $$(git for-each-ref refs/remotes/template --sort="-committerdate" | head -1 | cut -d ' ' -f 1)|g" .github/cloudopsworks-ci.yaml
+	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $(TEMPLATE_HASH)|g" .github/cloudopsworks-ci.yaml
 endif
 
 repos/clean:
@@ -217,9 +218,10 @@ repos/upgrade/master: repos/template/init
 repos/upgrade/fetch:
 	$(call assert-set,PULL_BRANCH)
 	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
-	@cd .template && \
-		$(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1 && \
-		rm -fr .git
+	@cd .template
+	@$(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1
+	@rm -fr .git
+	$(eval TEMPLATE_HASH := $(shell $(GIT) rev-parse HEAD))
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
