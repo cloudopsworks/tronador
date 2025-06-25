@@ -219,8 +219,8 @@ repos/upgrade/fetch:
 	$(call assert-set,PULL_BRANCH)
 	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
 	cd .template && $(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1
-	$(eval TEMPLATE_HASH := $(shell $(GIT) rev-parse HEAD))
-	rm -fr .git
+	$(eval TEMPLATE_HASH := $(shell cd .template && $(GIT) rev-parse HEAD))
+	cd .template && rm -fr .git
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
