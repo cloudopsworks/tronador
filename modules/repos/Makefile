@@ -170,7 +170,7 @@ repos/push:
 ifeq (1,$(CICD_TEMPLATE))
 	@$(GIT) add .github/workflows Makefile .github/_VERSION .github/Makefile .github/cloudopsworks-ci.yaml
 else
-	@$(GIT) add .github/workflows Makefile .github/_VERSION .github/Makefile
+	@$(GIT) add .github/workflows Makefile .github/_VERSION
 endif
 ifeq (1,$(BOILERPLATE_TEMPLATE))
 	@$(GIT) add $(BOILERPLATE_PATH)
