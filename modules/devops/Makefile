@@ -74,7 +74,7 @@ devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/ssm/check
 	@rm -f $(TEMP_FILE)
 
 
-## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by :<src port>:<dest port>
+## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<dest port>
 devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/bastion/ssm/check
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
@@ -86,3 +86,32 @@ devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["$(SRC_PORT)"],"localPortNumber":["$(DEST_PORT)"]}' --region $(REGION)
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
+
+## Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
+devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/bastion/ssm/check
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
+# Retrieve instance's public IP address from EC2 instance metadata instance id is defiende in $(TEMP_FILE)
+	@echo "Retrieving bastion host public IP address..."
+	$(eval BASTION_IP := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 describe-instances --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "Reservations[0].Instances[0].PublicIpAddress" --output text))
+	@echo "Bastion host public IP address: $(BASTION_IP)"
+# Retrieve the key name from ssm parameter store
+	@echo "Retrieving bastion host key name from SSM..."
+	$(eval KEY_NAME := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/key-secret-name --query "Parameter.Value" --region $(REGION) --output text))
+# Retrieve the contents of SecretsManager secret named by  $(KEYNAME)
+	@echo "Retrieving bastion host key contents from SecretsManager..."
+	$(eval KEY_CONTENTS := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) secretsmanager get-secret-value --secret-id $(KEY_NAME) --query "SecretString" --region $(REGION) --output text))
+# Save the key contents to a temporary file
+	$(eval TEMP_KEY_FILE := $(shell mktemp /tmp/bastion_key.XXXXXX))
+	@echo "Saving bastion host key contents to temporary file..."
+	@echo "$(KEY_CONTENTS)" > $(TEMP_KEY_FILE)
+# Set the permissions of the temporary key file to 400
+	@chmod 400 $(TEMP_KEY_FILE)
+# Retrieve the source and destination ports from the target
+	$(eval SRC_DEST ?= $(subst /, ,$(subst devops/aws/bastion/ssh-port-forward/,,$@)))
+	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
+	$(eval DEST_ADDR := $(word 2,$(SRC_DEST)))
+	$(eval DEST_PORT := $(word 3,$(SRC_DEST)))
+	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) addres-to: $(DEST_ADDR) to: $(DEST_PORT)"
+	@ssh -i $(TEMP_KEY_FILE) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) ec2-user@$(BASTION_IP)
+
