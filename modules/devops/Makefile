@@ -129,3 +129,21 @@ devops/aws/bastion/ssh-run:
 	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) address-to: $(DEST_ADDR) to: $(DEST_PORT)"
 	@eval `cat $(SSH_AGENT_FILE)` ; \
 		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) $(INSTANCE_USER)@$(BASTION_IP)
+
+## Shuts down the bastion host instance in the specified spoke number
+devops/aws/bastion/shutdown: devops/aws/load-defaults
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
+	$(eval TEMP_FILE := $(shell mktemp /tmp/bastion_instance_id.XXXXXX))
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE)
+	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
+# Check if the instance ID is in running state, if not, start the instance, wait and then proceed
+	@echo "Checking if the bastion host instance is running..."
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "stopped" || \
+		( echo "Bastion host instance is running, stopping it..." && \
+		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 stop-instances --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
+		  echo "Waiting for the bastion host instance to be totally stopped..." && \
+		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 wait instance-stopped --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
+		  echo "Bastion host instance is now stopped." )
+# Clean up the temporary file
+	rm -f $(TEMP_FILE)
