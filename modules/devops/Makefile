@@ -4,7 +4,7 @@ SPOKE_NUM ?= "001"
 REGION ?= "us-east-1"
 PROFILE ?= "devops"
 
-devps/aws/login/sso:
+devops/aws/login/sso:
 	@echo "Logging in to AWS SSO..."
 	@$(AWS) sso login --profile $(PROFILE)
 
