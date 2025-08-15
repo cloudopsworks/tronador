@@ -34,4 +34,4 @@ devops/aws/bastion/ssm: devops/aws/load-defaults
 	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
 	# Start SSM session to the bastion host
 	@echo "Starting SSM session to the bastion host..."
-	@(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
+	@$ (AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
