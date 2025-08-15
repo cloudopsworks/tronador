@@ -74,7 +74,7 @@ devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/ssm/check
 	@rm -f $(TEMP_FILE)
 
 
-## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number
+## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by :<src port>:<dest port>
 devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/bastion/ssm/check
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
