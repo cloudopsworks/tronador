@@ -32,6 +32,14 @@ devops/aws/bastion/ssm: devops/aws/load-defaults
 	$(eval TEMP_FILE := $(shell mktemp /tmp/bastion_instance_id.XXXXXX))
 	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE)
 	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
+	# Check if the instance ID is in running state, if not, start the instance, wait and then proceed
+	@echo "Checking if the bastion host instance is running..."
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "running" || \
+		( echo "Bastion host instance is not running, starting it..." && \
+		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 start-instances --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
+		  echo "Waiting for the bastion host instance to be running..." && \
+		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 wait instance-running --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
+		  echo "Bastion host instance is now running." )
 	# Start SSM session to the bastion host
 	@echo "Starting SSM session to the bastion host..."
 	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
