@@ -1,5 +1,5 @@
-AWS:$(shell which aws)
-AWS_VAULT:$(shell which aws-vault)
+AWS := $(shell which aws)
+AWS_VAULT :=  $(shell which aws-vault)
 SPOKE_NUM ?= "001"
 REGION ?= "us-east-1"
 PROFILE ?= "devops"
