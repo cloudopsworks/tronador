@@ -83,6 +83,6 @@ devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
 	$(eval DEST_PORT := $(word 2,$(SRC_DEST)))
 	@echo "Starting SSM session to the bastion host..."
-	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat /tmp/bastion_instance_id.XXXXXX) --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["$(SRC_PORT)"],"localPortNumber":["$(DEST_PORT)"]}' --region $(REGION)
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["$(SRC_PORT)"],"localPortNumber":["$(DEST_PORT)"]}' --region $(REGION)
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
