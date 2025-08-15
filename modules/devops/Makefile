@@ -10,6 +10,7 @@ devops/aws/login/sso:
 	@echo "Logging in to AWS SSO..."
 	@$(AWS) sso login --profile $(PROFILE)
 
+
 # Loads default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables
 devops/aws/load-defaults:
 # Load default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables, if $HOME/.tronador_devops does not exist, create and save defaults
@@ -24,6 +25,7 @@ devops/aws/load-defaults:
 		echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"; \
 	fi
 	@. $(HOME)/.tronador_devops
+
 
 # Check if the bastion host instance is running and registered with SSM before starting a session
 devops/aws/bastion/ssm/check:
@@ -43,7 +45,6 @@ devops/aws/bastion/ssm/check:
 		  echo "Waiting for the bastion host instance to be running..." && \
 		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 wait instance-running --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
 		  echo "Bastion host instance is now running." )
-# Start SSM session to the bastion host
 # Before starting the session, ensure that the instance ID is available and ssm agent was able to register with SSM
 	@echo "Checking if the bastion host instance is registered with SSM..."
 # Retry at least 3 times with 20 sec interval to ensure the SSM agent has registered
@@ -72,6 +73,7 @@ devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/ssm/check
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
 
+
 ## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number
 devops/aws/bastion/ssm/port-forward/%: devops/aws/load-defaults
 	$(call assert-set,AWS)
@@ -80,3 +82,7 @@ devops/aws/bastion/ssm/port-forward/%: devops/aws/load-defaults
 	$(eval SRC_DEST ?= $(subst devops/aws/bastion/ssm/port-forward/,,$@))
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
 	$(eval DEST_PORT := $(word 2,$(SRC_DEST)))
+	@echo "Starting SSM session to the bastion host..."
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat /tmp/bastion_instance_id.XXXXXX) --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["$(SRC_PORT)"],"localPortNumber":["$(DEST_PORT)"]}' --region $(REGION)
+# Clean up the temporary file
+	@rm -f $(TEMP_FILE)
