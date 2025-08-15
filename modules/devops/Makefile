@@ -1,0 +1,34 @@
+AWS:$(shell which aws)
+AWS_VAULT:$(shell which aws-vault)
+SPOKE_NUM ?= "001"
+REGION ?= "us-east-1"
+PROFILE ?= "devops"
+
+devps/aws/login/sso:
+	@echo "Logging in to AWS SSO..."
+	@$(AWS) sso login --profile $(PROFILE)
+
+devops/aws/load-defaults:
+	# Load default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables, if $HOME/.tronador_devops does not exist, create and save defaults
+	# this is done at makefile load time so that the variables are available for other targets
+	@echo "Loading AWS defaults..."
+	@if [ -f $(HOME)/.tronador_devops ]; then \
+		echo "Found existing .tronador_devops file, loading defaults..."; \
+	else \
+		echo "No .tronador_devops file found, creating with default values..."; \
+		echo "export REGION=$(REGION)" > $(HOME)/.tronador_devops; \
+		echo "export PROFILE=$(PROFILE)" >> $(HOME)/.tronador_devops; \
+		echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"; \
+	fi
+	@. $(HOME)/.tronador_devops
+
+devops/aws/bastion/ssm: devops/aws/load-defaults
+	# Retrieve the instance ID of the bastion host from ssm parameter store
+	@echo "Retrieving bastion host instance ID from SSM..."
+	# Generate temp file to store the instance ID
+    $(eval TEMP_FILE := $(shell mktemp /tmp/bastion_instance_id.XXXXXX))
+	@aws-vault exec $(PROFILE) -- @$(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE)
+	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
+	# Start SSM session to the bastion host
+	@echo "Starting SSM session to the bastion host..."
+	@aws-vault exec $(PROFILE) -- @$(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
