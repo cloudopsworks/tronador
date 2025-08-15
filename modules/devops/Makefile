@@ -122,10 +122,10 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 devops/aws/bastion/ssh-keyadd:
 # Retrieve the contents of SecretsManager secret named by  $(KEYNAME)
 	@echo "Retrieving bastion host key contents from SecretsManager..."
-	@eval `cat $(SSH_AGENT_FILE)` \
+	@eval `cat $(SSH_AGENT_FILE)` ; \
  		$(AWS_VAULT) exec $(PROFILE) -- $(AWS) secretsmanager get-secret-value --secret-id $(KEY_NAME) --query "SecretString" --region $(REGION) --output text | ssh-add -
 
 devops/aws/bastion/ssh-run:
-	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) addres-to: $(DEST_ADDR) to: $(DEST_PORT)"
-	@eval `cat $(SSH_AGENT_FILE)` \
+	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) address-to: $(DEST_ADDR) to: $(DEST_PORT)"
+	@eval `cat $(SSH_AGENT_FILE)` ; \
 		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) $(INSTANCE_USER)@$(BASTION_IP)
