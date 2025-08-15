@@ -6,6 +6,7 @@ PROFILE ?= "devops"
 
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
 devops/aws/login/sso:
+	$(call assert-set,AWS)
 	@echo "Logging in to AWS SSO..."
 	@$(AWS) sso login --profile $(PROFILE)
 
@@ -24,8 +25,10 @@ devops/aws/load-defaults:
 	fi
 	@. $(HOME)/.tronador_devops
 
-## Starts an SSM Session Manager session to the bastion host in the specified spoke number
-devops/aws/bastion/ssm: devops/aws/load-defaults
+# Check if the bastion host instance is running and registered with SSM before starting a session
+devops/aws/bastion/ssm/check:
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
 # Retrieve the instance ID of the bastion host from ssm parameter store
 	@echo "Retrieving bastion host instance ID from SSM..."
 # Generate temp file to store the instance ID
@@ -57,6 +60,23 @@ devops/aws/bastion/ssm: devops/aws/load-defaults
 		echo "Bastion host instance is not registered with SSM, please ensure the SSM agent is running on the instance."; \
 		exit 1; \
 	fi
+
+
+## Starts an SSM Session Manager session to the bastion host in the specified spoke number
+devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/ssm/check
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
 # If the instance is registered, start the SSM session
 	@echo "Starting SSM session to the bastion host..."
 	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
+# Clean up the temporary file
+	@rm -f $(TEMP_FILE)
+
+## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number
+devops/aws/bastion/ssm/port-forward/%: devops/aws/load-defaults
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
+# Retrieve the source and destination ports from the target parameters $@
+	$(eval SRC_DEST ?= $(subst devops/aws/bastion/ssm/port-forward/,,$@))
+	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
+	$(eval DEST_PORT := $(word 2,$(SRC_DEST)))
