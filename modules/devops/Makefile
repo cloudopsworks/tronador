@@ -106,7 +106,7 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	else \
 		echo "SSH agent is already running."; \
 	fi
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; eval `cat $(SSH_AGENT_FILE)`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; PROFILE=$(PROFILE) REGION=$(REGION) SSH_AGENT_FILE=$(SSH_AGENT_FILE) KEY_NAME=$(KEY_NAME) $(MAKE) devops/aws/bastion/ssh-keyadd"
+	bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; PROFILE=$(PROFILE) REGION=$(REGION) SSH_AGENT_FILE=$(SSH_AGENT_FILE) KEY_NAME=$(KEY_NAME) $(MAKE) devops/aws/bastion/ssh-keyadd"
 # Retrieve the source and destination ports from the target
 	$(eval SRC_DEST ?= $(subst /, ,$(subst devops/aws/bastion/ssh-port-forward/,,$@)))
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
