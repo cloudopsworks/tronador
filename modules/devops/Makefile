@@ -100,11 +100,8 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(eval KEY_NAME := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/key-secret-name --query "Parameter.Value" --region $(REGION) --output text))
 # Retrieve the contents of SecretsManager secret named by  $(KEYNAME)
 	@echo "Retrieving bastion host key contents from SecretsManager..."
-	$(eval KEY_CONTENTS := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) secretsmanager get-secret-value --secret-id $(KEY_NAME) --query "SecretString" --region $(REGION) --output text))
-# Save the key contents to a temporary file
 	$(eval TEMP_KEY_FILE := $(shell mktemp /tmp/bastion_key.XXXXXX))
-	@echo "Saving bastion host key contents to temporary file..."
-	@echo "$(KEY_CONTENTS)" > $(TEMP_KEY_FILE)
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) secretsmanager get-secret-value --secret-id $(KEY_NAME) --query "SecretString" --region $(REGION) --output text > $(TEMP_KEY_FILE)
 # Set the permissions of the temporary key file to 400
 	@chmod 400 $(TEMP_KEY_FILE)
 # Retrieve the source and destination ports from the target
@@ -113,7 +110,7 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(eval DEST_ADDR := $(word 2,$(SRC_DEST)))
 	$(eval DEST_PORT := $(word 3,$(SRC_DEST)))
 	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) addres-to: $(DEST_ADDR) to: $(DEST_PORT)"
-	@ssh -i $(TEMP_KEY_FILE) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) ec2-user@$(BASTION_IP)
+	ssh -i $(TEMP_KEY_FILE) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) ec2-user@$(BASTION_IP)
 # REmove the temporary key file
 	@rm -f $(TEMP_KEY_FILE)
 # Clean up the temporary file
