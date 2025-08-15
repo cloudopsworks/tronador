@@ -109,8 +109,11 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
 	$(eval DEST_ADDR := $(word 2,$(SRC_DEST)))
 	$(eval DEST_PORT := $(word 3,$(SRC_DEST)))
+# Retrieve from ssm parameter the instance-user value
+	@echo "Retrieving bastion host instance user from SSM..."
+	$(eval INSTANCE_USER := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user --query "Parameter.Value" --region $(REGION) --output text))
 	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) addres-to: $(DEST_ADDR) to: $(DEST_PORT)"
-	ssh -i $(TEMP_KEY_FILE) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) ec2-user@$(BASTION_IP)
+	ssh -i $(TEMP_KEY_FILE) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) $(INSTANCE_USER)@$(BASTION_IP)
 # REmove the temporary key file
 	@rm -f $(TEMP_KEY_FILE)
 # Clean up the temporary file
