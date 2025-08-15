@@ -3,6 +3,7 @@ AWS_VAULT :=  $(shell which aws-vault)
 SPOKE_NUM ?= "001"
 REGION ?= "us-east-1"
 PROFILE ?= "devops"
+SSH_AGENT_FILE := /tmp/bastion_ssh_agent
 
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
 devops/aws/login/sso:
@@ -98,12 +99,14 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 # Retrieve the key name from ssm parameter store
 	@echo "Retrieving bastion host key name from SSM..."
 	$(eval KEY_NAME := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/key-secret-name --query "Parameter.Value" --region $(REGION) --output text))
-# Retrieve the contents of SecretsManager secret named by  $(KEYNAME)
-	@echo "Retrieving bastion host key contents from SecretsManager..."
-	$(eval TEMP_KEY_FILE := $(shell mktemp /tmp/bastion_key.XXXXXX))
-	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) secretsmanager get-secret-value --secret-id $(KEY_NAME) --query "SecretString" --region $(REGION) --output text > $(TEMP_KEY_FILE)
-# Set the permissions of the temporary key file to 400
-	@chmod 400 $(TEMP_KEY_FILE)
+# Start SSH agent to manage keys and validate is not already running
+	@echo "Starting SSH agent..."
+	@if [ ! -f $(SSH_AGENT_FILE) ]; then \
+		ssh-agent -s > $(SSH_AGENT_FILE); \
+	else \
+		echo "SSH agent is already running."; \
+	fi
+	bash -c "trap 'trap - SIGINT SIGTERM ERR; eval `cat $(SSH_AGENT_FILE)`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); exit 1' SIGINT SIGTERM ERR; $(MAKE) devops/aws/bastion/ssh-keyadd"
 # Retrieve the source and destination ports from the target
 	$(eval SRC_DEST ?= $(subst /, ,$(subst devops/aws/bastion/ssh-port-forward/,,$@)))
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
@@ -111,10 +114,18 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(eval DEST_PORT := $(word 3,$(SRC_DEST)))
 # Retrieve from ssm parameter the instance-user value
 	@echo "Retrieving bastion host instance user from SSM..."
-	$(eval INSTANCE_USER := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user --query "Parameter.Value" --region $(REGION) --output text))
-	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) addres-to: $(DEST_ADDR) to: $(DEST_PORT)"
-	ssh -i $(TEMP_KEY_FILE) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) $(INSTANCE_USER)@$(BASTION_IP) || echo "... Command failed or interrupted, exiting."
-# REmove the temporary key file
-	rm -f $(TEMP_KEY_FILE)
+	$(eval INSTANCE_USER := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user --query "Parameter.Value" --region $(REGION) --output text ))
+	bash -c "trap 'trap - SIGINT SIGTERM ERR; eval `cat $(SSH_AGENT_FILE)`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); exit 1' SIGINT SIGTERM ERR; $(MAKE) devops/aws/bastion/ssh-run"
 # Clean up the temporary file
 	rm -f $(TEMP_FILE)
+
+devops/aws/bastion/ssh-keyadd:
+# Retrieve the contents of SecretsManager secret named by  $(KEYNAME)
+	@echo "Retrieving bastion host key contents from SecretsManager..."
+	@eval `cat $(SSH_AGENT_FILE)` \
+ 		$(AWS_VAULT) exec $(PROFILE) -- $(AWS) secretsmanager get-secret-value --secret-id $(KEY_NAME) --query "SecretString" --region $(REGION) --output text | ssh-add -
+
+devops/aws/bastion/ssh-run:
+	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) addres-to: $(DEST_ADDR) to: $(DEST_PORT)"
+	@eval `cat $(SSH_AGENT_FILE)` \
+		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) $(INSTANCE_USER)@$(BASTION_IP)
