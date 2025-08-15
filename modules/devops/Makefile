@@ -41,5 +41,22 @@ devops/aws/bastion/ssm: devops/aws/load-defaults
 		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 wait instance-running --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
 		  echo "Bastion host instance is now running." )
 	# Start SSM session to the bastion host
+    # Before starting the session, ensure that the instance ID is available and ssm agent was able to register with SSM
+	@echo "Checking if the bastion host instance is registered with SSM..."
+	# Retry at least 3 times with 20 sec interval to ensure the SSM agent has registered
+# Retry at least 3 times with 20 sec interval to ensure the SSM agent has registered
+	@for i in 1 2 3; do \
+		STATUS=$$($(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm describe-instance-information --filters "Key=InstanceIds,Values=$$(cat $(TEMP_FILE))" --region $(REGION) --query "InstanceInformationList[0].PingStatus" --output text); \
+		if [ "$$STATUS" = "Online" ]; then \
+			break; \
+		fi; \
+		echo "SSM agent not registered yet, retrying in 20 seconds... (attempt $$i)"; \
+		sleep 20; \
+	done; \
+	if [ "$$STATUS" != "Online" ]; then \
+		echo "Bastion host instance is not registered with SSM, please ensure the SSM agent is running on the instance."; \
+		exit 1; \
+	fi
+	# If the instance is registered, start the SSM session
 	@echo "Starting SSM session to the bastion host..."
 	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
