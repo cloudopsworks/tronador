@@ -79,7 +79,7 @@ devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # Retrieve the source and destination ports from the target parameters $@
-	$(eval SRC_DEST ?= $(subst devops/aws/bastion/ssm/port-forward/,,$@))
+	$(eval SRC_DEST ?= $(subst /, ,$(subst devops/aws/bastion/ssm-port-forward/,,$@)))
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
 	$(eval DEST_PORT := $(word 2,$(SRC_DEST)))
 	@echo "Starting SSM port forwarding session to the bastion host... from: $(SRC_PORT) to: $(DEST_PORT)"
