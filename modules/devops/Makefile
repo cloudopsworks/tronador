@@ -83,7 +83,7 @@ devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
 	$(eval DEST_PORT := $(word 2,$(SRC_DEST)))
 	@echo "Starting SSM port forwarding session to the bastion host... from: $(SRC_PORT) to: $(DEST_PORT)"
-	$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["$(SRC_PORT)"],"localPortNumber":["$(DEST_PORT)"]}' --region $(REGION)
+	$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["$(DEST_PORT)"],"localPortNumber":["$(SRC_PORT)"]}' --region $(REGION)
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
 
@@ -114,4 +114,7 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	$(eval DEST_PORT := $(word 3,$(SRC_DEST)))
 	@echo "Starting SSH port forwarding session to the bastion host... from: $(SRC_PORT) addres-to: $(DEST_ADDR) to: $(DEST_PORT)"
 	@ssh -i $(TEMP_KEY_FILE) -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) ec2-user@$(BASTION_IP)
-
+# REmove the temporary key file
+	@rm -f $(TEMP_KEY_FILE)
+# Clean up the temporary file
+	@rm -f $(TEMP_FILE)
