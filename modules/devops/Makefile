@@ -30,8 +30,8 @@ devops/aws/bastion/ssm: devops/aws/load-defaults
 	@echo "Retrieving bastion host instance ID from SSM..."
 	# Generate temp file to store the instance ID
 	$(eval TEMP_FILE := $(shell mktemp /tmp/bastion_instance_id.XXXXXX))
-	@aws-vault exec $(PROFILE) -- @$(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE)
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE)
 	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
 	# Start SSM session to the bastion host
 	@echo "Starting SSM session to the bastion host..."
-	@aws-vault exec $(PROFILE) -- @$(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
+	@(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm start-session --target $$(cat $(TEMP_FILE)) --region $(REGION)
