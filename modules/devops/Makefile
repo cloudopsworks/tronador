@@ -106,7 +106,7 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	else \
 		echo "SSH agent is already running."; \
 	fi
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; PROFILE=$(PROFILE) REGION=$(REGION) SSH_AGENT_FILE=$(SSH_AGENT_FILE) KEY_NAME=$(KEY_NAME) $(MAKE) devops/aws/bastion/ssh-keyadd"
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; PROFILE=$(PROFILE) REGION=$(REGION) SSH_AGENT_FILE=$(SSH_AGENT_FILE) KEY_NAME=$(KEY_NAME) $(MAKE) devops/aws/bastion/ssh-keyadd"
 # Retrieve the source and destination ports from the target
 	$(eval SRC_DEST ?= $(subst /, ,$(subst devops/aws/bastion/ssh-port-forward/,,$@)))
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
@@ -115,9 +115,9 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 # Retrieve from ssm parameter the instance-user value
 	@echo "Retrieving bastion host instance user from SSM..."
 	$(eval INSTANCE_USER := $(shell $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user --query "Parameter.Value" --region $(REGION) --output text ))
-	bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; SSH_AGENT_FILE=$(SSH_AGENT_FILE) SRC_PORT=$(SRC_PORT) DEST_ADDR=$(DEST_ADDR) DEST_PORT=$(DEST_PORT) INSTANCE_USER=$(INSTANCE_USER) BASTION_IP=$(BASTION_IP) $(MAKE) devops/aws/bastion/ssh-run"
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; SSH_AGENT_FILE=$(SSH_AGENT_FILE) SRC_PORT=$(SRC_PORT) DEST_ADDR=$(DEST_ADDR) DEST_PORT=$(DEST_PORT) INSTANCE_USER=$(INSTANCE_USER) BASTION_IP=$(BASTION_IP) $(MAKE) devops/aws/bastion/ssh-run"
 # Clean up the temporary file
-	rm -f $(TEMP_FILE)
+	@rm -f $(TEMP_FILE)
 
 devops/aws/bastion/ssh-keyadd:
 # Retrieve the contents of SecretsManager secret named by  $(KEYNAME)
@@ -130,6 +130,9 @@ devops/aws/bastion/ssh-run:
 	@eval `cat $(SSH_AGENT_FILE)` ; \
 		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) $(INSTANCE_USER)@$(BASTION_IP)
 
+## Shuts down the bastion host instance in the specified spoke number (alternate name)
+devops/aws/bastion/stop: devops/aws/bastion/shutdown
+
 ## Shuts down the bastion host instance in the specified spoke number
 devops/aws/bastion/shutdown: devops/aws/load-defaults
 	$(call assert-set,AWS)
@@ -139,11 +142,11 @@ devops/aws/bastion/shutdown: devops/aws/load-defaults
 	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
 # Check if the instance ID is in running state, if not, start the instance, wait and then proceed
 	@echo "Checking if the bastion host instance is running..."
-	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "stopped" || \
+	@$(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "None" || \
 		( echo "Bastion host instance is running, stopping it..." && \
 		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 stop-instances --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
 		  echo "Waiting for the bastion host instance to be totally stopped..." && \
 		  $(AWS_VAULT) exec $(PROFILE) -- $(AWS) ec2 wait instance-stopped --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
 		  echo "Bastion host instance is now stopped." )
 # Clean up the temporary file
-	rm -f $(TEMP_FILE)
+	@rm -f $(TEMP_FILE)
