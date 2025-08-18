@@ -1,11 +1,15 @@
-modules/apps: modules/apps/**
 modules/bash: modules/bash/**
+modules/devops: modules/devops/**
 modules/docs: modules/docs/**
 modules/git: modules/git/**
+modules/gitflow: modules/gitflow/**
 modules/github: modules/github/**
 modules/make: modules/make/**
+modules/opentofu: modules/opentofu/**
 modules/packages: modules/packages/**
 modules/readme: modules/readme/**
+modules/repos: modules/repos/**
 modules/semver: modules/semver/**
 modules/template: modules/template/**
 modules/terraform: modules/terraform/**
+modules/terragrunt: modules/terragrunt/**
