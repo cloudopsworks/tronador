@@ -10,7 +10,7 @@ tronador_devops.mk:: Makefile
 	echo "Created .tronador_devops.mk with REGION=$(REGION) and PROFILE=$(PROFILE)"
 
 
--include: tronador_devops.mk
+include: tronador_devops.mk
 
 REGION ?= "us-east-1"
 PROFILE ?= "devops"
@@ -23,7 +23,7 @@ devops/aws/login/sso:
 
 
 # Loads default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables
-devops/aws/load-defaults: #.tronador_devops.mk
+devops/aws/load-defaults: .tronador_devops.mk
 # Load default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables, if $HOME/.tronador_devops does not exist, create and save defaults
 # this is done at makefile load time so that the variables are available for other targets
 	@echo "Loading AWS defaults..."
