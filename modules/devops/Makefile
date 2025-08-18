@@ -134,6 +134,8 @@ devops/aws/bastion/ssh-run:
 ## Shuts down the bastion host instance in the specified spoke number (alternate name)
 devops/aws/bastion/stop: devops/aws/bastion/shutdown
 
+.PHONY: devops/aws/bastion/shutdown
+
 ## Shuts down the bastion host instance in the specified spoke number
 devops/aws/bastion/shutdown: devops/aws/load-defaults
 	$(call assert-set,AWS)
