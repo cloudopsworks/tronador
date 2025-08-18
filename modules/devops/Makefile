@@ -25,7 +25,7 @@ devops/aws/load-defaults:
 		echo "PROFILE=$(PROFILE)" >> $(HOME)/.tronador_devops; \
 		echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"; \
 	fi
-	include $(HOME)/.tronador_devops.mk
+	-include $(HOME)/.tronador_devops.mk
 	export $(shell sed 's/=.*//' $(HOME)/.tronador_devops.mk)
 
 
