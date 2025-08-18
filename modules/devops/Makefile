@@ -5,6 +5,13 @@ REGION ?= "us-east-1"
 PROFILE ?= "devops"
 SSH_AGENT_FILE := /tmp/bastion_ssh_agent
 
+.tronador_devops.mk: Makefile
+	echo "No .tronador_devops file found, creating with default values..."
+	echo "REGION=$(REGION)" > $@
+	echo "PROFILE=$(PROFILE)" >> $@
+	echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"
+
+
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
 devops/aws/login/sso:
 	$(call assert-set,AWS)
@@ -17,18 +24,7 @@ devops/aws/load-defaults:
 # Load default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables, if $HOME/.tronador_devops does not exist, create and save defaults
 # this is done at makefile load time so that the variables are available for other targets
 	@echo "Loading AWS defaults..."
-ifneq ($(wildcard $(HOME)/.tronador_devops),)
-	echo "Found existing .tronador_devops file, loading defaults..."
-	ls $(HOME)/.tronador_devops
-	$(info $(shell cat $(HOME)/.tronador_devops))
-	$(eval $(shell cat $(HOME)/.tronador_devops))
-	#export $(shell sed 's/=.*//' $(HOME)/.tronador_devops)
-else
-	echo "No .tronador_devops file found, creating with default values..."
-	echo "REGION=$(REGION)" > $(HOME)/.tronador_devops
-	echo "PROFILE=$(PROFILE)" >> $(HOME)/.tronador_devops
-	echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"
-endif
+	-include: .tronador_devops.mk
 
 
 # Check if the bastion host instance is running and registered with SSM before starting a session
