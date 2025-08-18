@@ -27,6 +27,7 @@ devops/aws/load-defaults: #.tronador_devops.mk
 # Load default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables, if $HOME/.tronador_devops does not exist, create and save defaults
 # this is done at makefile load time so that the variables are available for other targets
 	@echo "Loading AWS defaults..."
+	echo "$(REGION) $(PROFILE)"
 
 
 # Check if the bastion host instance is running and registered with SSM before starting a session
