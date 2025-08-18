@@ -21,7 +21,7 @@ ifneq ($(wildcard $(HOME)/.tronador_devops),)
 	echo "Found existing .tronador_devops file, loading defaults..."
 	ls $(HOME)/.tronador_devops
 	$(eval $(shell cat $(HOME)/.tronador_devops))
-	export $(shell sed 's/=.*//' $(HOME)/.tronador_devops)
+	#export $(shell sed 's/=.*//' $(HOME)/.tronador_devops)
 else
 	echo "No .tronador_devops file found, creating with default values..."
 	echo "REGION=$(REGION)" > $(HOME)/.tronador_devops
