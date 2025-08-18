@@ -133,6 +133,8 @@ devops/aws/bastion/ssh-run:
 	@eval `cat $(SSH_AGENT_FILE)` ; \
 		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L $(SRC_PORT):$(DEST_ADDR):$(DEST_PORT) $(INSTANCE_USER)@$(BASTION_IP)
 
+.PHONY: devops/aws/bastion/stop
+
 ## Shuts down the bastion host instance in the specified spoke number (alternate name)
 devops/aws/bastion/stop: devops/aws/bastion/shutdown
 
@@ -155,3 +157,4 @@ devops/aws/bastion/shutdown: devops/aws/load-defaults
 		  echo "Bastion host instance is now stopped." )
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
+
