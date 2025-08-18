@@ -3,11 +3,11 @@ AWS_VAULT :=  $(shell which aws-vault)
 SPOKE_NUM ?= "001"
 SSH_AGENT_FILE := /tmp/bastion_ssh_agent
 
-.tronador_devops.mk: Makefile
-	echo "No .tronador_devops file found, creating with default values..."
+.tronador_devops.mk:: Makefile
+	echo "No .tronador_devops.mk file found, creating with default values..."
 	echo "REGION=$(REGION)" > $@
 	echo "PROFILE=$(PROFILE)" >> $@
-	echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"
+	echo "Created .tronador_devops.mk with REGION=$(REGION) and PROFILE=$(PROFILE)"
 
 
 -include: .tronador_devops.mk
