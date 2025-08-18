@@ -29,6 +29,8 @@ devops/aws/load-defaults: #tronador_devops.mk
 	echo "$(REGION) $(PROFILE)"
 
 
+.PHONY: devops/aws/bastion/ssm/check
+
 # Check if the bastion host instance is running and registered with SSM before starting a session
 devops/aws/bastion/ssm/check:
 	$(call assert-set,AWS)
