@@ -1,8 +1,6 @@
 AWS := $(shell which aws)
 AWS_VAULT :=  $(shell which aws-vault)
 SPOKE_NUM ?= "001"
-REGION ?= "us-east-1"
-PROFILE ?= "devops"
 SSH_AGENT_FILE := /tmp/bastion_ssh_agent
 
 .tronador_devops.mk: Makefile
@@ -14,6 +12,8 @@ SSH_AGENT_FILE := /tmp/bastion_ssh_agent
 
 -include: .tronador_devops.mk
 
+REGION ?= "us-east-1"
+PROFILE ?= "devops"
 
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
 devops/aws/login/sso:
