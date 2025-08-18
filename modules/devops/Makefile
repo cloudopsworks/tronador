@@ -10,7 +10,7 @@ SSH_AGENT_FILE := /tmp/bastion_ssh_agent
 	echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"
 
 
--include: .tronador_devops.mk
+include: .tronador_devops.mk
 
 REGION ?= "us-east-1"
 PROFILE ?= "devops"
