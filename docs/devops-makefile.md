@@ -12,17 +12,17 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
   - macOS
   - Windows
   - Linux (Ubuntu/Debian), (RHEL/CentOS/Fedora), (Arch)
-- Quick start
-- Targets reference
+- [Quick start](#quick-start)
+- [Targets reference](#targets-reference)
   - devops/aws/login/sso
   - devops/aws/bastion/ssm
   - devops/aws/bastion/ssm-port-forward/<src:dest>
   - devops/aws/bastion/ssh-port-forward/<src:destAddr:destPort>
   - devops/aws/bastion/stop
   - devops/aws/bastion/shutdown
-- Environment variables and defaults
-- Security notes
-- Troubleshooting
+- [Environment variables and defaults](#environment-variables-and-defaults)
+- [Security notes](#security-notes)
+- [Troubleshooting](#troubleshooting)
 
 
 ### Prerequisites and concepts
@@ -96,30 +96,40 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 
 #### Windows
 - Scoop (recommended):
-  scoop install aws-vault
+    ```powershell
+      scoop install aws-vault
+    ```
 - Chocolatey (alternative):
-  choco install aws-vault -y
+    ```powershell
+    choco install aws-vault -y
+    ```
 - Manual: download the latest release from https://github.com/99designs/aws-vault/releases, place aws-vault.exe in a directory on PATH.
-- Verify: aws-vault --version
+- Verify: `aws-vault --version`
 
 #### Linux
 ##### Ubuntu/Debian
 - From release tarball:
-  sudo apt-get update && sudo apt-get install -y curl
-  curl -L https://github.com/99designs/aws-vault/releases/latest/download/aws-vault-linux-amd64 -o /tmp/aws-vault
-  sudo install -m 0755 /tmp/aws-vault /usr/local/bin/aws-vault
-- Verify: aws-vault --version
+    ```shell
+    sudo apt-get update && sudo apt-get install -y curl
+    curl -L https://github.com/99designs/aws-vault/releases/latest/download/aws-vault-linux-amd64 -o /tmp/aws-vault
+    sudo install -m 0755 /tmp/aws-vault /usr/local/bin/aws-vault
+    ```
+- Verify: `aws-vault --version`
 
 ##### RHEL/CentOS/Fedora
 - From release tarball:
-  curl -L https://github.com/99designs/aws-vault/releases/latest/download/aws-vault-linux-amd64 -o /tmp/aws-vault
-  sudo install -m 0755 /tmp/aws-vault /usr/local/bin/aws-vault
-- Verify: aws-vault --version
+    ```shell
+    curl -L https://github.com/99designs/aws-vault/releases/latest/download/aws-vault-linux-amd64 -o /tmp/aws-vault
+    sudo install -m 0755 /tmp/aws-vault /usr/local/bin/aws-vault
+    ```
+- Verify: `aws-vault --version`
 
 ##### Arch Linux
 - AUR (using yay):
-  yay -S aws-vault
-- Verify: aws-vault --version
+    ```shell
+    yay -S aws-vault
+    ```
+- Verify: `aws-vault --version`
 
 #### Notes
 - For ARM, download aws-vault-linux-arm64 instead.
@@ -138,31 +148,35 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 #### General conventions
 - Most targets require both aws and aws-vault to be available.
 - REGION and PROFILE can be set via environment, the ~/.tronador_devops file, or Makefile defaults (REGION=us-east-1, PROFILE=devops). Precedence: environment/CLI variables > ~/.tronador_devops > defaults.
-- SPOKE_NUM selects which spoke’s parameters to use (default "001").
+- SPOKE_NUM selects which spoke’s parameters to use (default "001"), it is important and is used to retrieve secrets and bastion information.
 
 1) `devops/aws/login/sso`
    - Purpose: Interactive AWS SSO login for a profile.
-   - Command executed: aws sso login --profile $(PROFILE)
-   - Inputs: PROFILE (default devops)
+   - Inputs: 
+     - `PROFILE` (default **devops**)
+     - `REGION` (default **us-east-1**)
+     - `SPOKE_NUM` (default **001**)
    - Example:
-     make PROFILE=devops devops/aws/login/sso
+       ```shell
+       make REGION=us-east-2 PROFILE=devops devops/aws/login/sso
+       ```
    - Expected: Browser prompts to authenticate. On success, cached SSO credentials are stored for the profile.
 
 
 2) `devops/aws/bastion/ssm`
    - Purpose: Open an SSM Session Manager shell into the bastion.
-   - Depends on: devops/aws/load-defaults, devops/aws/bastion/ssm/check
-   - Command executed: aws ssm start-session --target <instance-id> --region $(REGION)
    - Example:
         ```shell
-        make SPOKE_NUM=001 PROFILE=devops devops/aws/bastion/ssm
+        make  PROFILE=devops devops/aws/bastion/ssm
         ```
 
 3) `devops/aws/bastion/ssm-port-forward/<src:dest>`
    - Purpose: Open an SSM Port Forwarding session via Session Manager.
-   - Syntax: devops/aws/bastion/ssm-port-forward/LOCAL_PORT:REMOTE_PORT
+   - Syntax: `devops/aws/bastion/ssm-port-forward/LOCAL_PORT:REMOTE_PORT`
    - Example: Forward local 5432 to bastion’s 5432
-     make SPOKE_NUM=001 devops/aws/bastion/ssm-port-forward/5432:5432
+      ```shell
+      make SPOKE_NUM=001 devops/aws/bastion/ssm-port-forward/5432:5432
+      ```
    - Notes: Uses document AWS-StartPortForwardingSession. Close with Ctrl+C.
 
 4) `devops/aws/bastion/ssh-port-forward/<src:destAddr:destPort>`
@@ -173,7 +187,7 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
      - Reads instance-user from SSM: /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user.
      - Runs: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L SRC:DEST_ADDR:DEST_PORT INSTANCE_USER@BASTION_IP
      - On interrupt or error, traps to stop ssh-agent and cleanup temp files.
-   - Syntax: devops/aws/bastion/ssh-port-forward/LOCAL_PORT:DESTINATION_ADDRESS:DESTINATION_PORT
+   - Syntax: `devops/aws/bastion/ssh-port-forward/LOCAL_PORT:DESTINATION_ADDRESS:DESTINATION_PORT`
    - Examples:
      - Forward local 22 to a private host through bastion:
         ```shell
@@ -206,8 +220,7 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 - SPOKE_NUM: selects the target spoke, default "001".
 - REGION: AWS region used for SSM/EC2/Secrets Manager calls; default "us-east-1".
 - PROFILE: aws-vault profile and AWS CLI profile; default "devops".
-- SSH_AGENT_FILE: temp file path for storing ssh-agent environment; default /tmp/bastion_ssh_agent.
-- ~/.tronador_devops: a shell file containing export REGION=... and export PROFILE=... auto-created by devops/aws/load-defaults if missing. Sourced during make execution to populate variables.
+- .tronador_devops.mk: a shell file containing export REGION=... and export PROFILE=... auto-created by devops/aws/load-defaults if missing. Sourced during make execution to populate variables.
 
 #### Security notes
 - aws-vault stores credentials securely (macOS Keychain, Windows Credential Manager, Linux keyrings); prefer it over plain profiles.
@@ -231,8 +244,10 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
     ```
   
 - Forward PostgreSQL from a private RDS through bastion:
-  make devops/aws/bastion/ssm-port-forward/15432:5432
-  psql -h 127.0.0.1 -p 15432 -U user dbname
+    ```shell
+      make devops/aws/bastion/ssm-port-forward/15432:5432
+      psql -h 127.0.0.1 -p 15432 -U user dbname
+    ```
 - Stop a bastion when done:
     ```shell
     make devops/aws/bastion/shutdown
