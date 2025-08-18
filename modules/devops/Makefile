@@ -19,6 +19,7 @@ devops/aws/load-defaults:
 	@echo "Loading AWS defaults..."
 ifneq ($(wildcard $(HOME)/.tronador_devops),)
 	echo "Found existing .tronador_devops file, loading defaults..."
+	ls $(HOME)/.tronador_devops
 	include $(HOME)/.tronador_devops
 	export $(shell sed 's/=.*//' $(HOME)/.tronador_devops)
 else
