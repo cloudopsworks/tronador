@@ -18,14 +18,14 @@ devops/aws/load-defaults:
 # this is done at makefile load time so that the variables are available for other targets
 	@echo "Loading AWS defaults..."
 ifneq ($(wildcard $(HOME)/.tronador_devops),)
-	echo "Found existing .tronador_devops file, loading defaults..."; \
+	echo "Found existing .tronador_devops file, loading defaults..."
 	include $(HOME)/.tronador_devops
 	export $(shell sed 's/=.*//' $(HOME)/.tronador_devops)
 else
-	echo "No .tronador_devops file found, creating with default values..."; \
-	echo "REGION=$(REGION)" > $(HOME)/.tronador_devops; \
-	echo "PROFILE=$(PROFILE)" >> $(HOME)/.tronador_devops; \
-	echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"; \
+	echo "No .tronador_devops file found, creating with default values..."
+	echo "REGION=$(REGION)" > $(HOME)/.tronador_devops
+	echo "PROFILE=$(PROFILE)" >> $(HOME)/.tronador_devops
+	echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"
 endif
 
 
