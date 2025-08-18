@@ -12,6 +12,9 @@ SSH_AGENT_FILE := /tmp/bastion_ssh_agent
 	echo "Created $(HOME)/.tronador_devops with REGION=$(REGION) and PROFILE=$(PROFILE)"
 
 
+-include: .tronador_devops.mk
+
+
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
 devops/aws/login/sso:
 	$(call assert-set,AWS)
@@ -20,11 +23,10 @@ devops/aws/login/sso:
 
 
 # Loads default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables
-devops/aws/load-defaults:
+devops/aws/load-defaults: .tronador_devops.mk
 # Load default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables, if $HOME/.tronador_devops does not exist, create and save defaults
 # this is done at makefile load time so that the variables are available for other targets
 	@echo "Loading AWS defaults..."
-	-include: .tronador_devops.mk
 
 
 # Check if the bastion host instance is running and registered with SSM before starting a session
