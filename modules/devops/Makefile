@@ -18,7 +18,7 @@ PROFILE ?= "devops"
 SPOKE_NUM ?= "001"
 
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
-devops/aws/login/sso:
+a:
 	$(call assert-set,AWS)
 	@echo "Logging in to AWS SSO..."
 	@$(AWS) sso login --profile $(PROFILE)
@@ -57,7 +57,7 @@ devops/aws/bastion/ssm/check:
 # Retry at least 3 times with 20 sec interval to ensure the SSM agent has registered
 # Retry at least 3 times with 20 sec interval to ensure the SSM agent has registered
 	@for i in 1 2 3; do \
-		STATUS=$$($(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm describe-instance-information --filters "Key=InstanceIds,Values=$$(cat $(TEMP_FILE))" --region $(REGION) --query "InstanceInformationList[0].PingStatus" --output text); \
+		STATUS=$$($(AWS_VAULT) exec $(PROFILE) -- $(AWS) ssm describe-instance-information --filters "Key=InstanceIds,Values=$$(cat $(TEMP_FILE))" --region $(REGION) --query "InstanceInformationList[0].PingStatus" --output text | grep Online); \
 		if [ "$$STATUS" = "Online" ]; then \
 			break; \
 		fi; \
