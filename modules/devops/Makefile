@@ -1,6 +1,9 @@
 AWS := $(shell which aws)
 AWS_VAULT :=  $(shell which aws-vault)
 SSH_AGENT_FILE := /tmp/bastion_ssh_agent
+ifeq ($(OS),linux)
+AWS_VAULT_BACKEND ?= pass
+endif
 
 .tronador_devops.mk:: Makefile
 	@echo "No .tronador_devops.mk file found, creating with default values..."
