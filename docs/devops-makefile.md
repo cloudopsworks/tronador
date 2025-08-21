@@ -1,6 +1,6 @@
 # DevOps Makefile: Comprehensive Usage Guide
 
-This guide documents all targets in modules/devops/Makefile and explains how to prepare your workstation, including installing AWS CLI v2 and aws-vault on macOS, Windows, and common Linux distributions.
+This guide documents all targets in devops/* targets and explains how to prepare your workstation, including installing AWS CLI v2 and aws-vault on macOS, Windows, and common Linux distributions.
 
 ### Contents
 - [Prerequisites and concepts](#prerequisites-and-concepts)
@@ -26,6 +26,13 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 
 
 ### Prerequisites and concepts
+- Where to run:
+  This is part of the DevOps Accelerator and is intended to be run from a project or folder where the Makefile that includes the DevOps Accelerator is located.
+  Projects, which include the DevOps Accelerator, are those based on the following:
+  - https://github.com/cloudopsworks/terragrunt-project-template.git
+  - https://github.com/cloudopsworks/java-app-template.git
+  - https://github.com/cloudopsworks/python-app-template.git
+  - https://github.com/cloudopsworks/node-app-template.git
 - AWS account with SSO enabled and an SSO profile configured in ~/.aws/config, e.g.:
   [profile devops]
   sso_start_url = https://your-sso-portal.awsapps.com/start
@@ -36,8 +43,7 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 - Tools required by the Makefile:
   - aws (AWS CLI v2)
   - aws-vault
-  - ssh and ssh-agent (for SSH port forwarding target)
-- assert-set macro: The project’s helpers ensure binaries like aws and aws-vault exist before running targets.
+  - ssh and ssh-agent (for SSH port-forwarding target)
 - SSM parameters used by these targets (must exist in the target account/region):
   - /cloudopsworks/tronador/bastion/<SPOKE_NUM>/instance-id
   - /cloudopsworks/tronador/bastion/<SPOKE_NUM>/key-secret-name (Secret in Secrets Manager containing private key PEM)
@@ -137,9 +143,9 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 
 
 ### Quick start
-1) Ensure aws and aws-vault are installed and on PATH.
+1) Ensure `aws` and `aws-vault` are installed and on PATH.
 2) Ensure your AWS SSO profile exists in ~/.aws/config (e.g., profile devops).
-3) Optionally set SPOKE_NUM, REGION, PROFILE when invoking make; otherwise defaults are used or loaded via ~/.tronador_devops.
+3) Optionally set SPOKE_NUM, REGION, PROFILE when invoking make; otherwise defaults are used or loaded via ./.tronador_devops.mk.
 4) Log in with SSO: make PROFILE=devops devops/aws/login/sso
 5) Start an SSM session to the bastion in a spoke: make SPOKE_NUM=001 REGION=us-east-1 PROFILE=devops devops/aws/bastion/ssm
 
@@ -147,7 +153,7 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 ### Targets reference
 #### General conventions
 - Most targets require both aws and aws-vault to be available.
-- REGION and PROFILE can be set via environment, the ~/.tronador_devops file, or Makefile defaults (REGION=us-east-1, PROFILE=devops). Precedence: environment/CLI variables > ~/.tronador_devops > defaults.
+- REGION and PROFILE can be set via environment, the ./.tronador_devops.mk file, or Makefile defaults (REGION=us-east-1, PROFILE=devops). Precedence: environment/CLI variables > ./.tronador_devops.mk > defaults.
 - SPOKE_NUM selects which spoke’s parameters to use (default "001"), it is important and is used to retrieve secrets and bastion information.
 
 1) `devops/aws/login/sso`
@@ -167,7 +173,7 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
    - Purpose: Open an SSM Session Manager shell into the bastion.
    - Example:
         ```shell
-        make  PROFILE=devops devops/aws/bastion/ssm
+        make PROFILE=devops devops/aws/bastion/ssm
         ```
 
 3) `devops/aws/bastion/ssm-port-forward/<src:dest>`
@@ -220,7 +226,7 @@ This guide documents all targets in modules/devops/Makefile and explains how to 
 - SPOKE_NUM: selects the target spoke, default "001".
 - REGION: AWS region used for SSM/EC2/Secrets Manager calls; default "us-east-1".
 - PROFILE: aws-vault profile and AWS CLI profile; default "devops".
-- .tronador_devops.mk: a shell file containing export REGION=... and export PROFILE=... auto-created by devops/aws/load-defaults if missing. Sourced during make execution to populate variables.
+- .tronador_devops.mk: a shell file containing export REGION=... and export PROFILE=... auto-created if missing. Sourced during make execution to populate variables.
 
 #### Security notes
 - aws-vault stores credentials securely (macOS Keychain, Windows Credential Manager, Linux keyrings); prefer it over plain profiles.
