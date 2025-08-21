@@ -28,6 +28,12 @@ devops/aws/login/sso:
 	@echo "Logging in to AWS SSO..."
 	@$(AWS) sso login --profile $(PROFILE)
 
+## Test aws-vault client is installed and configured
+devops/aws/test/vault:
+	$(call assert-set,AWS_VAULT)
+	@echo "Testing aws-vault client..."
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sts get-caller-identity --region $(REGION) --output text || \
+		( echo "aws-vault is not configured correctly, please check your AWS credentials and profile." && exit 1 )
 
 # Loads default AWS REGION and PROFILE from $HOME/.tronador_devops or environment variables
 devops/aws/load-defaults: #tronador_devops.mk
