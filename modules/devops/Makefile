@@ -23,7 +23,7 @@ PROFILE ?= "devops"
 SPOKE_NUM ?= "001"
 
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
-a:
+devops/aws/login/sso:
 	$(call assert-set,AWS)
 	@echo "Logging in to AWS SSO..."
 	@$(AWS) sso login --profile $(PROFILE)
