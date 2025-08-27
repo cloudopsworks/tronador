@@ -21,6 +21,7 @@ endif
 REGION ?= "us-east-1"
 PROFILE ?= "devops"
 SPOKE_NUM ?= "001"
+LEASE_HOURS ?= "4"
 
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
 devops/aws/login/sso:
@@ -190,7 +191,7 @@ devops/aws/bastion/ssm/check2:
 	@echo "SQS Automation ID: $$(cat $(TEMP_FILE2))"
 # Request IP Registration into Bastion through SQS Message
 	$(eval MY_IP := $(shell curl -s https://checkip.amazonaws.com))
-	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $$(cat $(TEMP_FILE2)) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\"}"
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $$(cat $(TEMP_FILE2)) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":\"$(LEASE_HOURS)\"}"
 # Check if the instance ID is in running state, if not, start the instance, wait and then proceed
 	@echo "Checking if the bastion host instance is running..."
 	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "running" || \
@@ -252,7 +253,7 @@ devops/aws/bastion/ssh-interactive:
 	@eval `cat $(SSH_AGENT_FILE)` ; \
 		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $(INSTANCE_USER)@$(BASTION_IP)
 
-## Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
+## Starts an SSH Session to the bastion host in the specified spoke number
 devops/aws/bastion/ssh: devops/aws/load-defaults devops/aws/bastion/ssm/check2
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
