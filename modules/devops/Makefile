@@ -172,3 +172,108 @@ devops/aws/bastion/shutdown: devops/aws/load-defaults
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
 
+
+
+
+# Check if the bastion host instance is running and registered with SSM before starting a session
+devops/aws/bastion/ssm/check2:
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
+# Retrieve the instance ID of the bastion host from ssm parameter store
+	@echo "Retrieving bastion host instance ID from SSM..."
+# Generate temp file to store the instance ID
+	$(eval TEMP_FILE := $(shell mktemp /tmp/bastion_instance_id.XXXXXX))
+	$(eval TEMP_FILE2 := $(shell mktemp /tmp/bastion_sqs_queue.XXXXXX))
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE)
+	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/access-automation/sqs-queue --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE2)
+	@echo "SQS Automation ID: $$(cat $(TEMP_FILE2))"
+# Request IP Registration into Bastion through SQS Message
+	$(eval MY_IP := $(shell curl -s https://checkip.amazonaws.com))
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $$(cat $(TEMP_FILE2)) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\"}"
+# Check if the instance ID is in running state, if not, start the instance, wait and then proceed
+	@echo "Checking if the bastion host instance is running..."
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "running" || \
+		( echo "Waiting for the bastion host instance to be running..." && \
+		  $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 wait instance-running --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
+		  echo "Bastion host instance is now running." )
+# Before starting the session, ensure that the instance ID is available and ssm agent was able to register with SSM
+	@echo "Checking if the bastion host instance is registered with SSM..."
+# Retry at least 3 times with 20 sec interval to ensure the SSM agent has registered
+	@for i in 1 2 3; do \
+		STATUS=$$($(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm describe-instance-information --filters "Key=InstanceIds,Values=$$(cat $(TEMP_FILE))" --region $(REGION) --query "InstanceInformationList[0].PingStatus" --output text | grep Online); \
+		if [ "$$STATUS" = "Online" ]; then \
+			break; \
+		fi; \
+		echo "SSM agent not registered yet, retrying in 20 seconds... (attempt $$i)"; \
+		sleep 20; \
+	done; \
+	if [ "$$STATUS" != "Online" ]; then \
+		echo "Bastion host instance is not registered with SSM, please ensure the SSM agent is running on the instance."; \
+		exit 1; \
+	fi
+
+
+
+## Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
+devops/aws/bastion/ssh-port-forward2/%: devops/aws/load-defaults devops/aws/bastion/ssm/check2
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
+# Retrieve instance's public IP address from EC2 instance metadata instance id is defiende in $(TEMP_FILE)
+	@echo "Retrieving bastion host public IP address..."
+	$(eval BASTION_IP := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instances --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "Reservations[0].Instances[0].PublicIpAddress" --output text))
+	@echo "Bastion host public IP address: $(BASTION_IP)"
+# Retrieve the key name from ssm parameter store
+	@echo "Retrieving bastion host key name from SSM..."
+	$(eval KEY_NAME := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/key-secret-name --query "Parameter.Value" --region $(REGION) --output text))
+# Start SSH agent to manage keys and validate is not already running
+	@echo "Starting SSH agent..."
+	@if [ ! -f $(SSH_AGENT_FILE) ]; then \
+		ssh-agent -s > $(SSH_AGENT_FILE); \
+	else \
+		echo "SSH agent is already running."; \
+	fi
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; PROFILE=$(PROFILE) REGION=$(REGION) SSH_AGENT_FILE=$(SSH_AGENT_FILE) KEY_NAME=$(KEY_NAME) $(MAKE) devops/aws/bastion/ssh-keyadd"
+# Retrieve the source and destination ports from the target
+	$(eval SRC_DEST ?= $(subst /, ,$(subst devops/aws/bastion/ssh-port-forward/,,$@)))
+	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
+	$(eval DEST_ADDR := $(word 2,$(SRC_DEST)))
+	$(eval DEST_PORT := $(word 3,$(SRC_DEST)))
+# Retrieve from ssm parameter the instance-user value
+	@echo "Retrieving bastion host instance user from SSM..."
+	$(eval INSTANCE_USER := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user --query "Parameter.Value" --region $(REGION) --output text ))
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; SSH_AGENT_FILE=$(SSH_AGENT_FILE) SRC_PORT=$(SRC_PORT) DEST_ADDR=$(DEST_ADDR) DEST_PORT=$(DEST_PORT) INSTANCE_USER=$(INSTANCE_USER) BASTION_IP=$(BASTION_IP) $(MAKE) devops/aws/bastion/ssh-run"
+# Clean up the temporary file
+	@rm -f $(TEMP_FILE)
+
+
+devops/aws/bastion/ssh-interactive:
+	@echo "Starting SSH interactive session to the bastion host..."
+	@eval `cat $(SSH_AGENT_FILE)` ; \
+		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $(INSTANCE_USER)@$(BASTION_IP)
+
+## Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
+devops/aws/bastion/ssh: devops/aws/load-defaults devops/aws/bastion/ssm/check2
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
+# Retrieve instance's public IP address from EC2 instance metadata instance id is defiende in $(TEMP_FILE)
+	@echo "Retrieving bastion host public IP address..."
+	$(eval BASTION_IP := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instances --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "Reservations[0].Instances[0].PublicIpAddress" --output text))
+	@echo "Bastion host public IP address: $(BASTION_IP)"
+# Retrieve the key name from ssm parameter store
+	@echo "Retrieving bastion host key name from SSM..."
+	$(eval KEY_NAME := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/key-secret-name --query "Parameter.Value" --region $(REGION) --output text))
+# Start SSH agent to manage keys and validate is not already running
+	@echo "Starting SSH agent..."
+	@if [ ! -f $(SSH_AGENT_FILE) ]; then \
+		ssh-agent -s > $(SSH_AGENT_FILE); \
+	else \
+		echo "SSH agent is already running."; \
+	fi
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; PROFILE=$(PROFILE) REGION=$(REGION) SSH_AGENT_FILE=$(SSH_AGENT_FILE) KEY_NAME=$(KEY_NAME) $(MAKE) devops/aws/bastion/ssh-keyadd"
+# Retrieve from ssm parameter the instance-user value
+	@echo "Retrieving bastion host instance user from SSM..."
+	$(eval INSTANCE_USER := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user --query "Parameter.Value" --region $(REGION) --output text ))
+	@bash -c "trap 'trap - SIGINT SIGTERM ERR; eval \`cat $(SSH_AGENT_FILE)\`; ssh-agent -k ; rm -f $(SSH_AGENT_FILE); rm -f $(TEMP_FILE); exit 1' SIGINT SIGTERM ERR; SSH_AGENT_FILE=$(SSH_AGENT_FILE) INSTANCE_USER=$(INSTANCE_USER) BASTION_IP=$(BASTION_IP) $(MAKE) devops/aws/bastion/ssh-interactive"
+# Clean up the temporary file
+	@rm -f $(TEMP_FILE)
