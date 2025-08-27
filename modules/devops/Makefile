@@ -193,7 +193,7 @@ devops/aws/bastion/ssm/check2:
 	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $(REQUEST_SQS) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":$(LEASE_HOURS)}"
 	@echo "Request Sent..."
 	@echo "Waiting for response..."
-	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs receive-message --queue-url $(RESPONSE_SQS) --region $(REGION) --max-number-of-messages 1 --wait-time-seconds 120 --visibility-timeout 100 --query "Messages[0].Body" --output text > $(TEMP_FILE3)
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs receive-message --queue-url $(RESPONSE_SQS) --region $(REGION) --max-number-of-messages 1 --wait-time-seconds 120 --visibility-timeout 100 --query "Messages[0].Body" --output text > $(TEMP_FILE)
 # Retrieve instance's public IP address from EC2 instance metadata instance id is defiende in $(TEMP_FILE)
 	$(eval BASTION_IP := $(shell jq -r '.bastion_ip_address' $(TEMP_FILE)))
 	@echo "Bastion host public IP address: $(BASTION_IP)"
