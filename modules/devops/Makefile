@@ -185,9 +185,9 @@ devops/aws/bastion/ssm/check2:
 # Generate temp file to store the instance ID
 	$(eval TEMP_FILE := $(shell mktemp /tmp/bastion_response.XXXXXX))
 	$(eval REQUEST_SQS := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/access-automation/request-queue --query "Parameter.Value" --region $(REGION) --output text))
-	@echo "SQS Automation ID: $$(cat $(TEMP_FILE))"
+	@echo "SQS Automation ID: $(REQUEST_SQS)"
 	$(eval RESPONSE_SQS := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/access-automation/response-queue --query "Parameter.Value" --region $(REGION) --output text))
-	@echo "SQS Automation ID: $$(cat $(TEMP_FILE2))"
+	@echo "SQS Automation ID: $(RESPONSE_SQS)"
 # Request IP Registration into Bastion through SQS Message
 	$(eval MY_IP := $(shell curl -s https://checkip.amazonaws.com))
 	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $(REQUEST_SQS) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":$(LEASE_HOURS)}"
