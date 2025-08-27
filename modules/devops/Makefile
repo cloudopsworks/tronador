@@ -187,7 +187,7 @@ devops/aws/bastion/ssm/check2:
 	$(eval TEMP_FILE2 := $(shell mktemp /tmp/bastion_sqs_queue.XXXXXX))
 	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE)
 	@echo "Bastion host instance ID: $$(cat $(TEMP_FILE))"
-	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/access-automation/sqs-queue --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE2)
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/access-automation/request-queue --query "Parameter.Value" --region $(REGION) --output text > $(TEMP_FILE2)
 	@echo "SQS Automation ID: $$(cat $(TEMP_FILE2))"
 # Request IP Registration into Bastion through SQS Message
 	$(eval MY_IP := $(shell curl -s https://checkip.amazonaws.com))
