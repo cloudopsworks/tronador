@@ -191,7 +191,7 @@ devops/aws/bastion/ssm/check2:
 	@echo "SQS Automation ID: $$(cat $(TEMP_FILE2))"
 # Request IP Registration into Bastion through SQS Message
 	$(eval MY_IP := $(shell curl -s https://checkip.amazonaws.com))
-	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $$(cat $(TEMP_FILE2)) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":\"$(LEASE_HOURS)\"}"
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $$(cat $(TEMP_FILE2)) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":$(LEASE_HOURS)}"
 # Check if the instance ID is in running state, if not, start the instance, wait and then proceed
 	@echo "Checking if the bastion host instance is running..."
 	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "running" || \
