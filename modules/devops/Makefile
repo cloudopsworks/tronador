@@ -285,9 +285,9 @@ devops/aws/bastion/shutdown2: devops/aws/load-defaults
 	@echo "Bastion host instance ID: $(BASTION_ID)"
 # Check if the instance ID is in running state, if not, start the instance, wait and then proceed
 	@echo "Checking if the bastion host instance is running..."
-	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "None" || \
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $(BASTION_ID) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "None" || \
 		( echo "Waiting for the bastion host instance to be totally stopped..." && \
-		  $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 wait instance-stopped --instance-ids $$(cat $(TEMP_FILE)) --region $(REGION) && \
+		  $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 wait instance-stopped --instance-ids $(BASTION_ID) --region $(REGION) && \
 		  echo "Bastion host instance is now stopped." )
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
