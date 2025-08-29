@@ -46,12 +46,9 @@ devops/aws/load-defaults: #tronador_devops.mk
 
 .PHONY: devops/aws/bastion/ssm/check
 
-# Check if the bastion host instance is running and registered with SSM before starting a session
-devops/aws/bastion/ssm/check:
+devops/aws/bastion/authorize:
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
-# Retrieve the instance ID of the bastion host from ssm parameter store
-	@echo "Retrieving bastion host instance ID from SSM..."
 # Generate temp file to store the instance ID
 	$(eval REQUEST_SQS := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/access-automation/request-queue --query "Parameter.Value" --region $(REGION) --output text))
 	@echo "SQS Automation ID: $(REQUEST_SQS)"
@@ -59,6 +56,13 @@ devops/aws/bastion/ssm/check:
 	$(eval MY_IP := $(shell curl -s https://checkip.amazonaws.com))
 	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) sqs send-message --queue-url $(REQUEST_SQS) --region $(REGION) --message-body "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":$(LEASE_HOURS)}"
 	@echo "Request Sent..."
+
+# Check if the bastion host instance is running and registered with SSM before starting a session
+devops/aws/bastion/ssm/check:
+	$(call assert-set,AWS)
+	$(call assert-set,AWS_VAULT)
+# Retrieve the instance ID of the bastion host from ssm parameter store
+	@echo "Retrieving bastion host instance ID from SSM..."
 # Retrieve the Bastion instance ID from ssm parameter store
 	$(eval BASTION_ID := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text))
 	@echo "Bastion host instance ID: $(BASTION_ID)"
@@ -115,7 +119,7 @@ devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	@rm -f $(TEMP_FILE)
 
 ## Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
-devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/bastion/ssm/check
+devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/ssm/check
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # Retrieve the key name from ssm parameter store
@@ -189,7 +193,7 @@ devops/aws/bastion/ssh-interactive:
 		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $(INSTANCE_USER)@$(BASTION_IP)
 
 ## Starts an SSH Session to the bastion host in the specified spoke number
-devops/aws/bastion/ssh: devops/aws/load-defaults devops/aws/bastion/ssm/check
+devops/aws/bastion/ssh: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/ssm/check
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # Retrieve the key name from ssm parameter store
