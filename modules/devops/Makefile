@@ -100,16 +100,17 @@ devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/ssm/check
 	@rm -f $(TEMP_FILE)
 
 
-## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<dest port>
+## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
 devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/bastion/ssm/check
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # Retrieve the source and destination ports from the target parameters $@
 	$(eval SRC_DEST ?= $(subst /, ,$(subst devops/aws/bastion/ssm-port-forward/,,$@)))
 	$(eval SRC_PORT := $(word 1,$(SRC_DEST)))
-	$(eval DEST_PORT := $(word 2,$(SRC_DEST)))
+	$(eval DEST_ADDR := $(word 2,$(SRC_DEST)))
+	$(eval DEST_PORT := $(word 3,$(SRC_DEST)))
 	@echo "Starting SSM port forwarding session to the bastion host... from: $(SRC_PORT) to: $(DEST_PORT)"
-	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm start-session --target $(BASTION_ID) --document-name AWS-StartPortForwardingSession --parameters '{"portNumber":["$(DEST_PORT)"],"localPortNumber":["$(SRC_PORT)"]}' --region $(REGION) || echo "... Command failed or interrupted, exiting."
+	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm start-session --target $(BASTION_ID) --document-name AWS-StartPortForwardingSessionToRemoteHost --parameters '{"host":["$(DEST_ADDR)"],"portNumber":["$(DEST_PORT)"],"localPortNumber":["$(SRC_PORT)"]}' --region $(REGION) || echo "... Command failed or interrupted, exiting."
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
 
