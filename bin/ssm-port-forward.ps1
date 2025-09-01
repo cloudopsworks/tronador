@@ -117,12 +117,13 @@ try {
     Write-Host "Starting SSM port forwarding session to the bastion host... from: $SourcePort to: $DestinationPort"
 
     $parameters = @{
-        host = @($DestinationAddress)
-        portNumber = @($DestinationPort)
-        localPortNumber = @($SourcePort)
+        host = "$DestinationAddress"
+        portNumber = "$DestinationPort"
+        localPortNumber = "$SourcePort"
     }
 
-    $parametersJson = $parameters | ConvertTo-Json -Compress
+    $parametersJson1 = $parameters | ConvertTo-Json -Compress
+    $parametersJson = $parametersJson1.Replace('"','\"')
 
     & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws ssm start-session --target $bastionId --document-name "AWS-StartPortForwardingSessionToRemoteHost" --parameters $parametersJson --region $Region
 
