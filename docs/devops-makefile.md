@@ -15,9 +15,10 @@ This guide documents all targets in devops/* targets and explains how to prepare
 - [Quick start](#quick-start)
 - [Targets reference](#targets-reference)
   - devops/aws/login/sso
+  - devops/aws/bastion/ssh
+  - devops/aws/bastion/ssh-port-forward:<src:destAddr:destPort>
   - devops/aws/bastion/ssm
-  - devops/aws/bastion/ssm-port-forward/<src:dest>
-  - devops/aws/bastion/ssh-port-forward/<src:destAddr:destPort>
+  - devops/aws/bastion/ssm-port-forward:<src:destAddr:destPort>
   - devops/aws/bastion/stop
   - devops/aws/bastion/shutdown
 - [Environment variables and defaults](#environment-variables-and-defaults)
@@ -44,11 +45,6 @@ This guide documents all targets in devops/* targets and explains how to prepare
   - aws (AWS CLI v2)
   - aws-vault
   - ssh and ssh-agent (for SSH port-forwarding target)
-- SSM parameters used by these targets (must exist in the target account/region):
-  - /cloudopsworks/tronador/bastion/<SPOKE_NUM>/instance-id
-  - /cloudopsworks/tronador/bastion/<SPOKE_NUM>/key-secret-name (Secret in Secrets Manager containing private key PEM)
-  - /cloudopsworks/tronador/bastion/<SPOKE_NUM>/instance-user (e.g., ec2-user, ubuntu)
-
 
 ### Installing AWS CLI v2
 #### macOS
@@ -168,53 +164,96 @@ This guide documents all targets in devops/* targets and explains how to prepare
        ```
    - Expected: Browser prompts to authenticate. On success, cached SSO credentials are stored for the profile.
 
+2) `devops/aws/bastion/ssh`
+   - Purpose: Start an interactive SSH session to the bastion host using the private key from Secrets Manager.
+   - Steps:
+     - Authorizes the current public IP address for SSH access.
+     - Retrieves bastion instance information and ensures it's running and SSM-registered.
+     - Retrieves the private key from Secrets Manager and adds it to a temporary ssh-agent.
+     - Establishes an interactive SSH connection to the bastion host.
+   - Inputs:
+     - `PROFILE` (default **devops**)
+     - `REGION` (default **us-east-1**)
+     - `SPOKE_NUM` (default **001**)
+     - `LEASE_HOURS` (default **4**) - Duration for IP authorization
+   - Example:
+       ```shell
+       make SPOKE_NUM=001 PROFILE=devops devops/aws/bastion/ssh
+       ```
+   - Notes: 
+     - Automatically handles IP authorization through SQS automation.
+     - Sets up and tears down ssh-agent automatically.
+     - Includes proper cleanup on interruption (Ctrl+C).
 
-2) `devops/aws/bastion/ssm`
+3) `devops/aws/bastion/ssh-port-forward/%`
+   - Purpose: Open a classic SSH local port forward through the bastion's public IP, using a private key retrieved from Secrets Manager.
+   - Steps:
+     - Authorizes the current public IP address for SSH access.
+     - Retrieves bastion PublicIpAddress from EC2.
+     - Reads key secret name from SSM and fetches private key from Secrets Manager, then adds to ssh-agent.
+     - Reads instance-user from SSM.
+     - Runs: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L SRC_PORT:DEST_ADDR:DEST_PORT INSTANCE_USER@BASTION_IP
+     - On interrupt or error, traps to stop ssh-agent and cleanup temp files.
+   - Syntax: `devops/aws/bastion/ssh-port-forward/SRC_PORT/DEST_ADDR/DEST_PORT`
+   - Examples:
+     - Forward local port 2222 to a private host through bastion:
+        ```shell
+        make SPOKE_NUM=001 devops/aws/bastion/ssh-port-forward/2222/10.0.1.10/22
+        ```
+     - Forward local port 8443 to an internal ALB:
+        ```shell
+        make SPOKE_NUM=002 devops/aws/bastion/ssh-port-forward/8443/internal-alb.local/443
+        ```
+   - Notes: 
+     - Requires IP authorization and proper security group rules.
+     - The private key in Secrets Manager must be in PEM format acceptable by ssh-add.
+     - Uses `/` as delimiter between parameters.
+
+4) `devops/aws/bastion/ssm`
    - Purpose: Open an SSM Session Manager shell into the bastion.
+   - Steps:
+     - Loads defaults and checks bastion instance status.
+     - Ensures the bastion is running and registered with SSM.
+     - Opens an interactive SSM session.
    - Example:
         ```shell
         make PROFILE=devops devops/aws/bastion/ssm
         ```
+   - Notes: No IP authorization required since it uses AWS SSM service endpoints.
 
-3) `devops/aws/bastion/ssm-port-forward/<src:dest>`
-   - Purpose: Open an SSM Port Forwarding session via Session Manager.
-   - Syntax: `devops/aws/bastion/ssm-port-forward/LOCAL_PORT:REMOTE_PORT`
-   - Example: Forward local 5432 to bastion’s 5432
-      ```shell
-      make SPOKE_NUM=001 devops/aws/bastion/ssm-port-forward/5432:5432
-      ```
-   - Notes: Uses document AWS-StartPortForwardingSession. Close with Ctrl+C.
-
-4) `devops/aws/bastion/ssh-port-forward/<src:destAddr:destPort>`
-   - Purpose: Open a classic SSH local port forward through the bastion’s public IP, using a private key retrieved from Secrets Manager.
+5) `devops/aws/bastion/ssm-port-forward/%`
+   - Purpose: Open an SSM Port Forwarding session via Session Manager to forward traffic through the bastion to a remote host.
    - Steps:
-     - Retrieves bastion PublicIpAddress from EC2.
-     - Reads key secret name from SSM: /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/key-secret-name and fetches SecretString, then pipes to ssh-add (via a transient ssh-agent started by the target).
-     - Reads instance-user from SSM: /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-user.
-     - Runs: ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -N -L SRC:DEST_ADDR:DEST_PORT INSTANCE_USER@BASTION_IP
-     - On interrupt or error, traps to stop ssh-agent and cleanup temp files.
-   - Syntax: `devops/aws/bastion/ssh-port-forward/LOCAL_PORT:DESTINATION_ADDRESS:DESTINATION_PORT`
+     - Loads defaults and checks bastion instance status.
+     - Ensures the bastion is running and registered with SSM.
+     - Uses AWS-StartPortForwardingSessionToRemoteHost document to establish port forwarding.
+   - Syntax: `devops/aws/bastion/ssm-port-forward/SRC_PORT/DEST_ADDR/DEST_PORT`
    - Examples:
-     - Forward local 22 to a private host through bastion:
+     - Forward local port 5432 to a database through bastion:
         ```shell
-        make SPOKE_NUM=001 devops/aws/bastion/ssh-port-forward/2222:10.0.1.10:22
+        make SPOKE_NUM=001 devops/aws/bastion/ssm-port-forward/5432/database.internal/5432
         ```
-     - Forward local 443 to an internal ALB:
+     - Forward local port 3306 to MySQL RDS:
         ```shell
-        make SPOKE_NUM=002 devops/aws/bastion/ssh-port-forward/8443:internal-alb.local:443
+        make devops/aws/bastion/ssm-port-forward/3306/mysql.us-east-1.rds.amazonaws.com/3306
         ```
-   - Notes: Ensure your IP can reach BASTION_IP (security group rules). The private key in Secrets Manager must be in PEM format acceptable by ssh-add.
+   - Notes: 
+     - Uses AWS-StartPortForwardingSessionToRemoteHost SSM document.
+     - No IP authorization required since it uses AWS SSM service endpoints.
+     - Uses `/` as delimiter between parameters.
+     - Close with Ctrl+C.
 
-5) `devops/aws/bastion/stop`
+6) `devops/aws/bastion/stop`
    - Purpose: Alias for devops/aws/bastion/shutdown.
    - Example:
       ```shell
       make SPOKE_NUM=001 devops/aws/bastion/stop
       ```
 
-6) `devops/aws/bastion/shutdown`
+7) `devops/aws/bastion/shutdown`
    - Purpose: Stop the bastion EC2 instance for a given SPOKE_NUM.
    - Steps:
+     - Sends shutdown request through SQS automation.
      - Reads instance-id from SSM Parameter Store.
      - If the instance is running, stops it and waits until fully stopped.
    - Example:
@@ -249,13 +288,24 @@ This guide documents all targets in devops/* targets and explains how to prepare
     make REGION=eu-west-1 PROFILE=devops-eu SPOKE_NUM=003 devops/aws/bastion/ssm
     ```
   
-- Forward PostgreSQL from a private RDS through bastion:
+- Forward PostgreSQL from a private RDS through bastion using SSM:
     ```shell
-      make devops/aws/bastion/ssm-port-forward/15432:5432
+      make devops/aws/bastion/ssm-port-forward/15432/database.internal/5432
       psql -h 127.0.0.1 -p 15432 -U user dbname
     ```
+
+- Forward PostgreSQL using SSH port forwarding:
+    ```shell
+      make devops/aws/bastion/ssh-port-forward/15432/database.internal/5432
+      psql -h 127.0.0.1 -p 15432 -U user dbname
+    ```
+
+- Interactive SSH session to bastion:
+    ```shell
+    make SPOKE_NUM=001 devops/aws/bastion/ssh
+    ```
+    
 - Stop a bastion when done:
     ```shell
     make devops/aws/bastion/shutdown
     ```
-  
