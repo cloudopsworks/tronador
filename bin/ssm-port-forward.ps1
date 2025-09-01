@@ -117,9 +117,9 @@ try {
     Write-Host "Starting SSM port forwarding session to the bastion host... from: $SourcePort to: $DestinationPort"
 
     $parameters = @{
-        host = "$DestinationAddress"
-        portNumber = "$DestinationPort"
-        localPortNumber = "$SourcePort"
+        host = @($DestinationAddress)
+        portNumber = @($DestinationPort)
+        localPortNumber = @($SourcePort)
     }
 
     $parametersJson1 = $parameters | ConvertTo-Json -Compress
