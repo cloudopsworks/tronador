@@ -58,7 +58,7 @@ try {
     }
     $messageBodyJson1 = $messageBody | ConvertTo-Json -Compress
     $messageBodyJson = $messageBodyJson1.Replace('"', '\"')
-    Write-Host "Sending access request to SQS... $messageBodyJson"
+    Write-Host "Sending access request to SQS..."
     & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws sqs send-message --queue-url $requestSqsUrl --region $Region --message-body $messageBodyJson
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to send message to SQS"
