@@ -66,6 +66,9 @@ devops/aws/bastion/ssm/check:
 # Retrieve the Bastion instance ID from ssm parameter store
 	$(eval BASTION_ID := $(shell $(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ssm get-parameter --name /cloudopsworks/tronador/bastion/$(SPOKE_NUM)/instance-id --query "Parameter.Value" --region $(REGION) --output text))
 	@echo "Bastion host instance ID: $(BASTION_ID)"
+
+# Mark the instance as started in a temporary file to be used by other targets
+devops/aws/bastion/started: devops/aws/bastion/ssm/check
 # Check if the instance ID is in running state, if not, start the instance, wait and then proceed
 	@echo "Checking if the bastion host instance is running..."
 	@$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) ec2 describe-instance-status --instance-ids $(BASTION_ID) --region $(REGION) --query "InstanceStatuses[0].InstanceState.Name" --output text | grep -q "running" || \
@@ -119,7 +122,7 @@ devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/basti
 	@rm -f $(TEMP_FILE)
 
 ## Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
-devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/ssm/check
+devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/started
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # Retrieve the key name from ssm parameter store
@@ -193,7 +196,7 @@ devops/aws/bastion/ssh-interactive:
 		ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $(INSTANCE_USER)@$(BASTION_IP)
 
 ## Starts an SSH Session to the bastion host in the specified spoke number
-devops/aws/bastion/ssh: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/ssm/check
+devops/aws/bastion/ssh: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/started
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # Retrieve the key name from ssm parameter store
