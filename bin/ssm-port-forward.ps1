@@ -56,9 +56,10 @@ try {
         service = "ssh"
         lease_request = $LeaseHours
     }
-    $messageBodyJson = $messageBody | ConvertTo-Json -Compress
+    $messageBodyJson1 = $messageBody | ConvertTo-Json -Compress
+    $messageBodyJson = $messageBodyJson1.Replace('"', '\"')
     Write-Host "Sending access request to SQS... $messageBodyJson"
-    & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws sqs send-message --queue-url '$requestSqsUrl' --region $Region --message-body $messageBodyJson
+    & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws sqs send-message --queue-url $requestSqsUrl --region $Region --message-body $messageBodyJson
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to send message to SQS"
         exit 1
