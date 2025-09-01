@@ -11,7 +11,7 @@ param(
     [string]$Region = "us-east-1",
     [string]$Profile = "devops",
     [string]$SpokeNum = "001",
-    [string]$AwsVaultBackend = "wincred"
+    [string]$AwsVaultBackend = "wincred",
     [string]$LeaseHours = "4"
 )
 
@@ -51,10 +51,10 @@ try {
     $myIp = (Invoke-RestMethod -Uri "https://checkip.amazonaws.com").Trim()
     # Send message to SQS with this format: "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":$(LEASE_HOURS)}"
     $messageBody = @{
-        action = "request_acess"
-        ip_address = @(myIp)
+        action = "request_access"
+        ip_address = @($myIp)
         service = "ssh"
-        lease_request = @(LeaseHours)
+        lease_request = @($LeaseHours)
     }
     $messageBodyJson = $messageBody | ConvertTo-Json -Compress
     Write-Host "Sending access request to SQS..."
