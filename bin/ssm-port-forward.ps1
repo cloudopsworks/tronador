@@ -12,6 +12,7 @@ param(
     [string]$Profile = "devops",
     [string]$SpokeNum = "001",
     [string]$AwsVaultBackend = "wincred"
+    [string]$LeaseHours = "4"
 )
 
 # Function to check if a command exists
@@ -37,6 +38,32 @@ try {
     # Load defaults (equivalent to devops/aws/load-defaults)
     Write-Host "Loading AWS defaults..."
     Write-Host "$Region $Profile"
+
+    # Obtain Request SQS URL (equivalent to devops/aws/bastion/authorize)
+    Write-Host "Obtaining Request SQS URL..."
+    $requestSqsUrl = & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws ssm get-parameter --name "/cloudopsworks/tronador/access-automation/request-queue" --query "Parameter.Value" --region $Region --output text
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to retrieve Request SQS URL"
+        exit 1
+    }
+    Write-Host "Request SQS URL: $requestSqsUrl"
+    # Get current ip from https://checkip.amazonaws.com
+    $myIp = (Invoke-RestMethod -Uri "https://checkip.amazonaws.com").Trim()
+    # Send message to SQS with this format: "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":$(LEASE_HOURS)}"
+    $messageBody = @{
+        action = "request_acess"
+        ip_address = @(myIp)
+        service = "ssh"
+        lease_request = @(LeaseHours)
+    }
+    $messageBodyJson = $messageBody | ConvertTo-Json -Compress
+    Write-Host "Sending access request to SQS..."
+    & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws sqs send-message --queue-url $requestSqsUrl --region $Region --message-body $messageBodyJson
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to send message to SQS"
+        exit 1
+    }
+    Write-Host "Access request sent."
 
     # Bastion SSM check (equivalent to devops/aws/bastion/ssm/check)
     Write-Host "Retrieving bastion host instance ID from SSM..."

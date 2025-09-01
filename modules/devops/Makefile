@@ -100,7 +100,7 @@ devops/aws/bastion/ip:
 
 
 ## Starts an SSM Session Manager session to the bastion host in the specified spoke number
-devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/started
+devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/started
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # If the instance is registered, start the SSM session
@@ -111,7 +111,7 @@ devops/aws/bastion/ssm: devops/aws/load-defaults devops/aws/bastion/started
 
 
 ## Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
-devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/bastion/started
+devops/aws/bastion/ssm-port-forward/%: devops/aws/load-defaults devops/aws/bastion/authorize devops/aws/bastion/started
 	$(call assert-set,AWS)
 	$(call assert-set,AWS_VAULT)
 # Retrieve the source and destination ports from the target parameters $@
