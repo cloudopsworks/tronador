@@ -12,7 +12,7 @@ param(
     [string]$Profile = "devops",
     [string]$SpokeNum = "001",
     [string]$AwsVaultBackend = "wincred",
-    [string]$LeaseHours = "4"
+    [int]$LeaseHours = 4
 )
 
 # Function to check if a command exists
@@ -52,13 +52,13 @@ try {
     # Send message to SQS with this format: "{\"action\":\"request_access\",\"ip_address\":\"$(MY_IP)\",\"service\":\"ssh\",\"lease_request\":$(LEASE_HOURS)}"
     $messageBody = @{
         action = "request_access"
-        ip_address = @($myIp)
+        ip_address = "$myIp"
         service = "ssh"
-        lease_request = @($LeaseHours)
+        lease_request = $LeaseHours
     }
     $messageBodyJson = $messageBody | ConvertTo-Json -Compress
-    Write-Host "Sending access request to SQS..."
-    & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws sqs send-message --queue-url $requestSqsUrl --region $Region --message-body $messageBodyJson
+    Write-Host "Sending access request to SQS... $messageBodyJson"
+    & aws-vault --backend=$AwsVaultBackend exec $Profile -- aws sqs send-message --queue-url '$requestSqsUrl' --region $Region --message-body $messageBodyJson
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to send message to SQS"
         exit 1
