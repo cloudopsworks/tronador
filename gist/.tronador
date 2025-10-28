@@ -9,6 +9,8 @@
 #   -include $(shell curl -sSL -o .tronador "https://gist.githubusercontent.com/cloudopsworks/GIST_ID/raw/.tronador"; echo .tronador)
 #
 # Replace GIST_ID with the actual GitHub Gist ID once this file is uploaded.
+# After uploading to Gist, remember to update README.yaml with the actual Gist ID
+# and regenerate README.md by running: make readme/build
 #
 # This will download this Makefile and include it at run-time.
 # We recommend adding .tronador to your .gitignore file.
