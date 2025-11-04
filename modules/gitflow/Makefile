@@ -179,14 +179,14 @@ gitflow/hotfix/finish/local: gitflow/deps
 	@echo "Minor Version is: $(MINOR_VERSION)"
 	@echo "Working Branch is: $(WORKING_BRANCH)"
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
-	@$(GIT) checkout $(WORKING_BRANCH)
-	@$(GIT) pull origin $(WORKING_BRANCH)
-	@$(GIT) merge --no-ff hotfix/$(RELVERSION)
-	@$(GIT) tag -a $(RELVERSION) -m "HotFix Release $(HOTFIX_NAME)"
-	@$(GIT) push origin $(WORKING_BRANCH)
-	@$(GIT) push origin $(RELVERSION)
-	@$(GIT) branch -d hotfix/$(RELVERSION)
-	@$(GIT) push origin -d hotfix/$(RELVERSION)
+	$(GIT) checkout $(WORKING_BRANCH)
+	$(GIT) pull origin $(WORKING_BRANCH)
+	$(GIT) merge --no-ff hotfix/$(RELVERSION)
+	$(GIT) tag -a $(RELVERSION) -m "HotFix Release $(HOTFIX_NAME)"
+	$(GIT) push origin $(WORKING_BRANCH)
+	$(GIT) push origin $(RELVERSION)
+	$(GIT) branch -d hotfix/$(RELVERSION)
+	$(GIT) push origin -d hotfix/$(RELVERSION)
 else
 	$(error "You must be in a hotfix branch to finish")
 endif
