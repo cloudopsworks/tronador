@@ -169,6 +169,7 @@ endif
 gitflow/hotfix/finish/local: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
+	echo "Current Branch is: $(GIT_BRANCH)"
 	$(eval RELVERSION := "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)")
 	$(eval MAJOR_VERSION := $(shell echo "$(RELVERSION)" | cut -d. -f1))
 	$(eval MINOR_VERSION := $(shell echo "$(RELVERSION)" | cut -d. -f2))
