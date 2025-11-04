@@ -156,7 +156,7 @@ ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GH) pr create -B $(MAIN_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(MAIN_BRANCH)" \
+		$(GH) pr create -B $(feature/workflow-upgrade-$dp) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(MAIN_BRANCH)" \
 			-t "Hotfix Release $(GIT_BRANCH)" ; \
 	else \
 		echo "You must be in the latest commit of the release branch to publish"; \
@@ -172,13 +172,13 @@ gitflow/hotfix/finish/local: gitflow/deps
 	$(eval RELVERSION := "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)")
 	$(eval MAJOR_VERSION := $(shell echo "$(RELVERSION)" | cut -d. -f1))
 	$(eval MINOR_VERSION := $(shell echo "$(RELVERSION)" | cut -d. -f2))
-ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	# Check if we have a support branch with the same major.minor version on the git tree
 	$(eval SUPPORT_BRANCH := $(shell $(GIT) branch --list 'support/$(MAJOR_VERSION).$(MINOR_VERSION)*'  --format '%(refname:short)'))
 	$(eval WORKING_BRANCH := $(if $(SUPPORT_BRANCH),$(SUPPORT_BRANCH),$(MAIN_BRANCH)))
 	@echo "Major Version is: $(MAJOR_VERSION)"
 	@echo "Minor Version is: $(MINOR_VERSION)"
 	@echo "Working Branch is: $(WORKING_BRANCH)"
+ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	@$(GIT) checkout $(WORKING_BRANCH)
 	@$(GIT) pull origin $(WORKING_BRANCH)
 	@$(GIT) merge --no-ff hotfix/$(RELVERSION)
