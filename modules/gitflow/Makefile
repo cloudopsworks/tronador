@@ -175,9 +175,9 @@ gitflow/hotfix/finish/local: gitflow/deps
 	# Check if we have a support branch with the same major.minor version on the git tree
 	$(eval SUPPORT_BRANCH := $(shell $(GIT) branch --list 'support/$(MAJOR_VERSION).$(MINOR_VERSION)*'  --format '%(refname:short)'))
 	$(eval WORKING_BRANCH := $(if $(SUPPORT_BRANCH),$(SUPPORT_BRANCH),$(MAIN_BRANCH)))
-	@echo "Major Version is: $(MAJOR_VERSION)"
-	@echo "Minor Version is: $(MINOR_VERSION)"
-	@echo "Working Branch is: $(WORKING_BRANCH)"
+	echo "Major Version is: $(MAJOR_VERSION)"
+	echo "Minor Version is: $(MINOR_VERSION)"
+	echo "Working Branch is: $(WORKING_BRANCH)"
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	$(GIT) checkout $(WORKING_BRANCH)
 	$(GIT) pull origin $(WORKING_BRANCH)
