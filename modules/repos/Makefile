@@ -120,6 +120,7 @@ ifneq (,$(wildcard .github/.terraform-module))
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
+BOILERPLATE_PATH := .cloudopsworks
 REPO_NAME := $(TERRAFORM_MODULE)
 endif
 
