@@ -509,7 +509,7 @@ gitflow/version/semver/full: gitflow/deps
 ## Creates _VERSION FILE from the MajorMinorPatch version (strip newline) with GitVersion tool, location sent on .github folder commit and push to repo
 gitflow/version/file: gitflow/deps
 	$(call assert-set,GITVERSION)
-ifneq ("$(wildcard .github/_VERSION)","")
+ifneq (,$(wildcard .github/_VERSION))
 	@echo "Pushing version to .github/_VERSION ... v5.9 workflow"
 	@echo -n "v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" > .github/_VERSION
 	@echo "Add and commit the version file to repository..."
