@@ -1,0 +1,91 @@
+# Tronador DevOps Accelerator - Base Makefile
+# 
+# Cloud Ops Works LLC
+# https://github.com/cloudopsworks/tronador
+#
+# USAGE:
+# Add the following line at the top of your Makefile:
+#
+#   -include $(shell curl -sSL -o .tronador "https://gist.githubusercontent.com/cloudopsworks/GIST_ID/raw/.tronador"; echo .tronador)
+#
+# Replace GIST_ID with the actual GitHub Gist ID once this file is uploaded.
+# After uploading to Gist, remember to update README.yaml with the actual Gist ID
+# and regenerate README.md by running: make readme/build
+#
+# This will download this Makefile and include it at run-time.
+# We recommend adding .tronador to your .gitignore file.
+#
+# This automatically exposes many targets that you can leverage throughout 
+# your build & CI/CD process.
+#
+# Run `make help` for a list of available targets.
+#
+# NOTE: the `/` is interchangeable with the `:` in target names
+
+# This Makefile is recursively included by the Makefiles in the templating system
+# we have to prevent infinite recursion with a guard variable
+ifeq ($(TRONADOR_MAKEFILE_GUARD),)
+TRONADOR_MAKEFILE_GUARD := included
+
+export SHELL = /bin/bash
+export TRONADOR_ORG ?= cloudopsworks
+export TRONADOR_PROJECT ?= tronador
+export TRONADOR_BRANCH ?= master
+export TRONADOR_CLONE_URL ?= https://github.com/$(TRONADOR_ORG)/$(TRONADOR_PROJECT).git
+
+
+TRONADOR_PATH ?= $(shell until [ -d "$(TRONADOR_PROJECT)" ] || [ "`pwd`" == '/' ]; do cd ..; done; pwd)/$(TRONADOR_PROJECT)
+TRONADOR_PATH_LOCAL := $(PWD)/$(TRONADOR_PROJECT)
+
+export TRONADOR_PATH := $(or $(wildcard $(TRONADOR_PATH)), $(TRONADOR_PATH_LOCAL))
+
+# Auto-init toggles whether or not to automatically install tronador if it is not found
+TRONADOR_AUTO_INIT ?= false
+
+define tronador_install
+	curl --retry 5 --fail --silent --retry-delay 1 https://raw.githubusercontent.com/$(TRONADOR_ORG)/$(TRONADOR_PROJECT)/$(TRONADOR_BRANCH)/bin/install.sh | \
+		bash -s "$(TRONADOR_ORG)" "$(TRONADOR_PROJECT)" "$(TRONADOR_BRANCH)"
+endef
+
+define tronador_auto_init
+if [[ \
+	-f "/tronador/Makefile" || -f "/$(TRONADOR_PROJECT)/Makefile" \
+]]; then \
+	echo "[.tronador] Tronador already installed, skip auto init..."; \
+elif [[ \
+	"$(TRONADOR_PATH)" != "$(TRONADOR_PATH_LOCAL)" && \
+	-f "$(TRONADOR_PATH)/Makefile" \
+]]; then \
+	echo "[.tronador] using external $(TRONADOR_PATH), skip auto init..."; \
+elif [[ \
+	"$(TRONADOR_PATH)" == "$(TRONADOR_PATH_LOCAL)" && \
+	-f "$(TRONADOR_PATH)/Makefile" && \
+	"$$(git -C '$(TRONADOR_PATH_LOCAL)' ls-remote '$(TRONADOR_CLONE_URL)' '$(TRONADOR_BRANCH)' | cut -f1)" == "$$(git -C '$(TRONADOR_PATH_LOCAL)' rev-parse HEAD)" \
+]]; then \
+	echo "[.tronador] Clone of $(TRONADOR_PROJECT) already updated, skip auto init..."; \
+else \
+	$(tronador_install); \
+fi
+endef
+
+-include $(if $(findstring true,$(TRONADOR_AUTO_INIT)),$(shell $(tronador_auto_init) >&2)) $(TRONADOR_PATH)/Makefile
+
+.PHONY : init
+## Init Accelerate Tooling
+init::
+	@ $(tronador_install)
+
+
+## Clean Accelerate Tooling
+clean::
+	@if [ -d "$(TRONADOR_PATH)" ] ; then \
+		if [ -d tronador ] && [ "$(TRONADOR_PATH)" -ef tronador ] ; then \
+			echo rm -rf tronador; \
+			rm -rf tronador; \
+		else \
+			echo "The path $(TRONADOR_PATH) seems to be shared will not remove, you can do manually"; \
+			echo '    rm -rf "$(TRONADOR_PATH)"'; \
+		fi; \
+	fi
+
+endif
