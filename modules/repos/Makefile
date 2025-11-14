@@ -124,7 +124,7 @@ MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
-ifeq($(PRE510),1)
+ifeq ($(PRE510),1)
 BOILERPLATE_PATH := .cloudopsworks
 else
 BOILERPLATE_PATH := .cloudopsworks/boilerplate
@@ -140,7 +140,7 @@ ifneq (,$(wildcard $(BLUEPRINT_PATH)/.terraform-module))
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
-ifeq($(PRE510),1)
+ifeq ($(PRE510),1)
 BOILERPLATE_PATH := .cloudopsworks
 else
 BOILERPLATE_PATH := .cloudopsworks/boilerplate
