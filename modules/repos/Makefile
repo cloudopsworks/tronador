@@ -20,108 +20,133 @@ GH ?= $(INSTALL_PATH)/gh
 PULL_BRANCH ?= master
 REPO_NAME ?= ""
 TEMPLATE_HASH ?= ""
+ifneq (,$(wildcard .cloudopsworks/_VERSION))
+BLUEPRINT_PATH := .cloudopsworks
+PRE510 := 0
+else
+BLUEPRINT_PATH := .github
+PRE510 := 1
+endif
 
 repos/template/dotnet:
-ifneq (,$(wildcard .github/.dotnet))
+ifneq (,$(wildcard .$(BLUEPRINT_PATH)/.dotnet))
 	@echo "DotNet Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(DOTNET_TEMPLATE)
+MIGRATE_TASK := repos/migrate/dotnet/510
 endif
 
 repos/template/go:
-ifneq (,$(wildcard .github/.golang))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.golang))
 	@echo "Go Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(GO_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(GO_TEMPLATE)
+MIGRATE_TASK := repos/migrate/go/510
 endif
 
 repos/template/rust:
-ifneq (,$(wildcard .github/.rust))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.rust))
 	@echo "Rust Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(RUST_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(RUST_TEMPLATE)
+MIGRATE_TASK := repos/migrate/rust/510
 endif
 
 repos/template/xcode:
-ifneq (,$(wildcard .github/.xcode))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.xcode))
 	@echo "XCode Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(XCODE_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(XCODE_TEMPLATE)
+MIGRATE_TASK := repos/migrate/xcode/510
 endif
 
 repos/template/java:
-ifneq (,$(wildcard .github/.java))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.java))
 	@echo "Java Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(JAVA_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(JAVA_TEMPLATE)
+MIGRATE_TASK := repos/migrate/java/510
 endif
 
 repos/template/node:
-ifneq (,$(wildcard .github/.node))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.node))
 	@echo "NodeJS Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(NODE_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(NODE_TEMPLATE)
+MIGRATE_TASK := repos/migrate/node/510
 endif
 
 repos/template/docker:
-ifneq (,$(wildcard .github/.docker))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.docker))
 	@echo "Docker Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(DOCKER_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(DOCKER_TEMPLATE)
+MIGRATE_TASK := repos/migrate/docker/510
 endif
 
 repos/template/python:
-ifneq (,$(wildcard .github/.python))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.python))
 	@echo "Python Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(PYTHON_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(PYTHON_TEMPLATE)
+MIGRATE_TASK := repos/migrate/python/510
 endif
 
 repos/template/terragrunt:
-ifneq (,$(wildcard .github/.iac))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.iac))
 	@echo "Terragrunt Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(TERRAGRUNT_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
+ifeq($(PRE510),1)
 BOILERPLATE_PATH := .cloudopsworks
+else
+BOILERPLATE_PATH := .cloudopsworks/boilerplate
+endif
 REPO_NAME := $(TERRAGRUNT_TEMPLATE)
+MIGRATE_TASK := repos/migrate/terragrunt/510
 endif
 
 repos/template/terraform-module:
-ifneq (,$(wildcard .github/.terraform-module))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.terraform-module))
 	@echo "Terraform Module Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(TERRAFORM_MODULE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 BOILERPLATE_TEMPLATE := 1
+ifeq($(PRE510),1)
 BOILERPLATE_PATH := .cloudopsworks
+else
+BOILERPLATE_PATH := .cloudopsworks/boilerplate
+endif
 REPO_NAME := $(TERRAFORM_MODULE)
+MIGRATE_TASK := repos/migrate/terraform/510
 endif
 
 .PHONY: repos/template/init
@@ -138,11 +163,11 @@ repos/clean/template:
 ## Update CICD Pipeline footer versioning
 repos/cicd/update:
 	@echo "Updating CICD Pipeline cloudopsworks-ci.yaml"
-	@grep -q "#workflow-version-tag" .github/cloudopsworks-ci.yaml || printf "\n\n############ DO NOT MODIFY BELOW ############\n#workflow-version-tag: 1.0.0" >> .github/cloudopsworks-ci.yaml
+	@grep -q "#workflow-version-tag" $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml || printf "\n\n############ DO NOT MODIFY BELOW ############\n#workflow-version-tag: 1.0.0" >> $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml
 ifeq ($(OS),darwin)
-	@sed -i '' "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $(TEMPLATE_HASH)|g" .github/cloudopsworks-ci.yaml
+	@sed -i '' "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat $(BLUEPRINT_PATH)/_VERSION) - hash: $(TEMPLATE_HASH)|g" $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml
 else
-	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat .github/_VERSION) - hash: $(TEMPLATE_HASH)|g" .github/cloudopsworks-ci.yaml
+	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat $(BLUEPRINT_PATH)/_VERSION) - hash: $(TEMPLATE_HASH)|g" $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml
 endif
 
 repos/clean:
@@ -152,7 +177,7 @@ repos/clean:
 
 # Deprecated on v5
 #repos/copy/workflow:
-#	@echo "Copying workflows from version: $$(cat .github/_VERSION)"
+#	@echo "Copying workflows from version: $$(cat $(BLUEPRINT_PATH)/_VERSION)"
 #	@cp .github/workflows/.template/*.yml .github/workflows
 #	@cp .github/workflows/.template/*.yaml .github/workflows
 #ifeq ($(OS),darwin)
@@ -169,15 +194,15 @@ repos/push:
 	$(call assert-set,GIT)
 	@echo "Committing changes"
 ifeq (1,$(CICD_TEMPLATE))
-	@$(GIT) add .github/workflows Makefile .github/_VERSION .github/Makefile .github/cloudopsworks-ci.yaml
+	@$(GIT) add .github/workflows Makefile $(BLUEPRINT_PATH)/_VERSION $(BLUEPRINT_PATH)/Makefile $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml
 else
-	@$(GIT) add .github/workflows Makefile .github/_VERSION
+	@$(GIT) add .github/workflows Makefile $(BLUEPRINT_PATH)/_VERSION
 endif
 ifeq (1,$(BOILERPLATE_TEMPLATE))
 	@$(GIT) add $(BOILERPLATE_PATH)
 endif
-	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat .github/_VERSION)"
-	@echo "Repository upgraded to version: $$(cat .github/_VERSION)"
+	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat $(BLUEPRINT_PATH)/_VERSION)"
+	@echo "Repository upgraded to version: $$(cat $(BLUEPRINT_PATH)/_VERSION)"
 
 ## Upgrade Repository from Templates but for DEV!
 repos/upgrade/dev: repos/template/init
@@ -186,8 +211,8 @@ repos/upgrade/dev: repos/template/init
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
 repos/upgrade: packages/install/gh repos/template/init
 	$(call assert-set,GH)
-	$(eval VERSION_STRING := $(shell cat .github/_VERSION))
-	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' .github/_VERSION))
+	$(eval VERSION_STRING := $(shell cat $(BLUEPRINT_PATH)/_VERSION))
+	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' $(BLUEPRINT_PATH)/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
 	$(eval THETAG= $(shell ))
@@ -201,8 +226,8 @@ repos/upgrade: packages/install/gh repos/template/init
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
 repos/upgrade/major: packages/install/gh repos/template/init
 	$(call assert-set,GH)
-	$(eval VERSION_STRING := $(shell cat .github/_VERSION))
-	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' .github/_VERSION))
+	$(eval VERSION_STRING := $(shell cat $(BLUEPRINT_PATH)/_VERSION))
+	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' $(BLUEPRINT_PATH)/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
 	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
@@ -223,33 +248,46 @@ repos/upgrade/fetch:
 	$(eval TEMPLATE_HASH := $(shell cd .template && $(GIT) rev-parse HEAD))
 	@cd .template && rm -fr .git
 	@echo "Template repository hash: $(TEMPLATE_HASH)"
+	$(eval V510PLUS := $(wildcard .template/.cloudopsworks/_VERSION)) # will be empty if pre 5.1.0
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
-	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION) from $(PULL_BRANCH)"
+	@echo "Upgrading repository, current Version: $$(cat $(BLUEPRINT_DEST_PATH)/_VERSION) from $(PULL_BRANCH)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Updating from template repository"
 	@$(MAKE) repos/clean
-  ifeq (1,$(VERSIONED_TEMPLATE))
-	@cp -pfR .template/.github/workflows .github
-	@cp -pf .template/Makefile Makefile
-	@cp -pf .template/.github/_VERSION .github/_VERSION
-	@if [ -f .template/.github/Makefile ]; then \
-		cp -pf .template/.github/Makefile .github/Makefile ; \
-	fi
-  else
-	@cp -pfr .template/.github/workflows .github/workflows
-	@cp -pfr .template/Makefile Makefile
-  endif
-  ifeq (1,$(BOILERPLATE_TEMPLATE))
-	@cp -pfR .template/$(BOILERPLATE_PATH) .
-  endif
-  ifeq (1,$(CICD_TEMPLATE))
-	@$(MAKE) TEMPLATE_HASH=$(TEMPLATE_HASH) repos/cicd/update
-  endif
+ifeq (1,$(VERSIONED_TEMPLATE))
+		@cp -pfR .template/.github/workflows .github
+		@cp -pf .template/Makefile Makefile
+ifneq (,$(V510PLUS))
+			@echo "Detected template version v5.10+"
+			@$(MAKE) $(MIGRATE_TASK)
+			@cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION
+			@if [ -f .template/.cloudopsworks/Makefile ]; then \
+				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
+			fi
+else
+		@echo "Detected template version < v5.10"
+		@cp -pf .template/.github/_VERSION .github/_VERSION
+		@if [ -f .template/.github/Makefile ]; then \
+			cp -pf .template/.github/Makefile .github/Makefile ; \
+		fi
+endif
+else
+		@cp -pfr .template/.github/workflows .github/workflows
+		@cp -pfr .template/Makefile Makefile
+endif
+
+ifeq (1,$(BOILERPLATE_TEMPLATE))
+		@cp -pfR .template/$(BOILERPLATE_PATH) .
+endif
+
+ifeq (1,$(CICD_TEMPLATE))
+		@$(MAKE) TEMPLATE_HASH=$(TEMPLATE_HASH) repos/cicd/update
+endif
 	@rm -fr .template/
 	@$(MAKE) repos/push
 	@echo "Please review changes and push to remote repository"
@@ -267,7 +305,7 @@ repos/recover: packages/install/gh repos/template/init repos/upgrade/fetch
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
-	@echo "Upgrading repository, current Version: $$(cat .github/_VERSION) from $(PULL_BRANCH)"
+	@echo "Upgrading repository, current Version: $$(cat $(BLUEPRINT_PATH)/_VERSION) from $(PULL_BRANCH)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Fetching template repository"
@@ -283,4 +321,40 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@echo "!!WARNING!! Some files may have been overwritten, please review changes and push to remote repository"
 else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
+endif
+
+# Migration tasks:
+repos/migrate/510:
+	@echo "Migrating Common repository structure to v5.10+"
+	@mkdir -p .cloudopsworks
+	@mv .github/vars .github/values .github/cloudopsworks*.yaml .github/LICENSE .github/Makefile .github/_VERSION .cloudopsworks/
+
+repos/migrate/java/510: repos/migrate/510
+	@echo "Migrating Java repository structure to v5.10+"
+ifneq (,$(wildcard .github/_VERSION))
+	@mv .github/.java .cloudopsworks/
+endif
+
+repos/migrate/dotnet/510: repos/migrate/510
+	@echo "Migrating NodeJS repository structure to v5.10+"
+ifneq (,$(wildcard .github/_VERSION))
+	@mv .github/.dotnet .cloudopsworks/
+endif
+
+repos/migrate/go/510: repos/migrate/510
+	@echo "Migrating GoLang repository structure to v5.10+"
+ifneq (,$(wildcard .github/_VERSION))
+	@mv .github/.golang .cloudopsworks/
+endif
+
+repos/migrate/rust/510: repos/migrate/510
+	@echo "Migrating Rust repository structure to v5.10+"
+ifneq (,$(wildcard .github/_VERSION))
+	@mv .github/.rust .cloudopsworks/
+endif
+
+repos/migrate/python/510: repos/migrate/510
+	@echo "Migrating Python repository structure to v5.10+"
+ifneq (,$(wildcard .github/_VERSION))
+	@mv .github/.python .cloudopsworks/
 endif
