@@ -287,7 +287,8 @@ else
 endif
 
 ifeq (1,$(BOILERPLATE_TEMPLATE))
-		@cp -pfR .template/$(BOILERPLATE_PATH) .
+		@mkdir -p $(BOILERPLATE_PATH)
+		@cp -pfr .template/$(BOILERPLATE_PATH)/ $(BOILERPLATE_PATH)/
 endif
 
 ifeq (1,$(CICD_TEMPLATE))
