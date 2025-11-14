@@ -27,6 +27,7 @@ else
 BLUEPRINT_PATH := .github
 PRE510 := 1
 endif
+V510PLUS ?= ""
 
 repos/template/dotnet:
 ifneq (,$(wildcard .$(BLUEPRINT_PATH)/.dotnet))
