@@ -360,6 +360,6 @@ repos/migrate/terraform/510:
 	@mkdir -p  .cloudopsworks/boilerplate/
 	@mv .github/.terraform-module .cloudopsworks/
 	@mv .github/auto*.yml .cloudopsworks/
-	@[ -d .cloudopsworks/aws ] && mv .cloudopsworks/aws .cloudopsworks/boilerplate/
-	@[ -d .cloudopsworks/gcp ] && mv .cloudopsworks/gcp .cloudopsworks/boilerplate/
-	@[ -d .cloudopsworks/azure ] && mv .cloudopsworks/azure .cloudopsworks/boilerplate/
+	@[ -d .cloudopsworks/aws ] && mv .cloudopsworks/aws .cloudopsworks/boilerplate/ || echo "No AWS boilerplate found"
+	@[ -d .cloudopsworks/gcp ] && mv .cloudopsworks/gcp .cloudopsworks/boilerplate/ || echo "No GCP boilerplate found"
+	@[ -d .cloudopsworks/azure ] && mv .cloudopsworks/azure .cloudopsworks/boilerplate/ || echo "No Azure boilerplate found"
