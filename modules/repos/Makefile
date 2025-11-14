@@ -254,7 +254,7 @@ repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
 ifeq (1,$(MERGE_TEMPLATE))
-	@echo "Upgrading repository, current Version: $$(cat $(BLUEPRINT_DEST_PATH)/_VERSION) from $(PULL_BRANCH)"
+	@echo "Upgrading repository, current Version: $$(cat $(BLUEPRINT_PATH)/_VERSION) from $(PULL_BRANCH)"
 	@echo "Setting default repository: $(GIT_ORG)/$(GIT_REPO)"
 	@$(GH) repo set-default $(GIT_ORG)/$(GIT_REPO)
 	@echo "Updating from template repository"
@@ -264,7 +264,9 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pf .template/Makefile Makefile
 ifneq (,$(V510PLUS))
 			@echo "Detected template version v5.10+"
+ifeq ($(PRE510),1)
 			@$(MAKE) $(MIGRATE_TASK)
+endif
 			@cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION
 			@if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
@@ -331,30 +333,20 @@ repos/migrate/510:
 
 repos/migrate/java/510: repos/migrate/510
 	@echo "Migrating Java repository structure to v5.10+"
-ifneq (,$(wildcard .github/_VERSION))
 	@mv .github/.java .cloudopsworks/
-endif
 
 repos/migrate/dotnet/510: repos/migrate/510
 	@echo "Migrating NodeJS repository structure to v5.10+"
-ifneq (,$(wildcard .github/_VERSION))
 	@mv .github/.dotnet .cloudopsworks/
-endif
 
 repos/migrate/go/510: repos/migrate/510
 	@echo "Migrating GoLang repository structure to v5.10+"
-ifneq (,$(wildcard .github/_VERSION))
 	@mv .github/.golang .cloudopsworks/
-endif
 
 repos/migrate/rust/510: repos/migrate/510
 	@echo "Migrating Rust repository structure to v5.10+"
-ifneq (,$(wildcard .github/_VERSION))
 	@mv .github/.rust .cloudopsworks/
-endif
 
 repos/migrate/python/510: repos/migrate/510
 	@echo "Migrating Python repository structure to v5.10+"
-ifneq (,$(wildcard .github/_VERSION))
 	@mv .github/.python .cloudopsworks/
-endif
