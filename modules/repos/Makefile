@@ -361,7 +361,7 @@ repos/migrate/terraform/510:
 	@mv .github/.terraform-module .cloudopsworks/
 	@mv .github/auto*.yml .cloudopsworks/
 	@mv .github/_VERSION .cloudopsworks/
-	@[ -d .github/.provider ] && mv .github/.provider .cloudopsworks/ || echo "No Provider indicator found"
+	@[ -f .github/.provider ] && mv .github/.provider .cloudopsworks/ || echo "No Provider indicator found"
 	@[ -d .cloudopsworks/aws ] && mv .cloudopsworks/aws .cloudopsworks/boilerplate/ || echo "No AWS boilerplate found"
 	@[ -d .cloudopsworks/gcp ] && mv .cloudopsworks/gcp .cloudopsworks/boilerplate/ || echo "No GCP boilerplate found"
 	@[ -d .cloudopsworks/azure ] && mv .cloudopsworks/azure .cloudopsworks/boilerplate/ || echo "No Azure boilerplate found"
