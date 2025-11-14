@@ -268,6 +268,7 @@ ifneq (,$(V510PLUS))
 			@echo "Detected template version v5.10+"
 ifeq ($(PRE510),1)
 			@$(MAKE) $(MIGRATE_TASK)
+			git add .cloudopsworks
 endif
 			@cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION
 			@if [ -f .template/.cloudopsworks/Makefile ]; then \
@@ -331,7 +332,7 @@ endif
 repos/migrate/510:
 	@echo "Migrating Common repository structure to v5.10+"
 	@mkdir -p .cloudopsworks
-	@mv .github/vars .github/values .github/cloudopsworks*.yaml .github/LICENSE .github/Makefile .github/_VERSION .cloudopsworks/
+	@mv .github/vars .github/values .github/cloudopsworks*.yaml .github/LICENSE .github/Makefile .github/_VERSION .github/labeler.yml .cloudopsworks/
 
 repos/migrate/java/510: repos/migrate/510
 	@echo "Migrating Java repository structure to v5.10+"
