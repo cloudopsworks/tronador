@@ -359,6 +359,7 @@ repos/migrate/terraform/510:
 	@echo "Migrating Terraform Module repository structure to v5.10+"
 	@mkdir .cloudopsworks/boilerplate/
 	@mv .github/.terraform-module .cloudopsworks/
+	@mv .github/auto*.yml .cloudopsworks/
 	@mv .cloudopsworks/aws .cloudopsworks/boilerplate/
 	@mv .cloudopsworks/gcp .cloudopsworks/boilerplate/
 	@mv .cloudopsworks/azure .cloudopsworks/boilerplate/
