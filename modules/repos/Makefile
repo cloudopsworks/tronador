@@ -360,6 +360,6 @@ repos/migrate/terraform/510:
 	@mkdir .cloudopsworks/boilerplate/
 	@mv .github/.terraform-module .cloudopsworks/
 	@mv .github/auto*.yml .cloudopsworks/
-	@mv .cloudopsworks/aws .cloudopsworks/boilerplate/
-	@mv .cloudopsworks/gcp .cloudopsworks/boilerplate/
-	@mv .cloudopsworks/azure .cloudopsworks/boilerplate/
+	@[ -d .cloudopsworks/aws ] && mv .cloudopsworks/aws .cloudopsworks/boilerplate/
+	@[ -d .cloudopsworks/gcp ] && mv .cloudopsworks/gcp .cloudopsworks/boilerplate/
+	@[ -d .cloudopsworks/azure ] && mv .cloudopsworks/azure .cloudopsworks/boilerplate/
