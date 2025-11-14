@@ -355,10 +355,10 @@ repos/migrate/python/510: repos/migrate/510
 	@echo "Migrating Python repository structure to v5.10+"
 	@mv .github/.python .cloudopsworks/
 
-repos/migrate/terraform/510: repos/migrate/510
+repos/migrate/terraform/510:
 	@echo "Migrating Terraform Module repository structure to v5.10+"
-	@mv .github/.terraform-module .cloudopsworks/
 	@mkdir .cloudopsworks/boilerplate/
+	@mv .github/.terraform-module .cloudopsworks/
 	@mv .cloudopsworks/aws .cloudopsworks/boilerplate/
 	@mv .cloudopsworks/gcp .cloudopsworks/boilerplate/
 	@mv .cloudopsworks/azure .cloudopsworks/boilerplate/
