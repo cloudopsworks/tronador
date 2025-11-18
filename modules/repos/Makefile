@@ -246,7 +246,7 @@ repos/upgrade/fetch:
 	$(call assert-set,PULL_BRANCH)
 	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
 	@cd .template && $(GIT) checkout $(PULL_BRANCH) > /dev/null 2>&1
-	$(eval TEMPLATE_HASH := $(shell cd .template && $(GIT) rev-parse HEAD))
+	$(eval TEMPLATE_HASH := $(shell cd .template && $(GIT) rev-parse $(PULL_BRANCH)))
 	@cd .template && rm -fr .git
 	@echo "Template repository hash: $(TEMPLATE_HASH)"
 	$(eval V510PLUS := $(wildcard .template/.cloudopsworks/_VERSION)) # will be empty if pre 5.1.0
