@@ -195,14 +195,14 @@ repos/push:
 	$(call assert-set,GIT)
 	@echo "Committing changes"
 ifeq (1,$(CICD_TEMPLATE))
-	@$(GIT) add .github/workflows Makefile $(BLUEPRINT_PATH)/_VERSION $(BLUEPRINT_PATH)/Makefile $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml
+	@$(GIT) add -u .github/ Makefile $(BLUEPRINT_PATH)/_VERSION $(BLUEPRINT_PATH)/Makefile $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml
 else
-	@$(GIT) add .github/workflows Makefile $(BLUEPRINT_PATH)/_VERSION
+	@$(GIT) add -u .github/ Makefile $(BLUEPRINT_PATH)/_VERSION
 endif
 ifeq (1,$(BOILERPLATE_TEMPLATE))
 	@$(GIT) add $(BOILERPLATE_PATH)
 endif
-	@$(GIT) commit -m "chore: Upgrade repository from template, version: $$(cat $(BLUEPRINT_PATH)/_VERSION)"
+	@$(GIT) commit -am "chore: Upgrade repository from template, version: $$(cat $(BLUEPRINT_PATH)/_VERSION)"
 	@echo "Repository upgraded to version: $$(cat $(BLUEPRINT_PATH)/_VERSION)"
 
 ## Upgrade Repository from Templates but for DEV!
@@ -318,7 +318,8 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(MAKE) repos/clean
 	@cp -pfr .template/ .
   ifeq (1,$(BOILERPLATE_TEMPLATE))
-	@cp -pfR .template/$(BOILERPLATE_PATH) .
+	@mkdir -p $(BOILERPLATE_PATH)
+	@cp -pfR .template/$(BOILERPLATE_PATH)/* $(BOILERPLATE_PATH)
   endif
   ifeq (1,$(CICD_TEMPLATE))
 	@$(MAKE) repos/cicd/update
