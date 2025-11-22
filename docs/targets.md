@@ -4,11 +4,13 @@ Available targets:
 
   bash/lint                           Lint all bash scripts
   devops/aws/bastion/shutdown         Shuts down the bastion host instance in the specified spoke number
+  devops/aws/bastion/ssh              Starts an SSH Session to the bastion host in the specified spoke number
   devops/aws/bastion/ssh-port-forward/% Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
   devops/aws/bastion/ssm              Starts an SSM Session Manager session to the bastion host in the specified spoke number
-  devops/aws/bastion/ssm-port-forward/% Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<dest port>
+  devops/aws/bastion/ssm-port-forward/% Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
   devops/aws/bastion/stop             Shuts down the bastion host instance in the specified spoke number (alternate name)
   devops/aws/login/sso                Does login to AWS SSO and sets up the environment for DevOps tasks
+  devops/aws/test/vault               Test aws-vault client is installed and configured
   docs/copyright-add                  Add copyright headers to source code
   git/aliases-update                  Update git aliases
   git/export                          Export git vars
