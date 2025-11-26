@@ -335,10 +335,15 @@ repos/migrate/510:
 	@echo "Migrating Common repository structure to v5.10+"
 	@mkdir -p .cloudopsworks
 	@mv .github/vars .github/values .github/cloudopsworks*.yaml .github/LICENSE .github/Makefile .github/_VERSION .github/labeler.yml .cloudopsworks/
+	@$(GIT) add -A .github
 
 repos/migrate/java/510: repos/migrate/510
 	@echo "Migrating Java repository structure to v5.10+"
 	@mv .github/.java .cloudopsworks/
+
+repos/migrate/node/510: repos/migrate/510
+	@echo "Migrating NodeJS repository structure to v5.10+"
+	@mv .github/.node .cloudopsworks/
 
 repos/migrate/dotnet/510: repos/migrate/510
 	@echo "Migrating NodeJS repository structure to v5.10+"
