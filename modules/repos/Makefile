@@ -251,7 +251,7 @@ repos/upgrade/fetch:
 	@echo "Template repository hash: $(TEMPLATE_HASH)"
 # will be empty if pre v5.10 && upgrading same pre v5.10
 	$(eval V510PLUS := $(shell if [[ -f .template/.cloudopsworks/_VERSION]] ; then cat .template/.cloudopsworks/_VERSION ; else echo -n "" ; fi))
-	@echo "Template version v5.10+ detected?: $(V510PLUS)"
+	@echo "Template version v5.10+ detected?: '$(V510PLUS)'"
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
