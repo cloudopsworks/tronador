@@ -266,12 +266,13 @@ ifeq (1,$(MERGE_TEMPLATE))
 	@$(MAKE) repos/clean
 ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pfR .template/.github/workflows .github
+		@$(GIT) add .github/workflows
 		@cp -pf .template/Makefile Makefile
 		@if [[ "x$(V510PLUS)" != "x" ]] ; then \
 			echo "Detected template version v5.10+" ; \
 			if [[ "$(PRE510)" == "1" ]] ; then \
 				$(MAKE) $(MIGRATE_TASK) ; \
-				git add .cloudopsworks ; \
+				$(GIT) add .cloudopsworks ; \
 			fi ; \
 			cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION ; \
 			if [ -f .template/.cloudopsworks/Makefile ]; then \
@@ -286,6 +287,7 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		fi
 else
 		@cp -pfr .template/.github/workflows .github/workflows
+		@$(GIT) add .github/workflows
 		@cp -pfr .template/Makefile Makefile
 endif
 
