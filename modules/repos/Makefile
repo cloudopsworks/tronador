@@ -249,8 +249,9 @@ repos/upgrade/fetch:
 	$(eval TEMPLATE_HASH := $(shell cd .template && $(GIT) rev-parse $(PULL_BRANCH)))
 	@cd .template && rm -fr .git
 	@echo "Template repository hash: $(TEMPLATE_HASH)"
-	$(eval V510PLUS := $(wildcard .template/.cloudopsworks/_VERSION)) # will be empty if pre 5.1.0
-	echo "Template version v5.10+ detected?: $(V510PLUS)"
+# will be empty if pre v5.10 && upgrading same pre v5.10
+	$(eval V510PLUS := $(wildcard .template/.cloudopsworks/_VERSION))
+	@echo "Template version v5.10+ detected?: $(V510PLUS)"
 
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch
 	$(call assert-set,GIT)
