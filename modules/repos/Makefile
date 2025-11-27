@@ -267,24 +267,23 @@ ifeq (1,$(MERGE_TEMPLATE))
 ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pfR .template/.github/workflows .github
 		@cp -pf .template/Makefile Makefile
-		@echo "Template version v5.10+ detected? (2): '$(V510PLUS)'"
-ifneq ($(V510PLUS),)
-			@echo "Detected template version v5.10+"
-ifeq ($(PRE510),1)
-			@$(MAKE) $(MIGRATE_TASK)
-			git add .cloudopsworks
-endif
-			@cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION
-			@if [ -f .template/.cloudopsworks/Makefile ]; then \
+		@if [[ "x$(V510PLUS)" != "x" ]] ; then \
+			echo "Detected template version v5.10+" ; \
+			if [[ "$(PRE510)" == "1" ]] ; then \
+				$(MAKE) $(MIGRATE_TASK) ; \
+				git add .cloudopsworks ; \
+			fi ; \
+			cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION ; \
+			if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
-			fi
-else
-		@echo "Detected template version < v5.10"
-		@cp -pf .template/.github/_VERSION .github/_VERSION
-		@if [ -f .template/.github/Makefile ]; then \
-			cp -pf .template/.github/Makefile .github/Makefile ; \
+			fi ; \
+		else \
+			echo "Detected template version < v5.10" ; \
+			cp -pf .template/.github/_VERSION .github/_VERSION ; \
+			if [ -f .template/.github/Makefile ]; then \
+				cp -pf .template/.github/Makefile .github/Makefile ; \
+			fi ; \
 		fi
-endif
 else
 		@cp -pfr .template/.github/workflows .github/workflows
 		@cp -pfr .template/Makefile Makefile
