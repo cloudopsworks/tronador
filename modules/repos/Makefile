@@ -265,7 +265,7 @@ ifeq (1,$(MERGE_TEMPLATE))
 ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pfR .template/.github/workflows .github
 		@cp -pf .template/Makefile Makefile
-ifneq (,$(V510PLUS))
+ifneq ($(V510PLUS),)
 			@echo "Detected template version v5.10+"
 ifeq ($(PRE510),1)
 			@$(MAKE) $(MIGRATE_TASK)
