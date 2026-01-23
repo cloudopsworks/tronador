@@ -387,6 +387,10 @@ repos/migrate/androidsdk/510:
 	@echo "Android SDK is available only for v5.10+ templates, no migration needed."
 	exit 100
 
+repos/migrate/terragrunt/510: repos/migrate/510
+	@echo "Migrating Terragrunt repository structure to v5.10+"
+	@mv .github/.iac .cloudopsworks/
+
 repos/migrate/terraform/510:
 	@echo "Migrating Terraform Module repository structure to v5.10+"
 	@mkdir -p  .cloudopsworks/boilerplate/
