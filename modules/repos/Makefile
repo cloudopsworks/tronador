@@ -11,6 +11,7 @@ TERRAFORM_MODULE=cloudopsworks/terraform-module-template
 DOTNET_TEMPLATE=cloudopsworks/dotnet-app-template
 GO_TEMPLATE=cloudopsworks/go-app-template
 RUST_TEMPLATE=cloudopsworks/rust-app-template
+ANDROIDSDK_TEMPLATE=cloudopsworks/androidsdk-app-template
 MERGE_TEMPLATE := 0
 VERSIONED_TEMPLATE := 0
 CICD_TEMPLATE := 0
@@ -71,6 +72,17 @@ VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(XCODE_TEMPLATE)
 MIGRATE_TASK := repos/migrate/xcode/510
+endif
+
+repos/template/androidsdk:
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.android))
+	@echo "Android SDK Project Template will be pulled"
+	@$(GIT) clone https://github.com/$(ANDROIDSDK_TEMPLATE).git .template > /dev/null 2>&1
+MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
+REPO_NAME := $(ANDROIDSDK_TEMPLATE)
+MIGRATE_TASK := repos/migrate/android/510
 endif
 
 repos/template/java:
@@ -369,6 +381,11 @@ repos/migrate/python/510: repos/migrate/510
 repos/migrate/xcode/510: repos/migrate/510
 	@echo "Migrating Xcode repository structure to v5.10+"
 	@mv .github/.xcode .cloudopsworks/
+
+repos/migrate/android/510:
+	@echo "NOT SUPPORTED: Migrating Android SDK repository structure to v5.10+"
+	@echo "Android SDK is available only for v5.10+ templates, no migration needed."
+	exit 100
 
 repos/migrate/terraform/510:
 	@echo "Migrating Terraform Module repository structure to v5.10+"
