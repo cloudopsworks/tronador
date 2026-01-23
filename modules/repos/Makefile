@@ -82,7 +82,7 @@ MERGE_TEMPLATE := 1
 VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(ANDROIDSDK_TEMPLATE)
-MIGRATE_TASK := repos/migrate/android/510
+MIGRATE_TASK := repos/migrate/androidsdk/510
 endif
 
 repos/template/java:
@@ -163,7 +163,7 @@ MIGRATE_TASK := repos/migrate/terraform/510
 endif
 
 .PHONY: repos/template/init
-repos/template/init: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust
+repos/template/init: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
 
 .PHONY: repos/clean/template
 repos/clean/template:
@@ -382,7 +382,7 @@ repos/migrate/xcode/510: repos/migrate/510
 	@echo "Migrating Xcode repository structure to v5.10+"
 	@mv .github/.xcode .cloudopsworks/
 
-repos/migrate/android/510:
+repos/migrate/androidsdk/510:
 	@echo "NOT SUPPORTED: Migrating Android SDK repository structure to v5.10+"
 	@echo "Android SDK is available only for v5.10+ templates, no migration needed."
 	exit 100
