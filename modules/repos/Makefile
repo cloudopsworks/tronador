@@ -392,6 +392,7 @@ repos/migrate/terragrunt/510:
 	@mkdir -p .cloudopsworks
 	@mv .github/cloudopsworks*.yaml .github/LICENSE .github/Makefile .github/_VERSION .github/labeler.yml .cloudopsworks/
 	@mv .github/.iac .cloudopsworks/
+	@[ -f .github/.inputs_cicd ] && mv .github/.inputs_cicd .cloudopsworks/ || echo "No Inputs CICD indicator found"
 	@$(GIT) add -A .github
 
 repos/migrate/terraform/510:
