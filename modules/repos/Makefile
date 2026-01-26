@@ -294,7 +294,7 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		else \
 			echo "Detected template version < v5.10" ; \
 			cp -pf .template/.github/_VERSION .github/_VERSION ; \
-			[ -f .template/.github/labeler.yml ] && cp -pf .template/.github/labeler.yml .github \
+			[ -f .template/.github/labeler.yml ] && cp -pf .template/.github/labeler.yml .github ; \
 			if [ -f .template/.github/Makefile ]; then \
 				cp -pf .template/.github/Makefile .github/Makefile ; \
 			fi ; \
