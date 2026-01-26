@@ -287,12 +287,14 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 				$(GIT) add .cloudopsworks ; \
 			fi ; \
 			cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION ; \
+			[ -f .template/.cloudopsworks/labeler.yml ] && cp -pf .template/.cloudopsworks/labeler.yml .cloudopsworks \
 			if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
 			fi ; \
 		else \
 			echo "Detected template version < v5.10" ; \
 			cp -pf .template/.github/_VERSION .github/_VERSION ; \
+			[ -f .template/.github/labeler.yml ] && cp -pf .template/.github/labeler.yml .github \
 			if [ -f .template/.github/Makefile ]; then \
 				cp -pf .template/.github/Makefile .github/Makefile ; \
 			fi ; \
