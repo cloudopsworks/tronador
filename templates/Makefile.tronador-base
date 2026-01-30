@@ -46,7 +46,7 @@ endef
 
 -include $(if $(findstring true,$(TRONADOR_AUTO_INIT)),$(shell $(tronador_auto_init) >&2)) $(TRONADOR_PATH)/Makefile
 
-.PHONY : init
+.PHONY : init init/
 ## Init Accelerate Tooling
 init::
 	@ $(tronador_install)
