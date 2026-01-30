@@ -221,6 +221,9 @@ endif
 repos/upgrade/dev: repos/template/init
 	$(MAKE) PULL_BRANCH=develop repos/upgrade/stack
 
+## List available template repository versions next patch versions and next major versions (shortened)
+repos/avail: repos/available
+
 ## List available template repository versions next patch versions and next major versions
 repos/available: packages/install/gh repos/template/init
 	$(call assert-set,GH)
