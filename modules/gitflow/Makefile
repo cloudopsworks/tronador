@@ -7,6 +7,8 @@ GH ?= $(INSTALL_PATH)/gh
 SEMVER ?= $(INSTALL_PATH)/semver
 GITVERSION ?= $(INSTALL_PATH)/gitversion
 
+.PHONY: gitflow/init gitflow/co/develop gitflow/co/main gitflow/deps gitflow/check/beacon
+
 # Gitflow shorcut for gitflow/ commands
 gf/%:
 	$(call assert-set,GIT)
