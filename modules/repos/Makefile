@@ -173,6 +173,7 @@ repos/clean/template:
 	fi
 	@$(GIT) remote remove template > /dev/null 2>&1 || true
 
+.PHONY: repos/cicd/update
 ## Update CICD Pipeline footer versioning
 repos/cicd/update:
 	@echo "Updating CICD Pipeline cloudopsworks-ci.yaml"
@@ -183,6 +184,7 @@ else
 	@sed -i "s|#workflow-version-tag.*|#workflow-version-tag: $$(cat $(BLUEPRINT_PATH)/_VERSION) - hash: $(TEMPLATE_HASH)|g" $(BLUEPRINT_PATH)/cloudopsworks-ci.yaml
 endif
 
+.PHONY: repos/clean
 repos/clean:
 	@echo "Cleaning up repository"
 	@rm -rf .github/workflows
@@ -203,6 +205,7 @@ repos/clean:
 #	@echo "Removing Initial.yml script, only needed upon creation."
 #	@rm -f .github/workflows/initial.yml
 
+.PHONY: repos/push
 repos/push:
 	$(call assert-set,GIT)
 	@echo "Committing changes"
@@ -243,6 +246,7 @@ repos/available: packages/install/gh repos/template/init
 		echo "Version: $(VERSION_STRING) = $(MAJOR_VERSION).$(MINOR_VERSION)" ; \
 		echo "Latest Major Version: $$the_tag"
 
+.PHONY: repos/upgrade repos/upgrade/major repos/upgrade/master repos/upgrade/stack repos/upgrade/fetch repos/upgrade/eval repos/recover
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
 repos/upgrade: packages/install/gh repos/template/init
 	$(call assert-set,GH)
@@ -370,6 +374,7 @@ else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
 endif
 
+.PHONY: repos/migrate/510 repos/migrate/java/510 repos/migrate/node/510 repos/migrate/dotnet/510 repos/migrate/go/510 repos/migrate/rust/510 repos/migrate/python/510 repos/migrate/xcode/510 repos/migrate/androidsdk/510 repos/migrate/terragrunt/510 repos/migrate/terraform/510
 # Migration tasks:
 repos/migrate/510:
 	@echo "Migrating Common repository structure to v5.10+"
