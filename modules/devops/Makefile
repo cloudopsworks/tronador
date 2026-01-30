@@ -23,6 +23,7 @@ PROFILE ?= "devops"
 SPOKE_NUM ?= "001"
 LEASE_HOURS ?= "4"
 
+.PHONY: devops/aws/load-defaults
 ## Does login to AWS SSO and sets up the environment for DevOps tasks
 devops/aws/login/sso:
 	$(call assert-set,AWS)
@@ -44,7 +45,7 @@ devops/aws/load-defaults: #tronador_devops.mk
 	echo "$(REGION) $(PROFILE)"
 
 
-.PHONY: devops/aws/bastion/ssm/check
+.PHONY: devops/aws/bastion/ssm/check devops/aws/bastion/started devops/aws/bastion/ip
 
 devops/aws/bastion/authorize:
 	$(call assert-set,AWS)
@@ -151,8 +152,9 @@ devops/aws/bastion/ssh-port-forward/%: devops/aws/load-defaults devops/aws/basti
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
 
-devops/aws/bastion/ssh-keyadd:
+.PHONY: devops/aws/bastion/ssh-keyadd devops/aws/bastion/ssh-run
 # Retrieve the contents of SecretsManager secret named by  $(KEYNAME)
+devops/aws/bastion/ssh-keyadd:
 	@echo "Retrieving bastion host key contents from SecretsManager..."
 	@eval `cat $(SSH_AGENT_FILE)` ; \
  		$(AWS_VAULT) --backend=$(AWS_VAULT_BACKEND) exec $(PROFILE) -- $(AWS) secretsmanager get-secret-value --secret-id $(KEY_NAME) --query "SecretString" --region $(REGION) --output text | ssh-add -
@@ -191,7 +193,7 @@ devops/aws/bastion/shutdown: devops/aws/load-defaults
 # Clean up the temporary file
 	@rm -f $(TEMP_FILE)
 
-
+.PHONY: devops/aws/bastion/ssh-interactive
 # Interactive SSH session to the bastion host
 devops/aws/bastion/ssh-interactive:
 	@echo "Starting SSH interactive session to the bastion host..."
