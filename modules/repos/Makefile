@@ -221,6 +221,7 @@ endif
 repos/upgrade/dev: repos/template/init
 	$(MAKE) PULL_BRANCH=develop repos/upgrade/stack
 
+.PHONY: repos/avail repos/available
 ## List available template repository versions next patch versions and next major versions (shortened)
 repos/avail: repos/available
 
