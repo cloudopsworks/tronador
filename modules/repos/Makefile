@@ -221,6 +221,24 @@ endif
 repos/upgrade/dev: repos/template/init
 	$(MAKE) PULL_BRANCH=develop repos/upgrade/stack
 
+## List available template repository versions next patch versions and next major versions
+repos/available: packages/install/gh repos/template/init
+	$(call assert-set,GH)
+	$(eval VERSION_STRING := $(shell cat $(BLUEPRINT_PATH)/_VERSION))
+	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' $(BLUEPRINT_PATH)/_VERSION))
+	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
+	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
+	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
+    		the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$$' | sort -V | tail -n1) ; \
+    		echo "Repo: $(REPO_NAME)" ; \
+    		echo "Version: $(VERSION_STRING) = $(MAJOR_VERSION).$(MINOR_VERSION)" ; \
+    		echo "Latest Minor Version: $$the_tag"
+	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
+		the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.[0-9]+\.[0-9]+$$' | sort -V | tail -n1) ; \
+		echo "Repo: $(REPO_NAME)" ; \
+		echo "Version: $(VERSION_STRING) = $(MAJOR_VERSION).$(MINOR_VERSION)" ; \
+		echo "Latest Major Version: $$the_tag"
+
 ## Upgrade Repository from master Templates (Default upgrade, no breaking changes)
 repos/upgrade: packages/install/gh repos/template/init
 	$(call assert-set,GH)
@@ -228,7 +246,6 @@ repos/upgrade: packages/install/gh repos/template/init
 	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' $(BLUEPRINT_PATH)/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
-	$(eval THETAG= $(shell ))
 	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
 		the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.$(MINOR_VERSION)\.[0-9]+$$' | sort -V | tail -n1) ; \
 		echo "Repo: $(REPO_NAME)" ; \
