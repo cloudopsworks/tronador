@@ -279,6 +279,7 @@ repos/upgrade/major: packages/install/gh repos/template/init
 repos/upgrade/master: repos/template/init
 	$(MAKE) repos/upgrade/stack
 
+.PHONY: repos/upgrade/fetch
 repos/upgrade/fetch:
 	$(call assert-set,PULL_BRANCH)
 	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
