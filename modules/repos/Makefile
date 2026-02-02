@@ -31,8 +31,7 @@ endif
 V510PLUS ?= ""
 
 repos/template/dotnet:
-	echo "BLUEPRINT_PATH is set to: $(BLUEPRINT_PATH)"
-ifneq (,$(wildcard .$(BLUEPRINT_PATH)/.dotnet))
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.dotnet))
 	@echo "DotNet Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template > /dev/null 2>&1
 MERGE_TEMPLATE := 1
@@ -40,13 +39,6 @@ VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(DOTNET_TEMPLATE)
 MIGRATE_TASK := repos/migrate/dotnet/510
-	echo "MERGE_TEMPLATE := 1 \
-      VERSIONED_TEMPLATE := 1 \
-      CICD_TEMPLATE := 1 \
-      REPO_NAME := $(DOTNET_TEMPLATE) \
-      MIGRATE_TASK := repos/migrate/dotnet/510"
-else
-	echo "No .dotnet indicator file found, skipping DotNet template pull"
 endif
 
 repos/template/go:
@@ -276,7 +268,6 @@ repos/upgrade/major: packages/install/gh repos/template/init
 	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' $(BLUEPRINT_PATH)/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
-	echo "REPO=$(REPO_NAME)"
 	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
 		the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.[0-9]+\.[0-9]+$$' | sort -V | tail -n1) ; \
 		echo "Repo: $(REPO_NAME)" ; \
