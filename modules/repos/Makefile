@@ -268,6 +268,7 @@ repos/upgrade/major: packages/install/gh repos/template/init
 	$(eval VERSION_INFO := $(shell awk -F'[v.]' '{print $$2 " " $$3}' $(BLUEPRINT_PATH)/_VERSION))
 	$(eval MAJOR_VERSION := $(word 1,$(VERSION_INFO)))
 	$(eval MINOR_VERSION := $(word 2,$(VERSION_INFO)))
+	echo "REPO=$(REPO_NAME)"
 	@tags=$$($(GH) api "repos/$(REPO_NAME)/tags" --jq '.[].name' || echo "") ; \
 		the_tag=$$(echo "$$tags" | grep -E '^v?$(MAJOR_VERSION)\.[0-9]+\.[0-9]+$$' | sort -V | tail -n1) ; \
 		echo "Repo: $(REPO_NAME)" ; \
