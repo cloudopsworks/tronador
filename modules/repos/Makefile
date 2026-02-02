@@ -31,6 +31,7 @@ endif
 V510PLUS ?= ""
 
 repos/template/dotnet:
+	echo "BLUEPRINT_PATH is set to: $(BLUEPRINT_PATH)"
 ifneq (,$(wildcard .$(BLUEPRINT_PATH)/.dotnet))
 	@echo "DotNet Project Template will be pulled"
 	@$(GIT) clone https://github.com/$(DOTNET_TEMPLATE).git .template > /dev/null 2>&1
