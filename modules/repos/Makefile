@@ -167,7 +167,7 @@ REPO_NAME := $(TERRAFORM_MODULE)
 MIGRATE_TASK := repos/migrate/terraform/510
 endif
 
-.PHONY: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
+.PHONY: repos/template/init repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
 repos/template/init: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
 
 .PHONY: repos/clean/template
