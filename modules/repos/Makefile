@@ -44,6 +44,8 @@ MIGRATE_TASK := repos/migrate/dotnet/510
       CICD_TEMPLATE := 1 \
       REPO_NAME := $(DOTNET_TEMPLATE) \
       MIGRATE_TASK := repos/migrate/dotnet/510"
+else
+	echo "No .dotnet indicator file found, skipping DotNet template pull"
 endif
 
 repos/template/go:
