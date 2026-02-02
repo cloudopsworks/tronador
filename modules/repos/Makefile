@@ -39,6 +39,11 @@ VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(DOTNET_TEMPLATE)
 MIGRATE_TASK := repos/migrate/dotnet/510
+	echo "MERGE_TEMPLATE := 1 \
+      VERSIONED_TEMPLATE := 1 \
+      CICD_TEMPLATE := 1 \
+      REPO_NAME := $(DOTNET_TEMPLATE) \
+      MIGRATE_TASK := repos/migrate/dotnet/510"
 endif
 
 repos/template/go:
