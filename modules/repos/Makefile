@@ -30,6 +30,8 @@ PRE510 := 1
 endif
 V510PLUS ?= ""
 
+.PHONY: repos/template/init repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
+
 repos/template/dotnet:
 ifneq (,$(wildcard $(BLUEPRINT_PATH)/.dotnet))
 	@echo "DotNet Project Template will be pulled"
@@ -162,7 +164,6 @@ REPO_NAME := $(TERRAFORM_MODULE)
 MIGRATE_TASK := repos/migrate/terraform/510
 endif
 
-.PHONY: repos/template/init repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
 repos/template/init: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
 
 .PHONY: repos/clean/template
