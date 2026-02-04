@@ -279,7 +279,7 @@ repos/upgrade/major: packages/install/gh repos/template/init
 repos/upgrade/master: repos/template/init
 	$(MAKE) repos/upgrade/stack
 
-.PHONY: repos/upgrade/fetch
+.PHONY: repos/upgrade/fetch repos/upgrade/eval
 repos/upgrade/fetch:
 	$(call assert-set,PULL_BRANCH)
 	@echo "Fetching template repository from branch: $(PULL_BRANCH)"
@@ -293,6 +293,7 @@ repos/upgrade/eval:
 	$(eval V510PLUS := $(shell if [[ -f .template/.cloudopsworks/_VERSION ]] ; then cat .template/.cloudopsworks/_VERSION ; else echo -n "" ; fi))
 	@echo "Template version v5.10+ detected?: '$(V510PLUS)'"
 
+.PHONY: repos/upgrade/stack
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch repos/upgrade/eval
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
