@@ -308,10 +308,10 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pf .template/Makefile Makefile
 		@cp -pf .template/.gitignore .gitignore
 		@if [[ -f .template/.helmignore ]] ; then \
-		    cp -pf .template/.helmignore .helmignore \
+		    cp -pf .template/.helmignore .helmignore ; \
 		fi
 		@if [[ -f .template/.dockerignore ]] ; then \
-		    cp -pf .template/.dockerignore .dockerignore \
+		    cp -pf .template/.dockerignore .dockerignore ; \
 		fi
 		@if [[ "x$(V510PLUS)" != "x" ]] ; then \
 			echo "Detected template version v5.10+" ; \
