@@ -16,6 +16,7 @@ packages/delete:
 packages/reinstall: packages/delete packages/install
 	@exit 0
 
+.PHONY: packages/install packages/delete packages/reinstall
 ## Install packages 
 packages/install:
 	@if [ ! -d $(PACKAGES_PATH) ]; then \
