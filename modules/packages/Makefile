@@ -26,6 +26,7 @@ packages/install:
 	  rm -rf $(PACKAGES_PATH)/.git; \
 	fi 
 
+.PHONY: packages/install/% packages/reinstall/% packages/uninstall/%
 ## Install package (e.g. helm, helmfile, kubectl)
 packages/install/%: packages/install
 	@if [ ! -x $(INSTALL_PATH)/$(subst packages/install/,,$@) ]; then \
