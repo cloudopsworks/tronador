@@ -385,7 +385,7 @@ else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
 endif
 
-.PHONY: repos/migrate/510 repos/migrate/java/510 repos/migrate/node/510 repos/migrate/dotnet/510 repos/migrate/go/510 repos/migrate/rust/510 repos/migrate/python/510 repos/migrate/xcode/510 repos/migrate/androidsdk/510 repos/migrate/terragrunt/510 repos/migrate/terraform/510
+.PHONY: repos/migrate/510 repos/migrate/java/510 repos/migrate/node/510 repos/migrate/dotnet/510 repos/migrate/go/510 repos/migrate/rust/510 repos/migrate/python/510 repos/migrate/xcode/510 repos/migrate/androidsdk/510 repos/migrate/terragrunt/510 repos/migrate/terraform/510 repos/migrate/docker/510
 # Migration tasks:
 repos/migrate/510:
 	@echo "Migrating Common repository structure to v5.10+"
@@ -444,3 +444,7 @@ repos/migrate/terraform/510:
 	@[ -d .cloudopsworks/aws ] && mv .cloudopsworks/aws .cloudopsworks/boilerplate/ || echo "No AWS boilerplate found"
 	@[ -d .cloudopsworks/gcp ] && mv .cloudopsworks/gcp .cloudopsworks/boilerplate/ || echo "No GCP boilerplate found"
 	@[ -d .cloudopsworks/azure ] && mv .cloudopsworks/azure .cloudopsworks/boilerplate/ || echo "No Azure boilerplate found"
+
+repos/migrate/docker/510: repos/migrate/510
+	@echo "Migrating Docker repository structure to v5.10+"
+	@mv .github/.docker .cloudopsworks/
