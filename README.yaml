@@ -68,6 +68,12 @@ usage: |-
   At the top of your `Makefile` add, the following...
 
   ```make
+  -include $(shell curl -sSL -o .tronador "https://gist.githubusercontent.com/cloudopsworks/GIST_ID/raw/.tronador"; echo .tronador)
+  ```
+
+  Alternatively, you can use the short URL:
+
+  ```make
   -include $(shell curl -sSL -o .tronador "https://cowk.io/acc"; echo .tronador)
   ```
 

@@ -1,4 +1,6 @@
 tronador/
 .tronador-base
+/.tronador
+/.tronador_devops.mk
 
 .idea
