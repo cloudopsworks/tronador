@@ -324,7 +324,7 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 			fi ; \
 			cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION ; \
 			[ -f .template/.cloudopsworks/labeler.yml ] && cp -pf .template/.cloudopsworks/labeler.yml .cloudopsworks ; \
-			[ -a [ -f .template/.cloudopsworks/inputs-jira.yaml ] [ ! -f .cloudopsworks/inputs-jira.yaml ] ] && cp -pf .template/.cloudopsworks/inputs-jira.yaml .cloudopsworks/ ; \
+			[[ -f .template/.cloudopsworks/inputs-jira.yaml && ! -f .cloudopsworks/inputs-jira.yaml ]] && cp -pf .template/.cloudopsworks/inputs-jira.yaml .cloudopsworks/ ; \
 			if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
 			fi ; \
