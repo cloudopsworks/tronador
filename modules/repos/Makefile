@@ -339,6 +339,7 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 else
 		@cp -pfr .template/.github/workflows .github/workflows
 		@$(GIT) add .github/workflows
+		[ -d .cloudopsworks/ ] && git add .cloudopsworks/
 		@cp -pfr .template/Makefile Makefile
 endif
 
