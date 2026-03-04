@@ -309,6 +309,10 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pfR .template/.github/workflows .github
 		@cp -pf .template/Makefile Makefile
 		@cp -pf .template/.gitignore .gitignore
+		@if [[ -f .template/AGENTS.md ]] ; then \
+		    cp -pf .template/AGENTS.md AGENTS.md ; \
+		    $(GIT) add AGENTS.md ; \
+		fi
 		@if [[ -f .template/.helmignore ]] ; then \
 		    cp -pf .template/.helmignore .helmignore ; \
 		    $(GIT) add .helmignore ; \
