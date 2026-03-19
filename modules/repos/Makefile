@@ -313,6 +313,10 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		    cp -pf .template/AGENTS.md AGENTS.md ; \
 		    $(GIT) add AGENTS.md ; \
 		fi
+		@if [[ -f .template/CLAUDE.md ]] ; then \
+		    cp -pf .template/CLAUDE.md CLAUDE.md ; \
+		    $(GIT) add CLAUDE.md ; \
+		fi
 		@if [[ -f .template/.helmignore ]] ; then \
 		    cp -pf .template/.helmignore .helmignore ; \
 		    $(GIT) add .helmignore ; \
