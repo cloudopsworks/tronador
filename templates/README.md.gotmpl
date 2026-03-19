@@ -10,7 +10,7 @@
 {{- defineDatasource "includes" .Env.README_INCLUDES | regexp.Replace ".*" "" }}
 [![README Header][readme_header_img]][readme_header_link]
 
-[![cloudopsworks][logo]](https://cloudops.works/)
+[![cloudopsworks][logo]](https://cloudopsworks.co/)
 
 # {{(ds "config").name}}{{ if gt (len (ds "config").name) 34 }}{{ print "\n\n" }}{{ end }}{{ if has (ds "config") "badges" }}{{- range $badge := (ds "config").badges -}}{{ printf " [![%s](%s)](%s)" $badge.name $badge.image $badge.url }}{{ end }}{{ end }}
 
@@ -26,11 +26,10 @@
 
 This project is part of our comprehensive approach towards DevOps Acceleration. 
 [<img align="right" title="Share via Email" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/ios-mail.svg"/>][share_email]
-[<img align="right" title="Share on Google+" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-googleplus.svg" />][share_googleplus]
 [<img align="right" title="Share on Facebook" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-facebook.svg" />][share_facebook]
 [<img align="right" title="Share on Reddit" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-reddit.svg" />][share_reddit]
 [<img align="right" title="Share on LinkedIn" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-linkedin.svg" />][share_linkedin]
-[<img align="right" title="Share on Twitter" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-twitter.svg" />][share_twitter]
+[<img align="right" title="Share on X" width="24" height="24" src="https://docs.cloudops.works/images/ionicons/logo-x.svg" />][share_twitter]
 
 {{ if (file.Exists "main.tf") }}
 [![Terraform Open Source Modules](https://docs.cloudops.works/images/terraform-open-source-modules.svg)][terraform_modules]
@@ -160,7 +159,7 @@ Please use the [issue tracker]({{ printf "https://github.com/%s/issues" (ds "con
 {{ else }}
 ## Copyright
 
-Copyright © 2021-{{ time.Now.Year }} [Cloud Ops Works LLC](https://cowk.io/copyright)
+Copyright © 2021-{{ time.Now.Year }} [Cloud Ops Works LLC](https://cloudopsworks.co/)
 {{ end}}
 
 {{ if eq (ds "config").license "APACHE2" }}
@@ -305,32 +304,31 @@ This project is maintained by [Cloud Ops Works LLC][website].
 [![README Footer][readme_footer_img]][readme_footer_link]
 [![Beacon][beacon]][website]
 
-  [logo]: https://cloudops.works/logo-300x69.svg
-  [docs]: {{ printf $utm_link "https://cowk.io/docs" "docs" }}
-  [website]: {{ printf $utm_link "https://cowk.io/homepage" "website" }}
-  [github]: {{ printf $utm_link "https://cowk.io/github" "github" }}
-  [jobs]: {{ printf $utm_link "https://cowk.io/jobs" "jobs" }}
-  [hire]: {{ printf $utm_link "https://cowk.io/hire" "hire" }}
-  [slack]: {{ printf $utm_link "https://cowk.io/slack" "slack" }}
-  [linkedin]: {{ printf $utm_link "https://cowk.io/linkedin" "linkedin" }}
-  [twitter]: {{ printf $utm_link "https://cowk.io/twitter" "twitter" }}
-  [testimonial]: {{ printf $utm_link "https://cowk.io/leave-testimonial" "testimonial" }}
-  [office_hours]: {{ printf $utm_link "https://cloudops.works/office-hours" "office_hours" }}
-  [newsletter]: {{ printf $utm_link "https://cowk.io/newsletter" "newsletter" }}
-  [email]: {{ printf $utm_link "https://cowk.io/email" "email" }}
-  [commercial_support]: {{ printf $utm_link "https://cowk.io/commercial-support" "commercial_support" }}
-  [we_love_open_source]: {{ printf $utm_link "https://cowk.io/we-love-open-source" "we_love_open_source" }}
-  [terraform_modules]: {{ printf $utm_link "https://cowk.io/terraform-modules" "terraform_modules" }}
-  [readme_header_img]: {{ printf "https://cloudops.works/readme/header/img" }}
-  [readme_header_link]: {{ printf $utm_link "https://cloudops.works/readme/header/link" "readme_header_link" }}
-  [readme_footer_img]: {{ printf "https://cloudops.works/readme/footer/img" }}
-  [readme_footer_link]: {{ printf $utm_link "https://cloudops.works/readme/footer/link" "readme_footer_link" }}
-  [readme_commercial_support_img]: {{ printf "https://cloudops.works/readme/commercial-support/img" }}
-  [readme_commercial_support_link]: {{ printf $utm_link "https://cloudops.works/readme/commercial-support/link" "readme_commercial_support_link" }}
-  [share_twitter]: {{ printf "https://twitter.com/intent/tweet/?text=%s&url=https://github.com/%s" ((ds "config").name | regexp.Replace " " "+") (ds "config").github_repo }}
+  [logo]: https://cloudopsworks.co/logo.png
+  [docs]: {{ printf $utm_link "https://cloudopsworks.co/resources" "docs" }}
+  [website]: {{ printf $utm_link "https://cloudopsworks.co" "website" }}
+  [github]: {{ printf $utm_link "https://cloudopsworks.co/github" "github" }}
+  [jobs]: {{ printf $utm_link "https://cloudopsworks.co/jobs" "jobs" }}
+  [hire]: {{ printf $utm_link "https://cloudopsworks.co/hire" "hire" }}
+  [slack]: {{ printf $utm_link "https://cloudopsworks.co/slack" "slack" }}
+  [linkedin]: {{ printf $utm_link "https://cloudopsworks.co/linkedin" "linkedin" }}
+  [x]: {{ printf $utm_link "https://cloudopsworks.co/x" "x" }}
+  [testimonial]: {{ printf $utm_link "https://cloudopsworks.co/case-studies" "testimonial" }}
+  [office_hours]: {{ printf $utm_link "https://cloudopsworks.co/office-hours" "office_hours" }}
+  [newsletter]: {{ printf $utm_link "https://cloudopsworks.co/resources" "newsletter" }}
+  [email]: {{ printf $utm_link "https://cloudopsworks.co/contact" "email" }}
+  [commercial_support]: {{ printf $utm_link "https://cloudopsworks.co/services" "commercial_support" }}
+  [we_love_open_source]: {{ printf $utm_link "https://cloudopsworks.co/open-source" "we_love_open_source" }}
+  [terraform_modules]: {{ printf $utm_link "https://cloudopsworks.co/open-source" "terraform_modules" }}
+  [readme_header_img]: {{ printf "https://cloudopsworks.co/readme/header/img" }}
+  [readme_header_link]: {{ printf $utm_link "https://cloudopsworks.co/readme/header/link" "readme_header_link" }}
+  [readme_footer_img]: {{ printf "https://cloudopsworks.co/readme/footer/img" }}
+  [readme_footer_link]: {{ printf $utm_link "https://cloudopsworks.co/readme/footer/link" "readme_footer_link" }}
+  [readme_commercial_support_img]: {{ printf "https://cloudopsworks.co/readme/commercial-support/img" }}
+  [readme_commercial_support_link]: {{ printf $utm_link "https://cloudopsworks.co/readme/commercial-support/link" "readme_commercial_support_link" }}
+  [share_twitter]: {{ printf "https://x.com/intent/tweet/?text=%s&url=https://github.com/%s" ((ds "config").name | regexp.Replace " " "+") (ds "config").github_repo }}
   [share_linkedin]: {{ printf "https://www.linkedin.com/shareArticle?mini=true&title=%s&url=https://github.com/%s" ((ds "config").name | regexp.Replace " " "+") (ds "config").github_repo }}
   [share_reddit]: {{ printf "https://reddit.com/submit/?url=https://github.com/%s" (ds "config").github_repo }}
   [share_facebook]: {{ printf "https://facebook.com/sharer/sharer.php?u=https://github.com/%s" (ds "config").github_repo }}
-  [share_googleplus]: {{ printf "https://plus.google.com/share?url=https://github.com/%s" (ds "config").github_repo }}
   [share_email]: {{ printf "mailto:?subject=%s&body=https://github.com/%s" ((ds "config").name | regexp.Replace " " "+") (ds "config").github_repo }}
-  [beacon]: {{ printf "https://ga-beacon.cloudops.works/G-7XWMFVFXZT/%s?pixel&cs=github&cm=readme&an=%s" (ds "config").github_repo (filepath.Base ((ds "config").github_repo)) }}
+  [beacon]: {{ printf "https://ga-beacon.cloudospworks.co/G-QMZVYYN2VN/%s?pixel&cs=github&cm=readme&an=%s" (ds "config").github_repo (filepath.Base ((ds "config").github_repo)) }}
