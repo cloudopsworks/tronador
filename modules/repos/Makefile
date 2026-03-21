@@ -329,7 +329,9 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 			echo "Detected template version v5.10+" ; \
 			mkdir -p .cloudopsworks ; \
 			cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION ; \
-			[ -f .template/.cloudopsworks/labeler.yml ] && cp -pf .template/.cloudopsworks/labeler.yml .cloudopsworks ; \
+			[ -f .template/.cloudopsworks/labeler.yml ] && cp -pf .template/.cloudopsworks/labeler.yml .cloudopsworks/ ; \
+			[ -f .template/.cloudopsworks/auto-label.yml ] && cp -pf .template/.cloudopsworks/auto-label.yml .cloudopsworks/ ; \
+			[ -f .template/.cloudopsworks/auto-assign.yml ] && cp -pf .template/.cloudopsworks/auto-assign.yml .cloudopsworks/ ; \
 			[[ -f .template/.cloudopsworks/inputs-jira.yaml && ! -f .cloudopsworks/inputs-jira.yaml ]] && cp -pf .template/.cloudopsworks/inputs-jira.yaml .cloudopsworks/ ; \
 			if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
