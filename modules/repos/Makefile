@@ -338,8 +338,8 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 			fi ; \
 			if [[ "$(PRE510)" == "1" ]] ; then \
 				$(MAKE) $(MIGRATE_TASK) ; \
-				$(GIT) add .cloudopsworks ; \
 			fi ; \
+			$(GIT) add .cloudopsworks ; \
 		else \
 			echo "Detected template version < v5.10" ; \
 			cp -pf .template/.github/_VERSION .github/_VERSION ; \
