@@ -333,6 +333,7 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 			[ -f .template/.cloudopsworks/auto-label.yml ] && cp -pf .template/.cloudopsworks/auto-label.yml .cloudopsworks/ ; \
 			[ -f .template/.cloudopsworks/auto-assign.yml ] && cp -pf .template/.cloudopsworks/auto-assign.yml .cloudopsworks/ ; \
 			[[ -f .template/.cloudopsworks/inputs-jira.yaml && ! -f .cloudopsworks/inputs-jira.yaml ]] && cp -pf .template/.cloudopsworks/inputs-jira.yaml .cloudopsworks/ ; \
+			[[ -f .template/.cloudopsworks/inputs.yaml && ! -f .cloudopsworks/inputs.yaml ]] && cp -pf .template/.cloudopsworks/inputs.yaml .cloudopsworks/ ; \
 			if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
 			fi ; \
