@@ -57,6 +57,17 @@ gitflow/feature/start/%:
 	  exit 1 ; \
 	fi
 
+## Git-Flow feature start for main-branch development, this receives the following call pattern: make gitflow/feature/start-no-develop:<feature_name>
+gitflow/feature/start-no-develop/%:
+	$(call assert-set,GIT)
+	$(eval FEAT_NAME ?= $(subst gitflow/feature/start-no-develop/,,$@))
+	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
+	  $(GIT) checkout -b feature/$(FEAT_NAME) $(MAIN_BRANCH) ; \
+	else \
+	  echo "You must specify a feature name." ; \
+	  exit 1 ; \
+	fi
+
 ## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish must be on a feature branch
 gitflow/feature/finish: gitflow/deps
 	$(call assert-set,GIT)
@@ -123,6 +134,23 @@ gitflow/feature/purge-no-develop/%: gitflow/co/main
 	$(eval FEAT_NAME := $(subst gitflow/feature/purge-no-develop/,,$@))
 	@$(GIT) branch -D feature/$(FEAT_NAME)
 	@$(GIT) push origin -d feature/$(FEAT_NAME)
+
+## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish-no-develop must be on a feature branch and will generate a PR against MAIN branch instead of develop, this is useful for hotfixes or features that need to be merged directly into main without going through develop branch
+gitflow/feature/finish-no-develop: gitflow/deps
+	$(call assert-set,GIT)
+	$(call assert-set,GH)
+ifeq ($(GIT_BRANCH_PREFIX),feature)
+	@if [[ \
+		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
+	]]; then \
+		$(GH) pr create -B $(MAIN_BRANCH) -b "Feature '$(GIT_BRANCH)' Finish, will merge the code into '$(MAIN_BRANCH)'." \
+			-t "Feature '$(GIT_BRANCH)' Finish" ; \
+	else \
+		echo "You must be in the latest commit of the feature branch to publish"; \
+	fi
+else
+	$(error "You must specify a feature name to publish, or being working on a feature branch")
+endif
 
 ## GIt-Flow Hotfix start
 gitflow/hotfix/start: gitflow/deps
