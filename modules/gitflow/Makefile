@@ -50,7 +50,7 @@ ifneq (,$(wildcard $(GITVERSION_CONFIG)))
 GITVERSION := $(GITVERSION) -config $(GITVERSION_CONFIG)
 GITVERSION_CONFIG_SET := 1
 endif
-	@exit 0
+
 
 ## Git-Flow feature start, this receives the following call pattern: make gitflow/feature/start:<feature_name>
 gitflow/feature/start/%:
