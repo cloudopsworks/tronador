@@ -537,7 +537,7 @@ gitflow/version/publish: gitflow/deps
 ## Retrieve the SemVer version with GitVersion tool
 gitflow/version/semver: gitflow/deps
 	$(call assert-set,GITVERSION)
-	@$(GITVERSION) -output json -showvariable SemVer
+	$(GITVERSION) -output json -showvariable SemVer
 
 ## Retrieve the Full SemVer version (commits count) with GitVersion tool translate + to - for compatibility with Helm/Docker
 gitflow/version/semver/full: gitflow/deps
