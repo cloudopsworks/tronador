@@ -6,6 +6,11 @@ export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/nu
 GH ?= $(INSTALL_PATH)/gh
 SEMVER ?= $(INSTALL_PATH)/semver
 GITVERSION ?= $(INSTALL_PATH)/gitversion
+GITVERSION_CONFIG ?= .cloudopsworks/gitversion.yaml
+
+ifneq(,$(wildcard $(GITVERSION_CONFIG)))
+GITVERSION := "$(INSTALL_PATH)/gitversion -config $(GITVERSION_CONFIG)"
+endif
 
 .PHONY: gitflow/init gitflow/co/develop gitflow/co/main gitflow/deps gitflow/check/beacon
 
