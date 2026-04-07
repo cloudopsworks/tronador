@@ -10,8 +10,8 @@ GITVERSION_CONFIG ?= .cloudopsworks/gitversion.yaml
 GITVERSION_CONFIG_SET ?= 0
 
 ifneq (,$(wildcard $(GITVERSION_CONFIG)))
-GITVERSION := $(GITVERSION) -config $(GITVERSION_CONFIG)
-GITVERSION_CONFIG_SET := 1
+	GITVERSION := $(GITVERSION) -config $(GITVERSION_CONFIG)
+	GITVERSION_CONFIG_SET := 1
 endif
 
 .PHONY: gitflow/init gitflow/co/develop gitflow/co/main gitflow/deps gitflow/check/beacon
