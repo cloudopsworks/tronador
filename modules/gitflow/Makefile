@@ -5,13 +5,14 @@ export GIT_REMOTE ?= $(shell $(GIT) ls-remote --get-url 2>/dev/null)
 export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null | sed -e 's/\(.*\)\/.*/\1/')
 GH ?= $(INSTALL_PATH)/gh
 SEMVER ?= $(INSTALL_PATH)/semver
-GITVERSION ?= $(INSTALL_PATH)/gitversion
 GITVERSION_CONFIG ?= .cloudopsworks/gitversion.yaml
 GITVERSION_CONFIG_SET ?= 0
 
 ifneq (,$(wildcard $(GITVERSION_CONFIG)))
-GITVERSION := "$(INSTALL_PATH)/gitversion -config $(GITVERSION_CONFIG)"
+GITVERSION ?= "$(INSTALL_PATH)/gitversion -config $(GITVERSION_CONFIG)"
 GITVERSION_CONFIG_SET := 1
+else
+GITVERSION ?= $(INSTALL_PATH)/gitversion
 endif
 
 .PHONY: gitflow/init gitflow/co/develop gitflow/co/main gitflow/deps gitflow/check/beacon
