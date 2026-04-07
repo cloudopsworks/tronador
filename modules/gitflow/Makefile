@@ -9,11 +9,6 @@ GITVERSION ?= $(INSTALL_PATH)/gitversion
 GITVERSION_CONFIG ?= .cloudopsworks/gitversion.yaml
 GITVERSION_CONFIG_SET ?= 0
 
-ifneq (,$(wildcard $(GITVERSION_CONFIG)))
-	GITVERSION := $(GITVERSION) -config $(GITVERSION_CONFIG)
-	GITVERSION_CONFIG_SET := 1
-endif
-
 .PHONY: gitflow/init gitflow/co/develop gitflow/co/main gitflow/deps gitflow/check/beacon
 
 # Gitflow shorcut for gitflow/ commands
@@ -51,6 +46,10 @@ gitflow/co/main:
 
 # Install gitflow dependencies
 gitflow/deps: packages/install/gitversion packages/install/gh packages/install/semver
+ifneq (,$(wildcard $(GITVERSION_CONFIG)))
+	GITVERSION := $(GITVERSION) -config $(GITVERSION_CONFIG)
+	GITVERSION_CONFIG_SET := 1
+endif
 	@exit 0
 
 ## Git-Flow feature start, this receives the following call pattern: make gitflow/feature/start:<feature_name>
