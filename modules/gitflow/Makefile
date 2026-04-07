@@ -47,8 +47,8 @@ gitflow/co/main:
 # Install gitflow dependencies
 gitflow/deps: packages/install/gitversion packages/install/gh packages/install/semver
 ifneq (,$(wildcard $(GITVERSION_CONFIG)))
-GITVERSION := $(GITVERSION) -config $(GITVERSION_CONFIG)
-GITVERSION_CONFIG_SET := 1
+$(eval GITVERSION := $(GITVERSION) -config $(GITVERSION_CONFIG))
+$(eval GITVERSION_CONFIG_SET := 1)
 endif
 
 
