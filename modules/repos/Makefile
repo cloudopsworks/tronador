@@ -329,7 +329,7 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 			echo "Detected template version v5.10+" ; \
 			mkdir -p .cloudopsworks ; \
 			cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION ; \
-			[ -d .template/.cloudopsworks/hooks ] && cp -Rpf .template/.cloudopsworks/hooks/ .cloudopsworks/ ; \
+			[ -d .template/.cloudopsworks/hooks ] && cp -Rpf .template/.cloudopsworks/hooks .cloudopsworks/ ; \
 			[ -f .template/.cloudopsworks/labeler.yml ] && cp -pf .template/.cloudopsworks/labeler.yml .cloudopsworks/ ; \
 			[ -f .template/.cloudopsworks/auto-label.yml ] && cp -pf .template/.cloudopsworks/auto-label.yml .cloudopsworks/ ; \
 			[ -f .template/.cloudopsworks/auto-assign.yml ] && cp -pf .template/.cloudopsworks/auto-assign.yml .cloudopsworks/ ; \
