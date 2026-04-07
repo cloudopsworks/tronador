@@ -9,7 +9,7 @@ GITVERSION ?= $(INSTALL_PATH)/gitversion
 GITVERSION_CONFIG ?= .cloudopsworks/gitversion.yaml
 GITVERSION_CONFIG_SET ?= 0
 
-ifneq(,$(wildcard $(GITVERSION_CONFIG)))
+ifneq (,$(wildcard $(GITVERSION_CONFIG)))
 GITVERSION := "$(INSTALL_PATH)/gitversion -config $(GITVERSION_CONFIG)"
 GITVERSION_CONFIG_SET := 1
 endif
