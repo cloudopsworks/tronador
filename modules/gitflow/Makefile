@@ -7,9 +7,11 @@ GH ?= $(INSTALL_PATH)/gh
 SEMVER ?= $(INSTALL_PATH)/semver
 GITVERSION ?= $(INSTALL_PATH)/gitversion
 GITVERSION_CONFIG ?= .cloudopsworks/gitversion.yaml
+GITVERSION_CONFIG_SET ?= 0
 
 ifneq(,$(wildcard $(GITVERSION_CONFIG)))
 GITVERSION := "$(INSTALL_PATH)/gitversion -config $(GITVERSION_CONFIG)"
+GITVERSION_CONFIG_SET := 1
 endif
 
 .PHONY: gitflow/init gitflow/co/develop gitflow/co/main gitflow/deps gitflow/check/beacon
