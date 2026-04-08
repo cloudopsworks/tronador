@@ -362,6 +362,7 @@ endif
 
 ifeq (1,$(BOILERPLATE_TEMPLATE))
 		@mkdir -p $(BOILERPLATE_PATH)
+		@rm -fr $(BOILERPLATE_PATH)/*
 		@cp -pfr .template/$(BOILERPLATE_PATH)/ $(BOILERPLATE_PATH)/
 endif
 
