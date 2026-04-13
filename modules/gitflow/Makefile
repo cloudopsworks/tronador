@@ -95,6 +95,7 @@ endif
 gitflow/feature/finish/%:
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/finish/,,$@))
+	# Assumes that feature branch is prefixed with feature/
 	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
 	  $(GIT) checkout develop ; \
 	  $(GIT) pull origin develop ; \
@@ -110,6 +111,7 @@ gitflow/feature/finish/%:
 gitflow/feature/publish/%:
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/publish/,,$@))
+	# Assumes that feature branch is prefixed with feature/
 	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
 	  @$(GIT) checkout feature/$(FEAT_NAME) ; \
 	  @$(GIT) push --set-upstream origin feature/$(FEAT_NAME) ; \
@@ -121,7 +123,7 @@ gitflow/feature/publish/%:
 ## Git-Flow feature publish
 gitflow/feature/publish:
 	$(call assert-set,GIT)
-ifeq ($(GIT_BRANCH_PREFIX),feature)
+ifneq (,$(filter $(GIT_BRANCH_PREFIX),feature feat))
 	@$(GIT) push --set-upstream origin $(GIT_BRANCH)
 else
 	$(error "You must specify a feature name to publish, or being working on a feature branch")
@@ -131,6 +133,7 @@ endif
 gitflow/feature/purge/%: gitflow/co/develop
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/purge/,,$@))
+	# Assumes that feature branch is prefixed with feature/
 	@$(GIT) branch -D feature/$(FEAT_NAME)
 	@$(GIT) push origin -d feature/$(FEAT_NAME)
 
@@ -138,6 +141,7 @@ gitflow/feature/purge/%: gitflow/co/develop
 gitflow/feature/purge-no-develop/%: gitflow/co/main
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/purge-no-develop/,,$@))
+	# Assumes that feature branch is prefixed with feature/
 	@$(GIT) branch -D feature/$(FEAT_NAME)
 	@$(GIT) push origin -d feature/$(FEAT_NAME)
 
@@ -145,7 +149,7 @@ gitflow/feature/purge-no-develop/%: gitflow/co/main
 gitflow/feature/finish-no-develop: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GH)
-ifeq ($(GIT_BRANCH_PREFIX),feature)
+ifneq (,$(filter $(GIT_BRANCH_PREFIX),feature feat))
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
@@ -246,6 +250,10 @@ gitflow/hotfix/purge: gitflow/deps
 	$(call assert-set,GIT)
 	$(call assert-set,GITVERSION)
 ifeq ($(GIT_BRANCH_PREFIX),hotfix)
+	@$(GIT) checkout $(MAIN_BRANCH)
+	@$(GIT) branch -D $(GIT_BRANCH)
+	@$(GIT) push origin -d $(GIT_BRANCH)
+else ifeq ($(GIT_BRANCH_PREFIX),fix)
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) branch -D $(GIT_BRANCH)
 	@$(GIT) push origin -d $(GIT_BRANCH)
