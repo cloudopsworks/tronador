@@ -1,4 +1,12 @@
 tronador/
+.tronador_devops.mk
 .tronador-base
 
 .idea
+
+
+.ai/
+.claude/
+.omc/
+.omx/
+.opencode/

@@ -4,21 +4,25 @@ Available targets:
 
   bash/lint                           Lint all bash scripts
   devops/aws/bastion/shutdown         Shuts down the bastion host instance in the specified spoke number
+  devops/aws/bastion/ssh              Starts an SSH Session to the bastion host in the specified spoke number
   devops/aws/bastion/ssh-port-forward/% Starts an SSH Direct port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
   devops/aws/bastion/ssm              Starts an SSM Session Manager session to the bastion host in the specified spoke number
-  devops/aws/bastion/ssm-port-forward/% Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<dest port>
+  devops/aws/bastion/ssm-port-forward/% Starts an SSM Session Manager port forwarding session to the bastion host in the specified spoke number, parameters are specified by <src port>:<destination address>:<dest port>
   devops/aws/bastion/stop             Shuts down the bastion host instance in the specified spoke number (alternate name)
   devops/aws/login/sso                Does login to AWS SSO and sets up the environment for DevOps tasks
+  devops/aws/test/vault               Test aws-vault client is installed and configured
   docs/copyright-add                  Add copyright headers to source code
   git/aliases-update                  Update git aliases
   git/export                          Export git vars
   git/submodules-update               Update submodules
   gitflow/feature/finish              Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish must be on a feature branch
+  gitflow/feature/finish-no-develop   Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish-no-develop must be on a feature branch and will generate a PR against MAIN branch instead of develop, this is useful for hotfixes or features that need to be merged directly into main without going through develop branch
   gitflow/feature/finish/%            Git-Flow feature finish (manual), this receives the following call pattern: make gitflow/feature/manual/finish:<feature_name>
   gitflow/feature/publish             Git-Flow feature publish
   gitflow/feature/publish/%           Git-Flow feature publish, this receives the following call pattern: make gitflow/feature/publish:<feature_name>
   gitflow/feature/purge-no-develop/%  Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge-no-develop:<feature_name> # This will not checkout develop branch
   gitflow/feature/purge/%             Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge:<feature_name>
+  gitflow/feature/start-no-develop/%  Git-Flow feature start for main-branch development, this receives the following call pattern: make gitflow/feature/start-no-develop:<feature_name>
   gitflow/feature/start/%             Git-Flow feature start, this receives the following call pattern: make gitflow/feature/start:<feature_name>
   gitflow/hotfix/finish               Git-Flow Hotfix finish (automatic via PR)
   gitflow/hotfix/finish/local         Git-Flow Hotfix finish (local)
@@ -66,6 +70,8 @@ Available targets:
   readme/build                        Create README.md by building it from README.yaml
   readme/init                         Create basic minimalistic .README.md template file
   readme/lint                         Verify the `README.md` is up to date
+  repos/avail                         List available template repository versions next patch versions and next major versions (shortened)
+  repos/available                     List available template repository versions next patch versions and next major versions
   repos/cicd/update                   Update CICD Pipeline footer versioning
   repos/recover                       Upgrade Repository from Templates
   repos/upgrade                       Upgrade Repository from master Templates (Default upgrade, no breaking changes)
