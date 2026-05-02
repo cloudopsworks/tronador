@@ -11,11 +11,11 @@ terragrunt/get-plugins:
 
 ## Ensure all modules can be fetched
 terragrunt/get-modules:
-	$(TERRAGRUNT) --non-interactive run --all --exclude-dir .cloudopsworks -- init -get -backend=false -input=false >/dev/null
+	$(TERRAGRUNT) --non-interactive run --all -- init -get -backend=false -input=false >/dev/null
 
 ## Basic Terragrunt sanity check
 terragrunt/validate:
-	$(TERRAGRUNT) --non-interactive run --all --exclude-dir .cloudopsworks -- validate
+	$(TERRAGRUNT) --non-interactive run --all -- validate
 
 ## Lint check Terraform
 terragrunt/lint:
@@ -28,4 +28,4 @@ terragrunt/upgrade-modules: packages/install/json2hcl
 
 ## Format terraform/Terragrunt code
 terragrunt/fmt:
-	$(TERRAGRUNT) --non-interactive run-all hclfmt --diff
+	$(TERRAGRUNT) --non-interactive hcl format --exclude-dir .cloudopsworks
