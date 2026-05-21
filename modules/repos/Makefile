@@ -12,6 +12,7 @@ DOTNET_TEMPLATE=cloudopsworks/dotnet-app-template
 GO_TEMPLATE=cloudopsworks/go-app-template
 RUST_TEMPLATE=cloudopsworks/rust-app-template
 ANDROIDSDK_TEMPLATE=cloudopsworks/androidsdk-app-template
+FLUTTER_TEMPLATE=cloudopsworks/fluttermobile-app-template
 MERGE_TEMPLATE := 0
 VERSIONED_TEMPLATE := 0
 CICD_TEMPLATE := 0
@@ -30,7 +31,7 @@ PRE510 := 1
 endif
 V510PLUS ?= ""
 
-.PHONY: repos/template/init repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
+.PHONY: repos/template/init repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk repos/template/flutter
 
 repos/template/dotnet:
 ifneq (,$(wildcard $(BLUEPRINT_PATH)/.dotnet))
@@ -85,6 +86,17 @@ VERSIONED_TEMPLATE := 1
 CICD_TEMPLATE := 1
 REPO_NAME := $(ANDROIDSDK_TEMPLATE)
 MIGRATE_TASK := repos/migrate/androidsdk/510
+endif
+
+repos/template/flutter:
+ifneq (,$(wildcard $(BLUEPRINT_PATH)/.flutter))
+	@echo "Flutter Project Template will be pulled"
+	@$(GIT) clone https://github.com/$(FLUTTER_TEMPLATE).git .template > /dev/null 2>&1
+MERGE_TEMPLATE := 1
+VERSIONED_TEMPLATE := 1
+CICD_TEMPLATE := 1
+REPO_NAME := $(FLUTTER_TEMPLATE)
+MIGRATE_TASK := repos/migrate/flutter/510
 endif
 
 repos/template/java:
@@ -165,7 +177,7 @@ MIGRATE_TASK := repos/migrate/terraform/510
 endif
 
 # Init script
-repos/template/init: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk
+repos/template/init: repos/clean/template repos/template/java repos/template/docker repos/template/node repos/template/python repos/template/terragrunt repos/template/xcode repos/template/terraform-module repos/template/dotnet repos/template/go repos/template/rust repos/template/androidsdk repos/template/flutter
 
 .PHONY: repos/clean/template
 repos/clean/template:
@@ -405,7 +417,7 @@ else
 	@echo "No templates supported to upgrade by this script, skipping upgrade"
 endif
 
-.PHONY: repos/migrate/510 repos/migrate/java/510 repos/migrate/node/510 repos/migrate/dotnet/510 repos/migrate/go/510 repos/migrate/rust/510 repos/migrate/python/510 repos/migrate/xcode/510 repos/migrate/androidsdk/510 repos/migrate/terragrunt/510 repos/migrate/terraform/510 repos/migrate/docker/510
+.PHONY: repos/migrate/510 repos/migrate/java/510 repos/migrate/node/510 repos/migrate/dotnet/510 repos/migrate/go/510 repos/migrate/rust/510 repos/migrate/python/510 repos/migrate/xcode/510 repos/migrate/androidsdk/510 repos/migrate/terragrunt/510 repos/migrate/terraform/510 repos/migrate/docker/510 repos/migrate/flutter/510
 # Migration tasks:
 repos/migrate/510:
 	@echo "Migrating Common repository structure to v5.10+"
@@ -444,6 +456,11 @@ repos/migrate/xcode/510: repos/migrate/510
 repos/migrate/androidsdk/510:
 	@echo "NOT SUPPORTED: Migrating Android SDK repository structure to v5.10+"
 	@echo "Android SDK is available only for v5.10+ templates, no migration needed."
+	exit 100
+
+repos/migrate/flutter/510:
+	@echo "NOT SUPPORTED: Migrating Flutter repository structure to v5.10+"
+	@echo "Flutter is available only for v5.10+ templates, no migration needed."
 	exit 100
 
 repos/migrate/terragrunt/510:

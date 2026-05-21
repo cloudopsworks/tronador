@@ -8,6 +8,7 @@ addAssignees: author
 # Teams are not supported (wontfix): https://github.com/kentaro-m/auto-assign/issues/39
 reviewers:
   - berahac
+  - cloudopsworks-bot
 
 # A number of reviewers added to the pull request
 # Set 0 to add all the reviewers (default: 0)
