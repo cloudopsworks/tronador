@@ -1,15 +1,48 @@
-modules/bash: modules/bash/**
-modules/devops: modules/devops/**
-modules/docs: modules/docs/**
-modules/git: modules/git/**
-modules/gitflow: modules/gitflow/**
-modules/github: modules/github/**
-modules/make: modules/make/**
-modules/opentofu: modules/opentofu/**
-modules/packages: modules/packages/**
-modules/readme: modules/readme/**
-modules/repos: modules/repos/**
-modules/semver: modules/semver/**
-modules/template: modules/template/**
-modules/terraform: modules/terraform/**
-modules/terragrunt: modules/terragrunt/**
+"modules/bash":
+  - changed-files:
+    - any-glob-to-any-file: "modules/bash/**"
+"modules/devops":
+  - changed-files:
+    - any-glob-to-any-file: "modules/devops/**"
+"modules/docs":
+  - changed-files:
+    - any-glob-to-any-file: "modules/docs/**"
+"modules/git":
+  - changed-files:
+    - any-glob-to-any-file: "modules/git/**"
+"modules/gitflow":
+  - changed-files:
+    - any-glob-to-any-file: "modules/gitflow/**"
+"modules/github":
+  - changed-files:
+    - any-glob-to-any-file: "modules/github/**"
+"modules/make":
+  - changed-files:
+    - any-glob-to-any-file: "modules/make/**"
+"modules/opentofu":
+  - changed-files:
+    - any-glob-to-any-file: "modules/opentofu/**"
+"modules/packages":
+  - changed-files:
+    - any-glob-to-any-file: "modules/packages/**"
+"modules/readme":
+  - changed-files:
+    - any-glob-to-any-file: "modules/readme/**"
+"modules/repos":
+  - changed-files:
+    - any-glob-to-any-file: "modules/repos/**"
+"modules/semver":
+  - changed-files:
+    - any-glob-to-any-file: "modules/semver/**"
+"modules/template":
+  - changed-files:
+    - any-glob-to-any-file: "modules/template/**"
+"modules/terraform":
+  - changed-files:
+    - any-glob-to-any-file: "modules/terraform/**"
+"modules/terragrunt":
+  - changed-files:
+    - any-glob-to-any-file: "modules/terragrunt/**"
+"modules/flutter":
+  - changed-files:
+    - any-glob-to-any-file: "modules/flutter/**"
