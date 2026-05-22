@@ -18,6 +18,7 @@ VERSIONED_TEMPLATE := 0
 CICD_TEMPLATE := 0
 BOILERPLATE_TEMPLATE := 0
 BOILERPLATE_PATH := .boilerplate
+AGENTSMD_OVERRIDE ?= 0
 GH ?= $(INSTALL_PATH)/gh
 PULL_BRANCH ?= master
 REPO_NAME ?= ""
@@ -158,6 +159,7 @@ BOILERPLATE_PATH := .cloudopsworks/boilerplate
 endif
 REPO_NAME := $(TERRAGRUNT_TEMPLATE)
 MIGRATE_TASK := repos/migrate/terragrunt/510
+AGENTSMD_OVERRIDE := 1
 endif
 
 repos/template/terraform-module:
@@ -174,6 +176,7 @@ BOILERPLATE_PATH := .cloudopsworks/boilerplate
 endif
 REPO_NAME := $(TERRAFORM_MODULE)
 MIGRATE_TASK := repos/migrate/terraform/510
+AGENTSMD_OVERRIDE := 1
 endif
 
 # Init script
@@ -322,12 +325,19 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pf .template/Makefile Makefile
 		@cp -pf .template/.gitignore .gitignore
 		@if [[ -f .template/AGENTS.md ]] ; then \
-		    cp -pf .template/AGENTS.md AGENTS.md ; \
-		    $(GIT) add AGENTS.md ; \
+			if [[ "$(AGENTSMD_OVERRIDE)" == "1" ]] ; then \
+				echo "AGENTS.md override enabled, copying from template" ; \
+		    	cp -pf .template/AGENTS.md AGENTS.md ; \
+		    	$(GIT) add AGENTS.md ; \
+		    fi ; \
 		fi
 		@if [[ -f .template/CLAUDE.md ]] ; then \
 		    cp -pf .template/CLAUDE.md CLAUDE.md ; \
 		    $(GIT) add CLAUDE.md ; \
+		fi
+		@if [[ -f .template/README-TEMPLATE.md ]] ; then \
+		    cp -pf .template/README-TEMPLATE.md README-TEMPLATE.md ; \
+		    $(GIT) add README-TEMPLATE.md ; \
 		fi
 		@if [[ -f .template/.helmignore ]] ; then \
 		    cp -pf .template/.helmignore .helmignore ; \
@@ -346,8 +356,8 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 			[ -f .template/.cloudopsworks/auto-label.yml ] && cp -pf .template/.cloudopsworks/auto-label.yml .cloudopsworks/ ; \
 			[ -f .template/.cloudopsworks/auto-assign.yml ] && cp -pf .template/.cloudopsworks/auto-assign.yml .cloudopsworks/ ; \
 			[ -f .template/.cloudopsworks/gitversion.yaml ] && cp -pf .template/.cloudopsworks/gitversion.yaml .cloudopsworks/ ; \
-			[[ -f .template/.cloudopsworks/inputs-jira.yaml && ! -f .cloudopsworks/inputs-jira.yaml ]] && cp -pf .template/.cloudopsworks/inputs-jira.yaml .cloudopsworks/ ; \
-			[[ -f .template/.cloudopsworks/inputs.yaml && ! -f .cloudopsworks/inputs.yaml ]] && cp -pf .template/.cloudopsworks/inputs.yaml .cloudopsworks/ ; \
+			[[ -f .template/.cloudopsworks/inputs-jira.yaml && ! -f .cloudopsworks/inputs-jira.yaml ]] && cp -pf .template/.cloudopsworks/inputs-jira.yaml .cloudopsworks/ || echo "Not modifying .cloudopsworks/inputs-jira.yaml" ; \
+			[[ -f .template/.cloudopsworks/inputs.yaml && ! -f .cloudopsworks/inputs.yaml ]] && cp -pf .template/.cloudopsworks/inputs.yaml .cloudopsworks/ || echo "Not modifying .cloudopsworks/inputs.yaml" ; \
 			if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
 			fi ; \
