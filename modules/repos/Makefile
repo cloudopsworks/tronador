@@ -325,8 +325,11 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		@cp -pf .template/Makefile Makefile
 		@cp -pf .template/.gitignore .gitignore
 		@if [[ -f .template/AGENTS.md ]] ; then \
-			if [[ "$(AGENTSMD_OVERRIDE)" == "1" ]] ; then \
+			if [[ "$(AGENTSMD_OVERRIDE)" == "1" && -f AGENTS.md ]] ; then \
 				echo "AGENTS.md override enabled, copying from template" ; \
+		    	cp -pf .template/AGENTS.md AGENTS.md ; \
+		    	$(GIT) add AGENTS.md ; \
+		    else ; \
 		    	cp -pf .template/AGENTS.md AGENTS.md ; \
 		    	$(GIT) add AGENTS.md ; \
 		    fi ; \
