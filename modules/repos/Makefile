@@ -350,6 +350,9 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 		@if [[ "x$(V510PLUS)" != "x" ]] ; then \
 			echo "Detected template version v5.10+" ; \
 			mkdir -p .cloudopsworks ; \
+			if [[ "$(PRE510)" == "1" ]] ; then \
+				$(MAKE) $(MIGRATE_TASK) ; \
+			fi ; \
 			cp -pf .template/.cloudopsworks/_VERSION .cloudopsworks/_VERSION ; \
 			[ -d .template/.cloudopsworks/hooks ] && cp -Rpf .template/.cloudopsworks/hooks .cloudopsworks/ ; \
 			[ -f .template/.cloudopsworks/labeler.yml ] && cp -pf .template/.cloudopsworks/labeler.yml .cloudopsworks/ ; \
@@ -360,9 +363,6 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 			[[ -f .template/.cloudopsworks/inputs.yaml && ! -f .cloudopsworks/inputs.yaml ]] && cp -pf .template/.cloudopsworks/inputs.yaml .cloudopsworks/ || echo "Not modifying .cloudopsworks/inputs.yaml" ; \
 			if [ -f .template/.cloudopsworks/Makefile ]; then \
 				cp -pf .template/.cloudopsworks/Makefile .cloudopsworks/Makefile ; \
-			fi ; \
-			if [[ "$(PRE510)" == "1" ]] ; then \
-				$(MAKE) $(MIGRATE_TASK) ; \
 			fi ; \
 			$(GIT) add .cloudopsworks ; \
 		else \
