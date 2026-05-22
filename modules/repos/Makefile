@@ -329,7 +329,7 @@ ifeq (1,$(VERSIONED_TEMPLATE))
 				echo "AGENTS.md override enabled, copying from template" ; \
 		    	cp -pf .template/AGENTS.md AGENTS.md ; \
 		    	$(GIT) add AGENTS.md ; \
-		    else ; \
+		    else \
 		    	cp -pf .template/AGENTS.md AGENTS.md ; \
 		    	$(GIT) add AGENTS.md ; \
 		    fi ; \
