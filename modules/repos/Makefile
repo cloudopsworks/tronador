@@ -322,9 +322,22 @@ define copy-template-issue-templates
 fi
 endef
 
+define copy-template-pr-template
+@if [[ -f .template/.github/PULL_REQUEST_TEMPLATE.md ]] ; then \
+	echo "Updating pull request template" ; \
+	mkdir -p .github ; \
+	cp -pf .template/.github/PULL_REQUEST_TEMPLATE.md .github/PULL_REQUEST_TEMPLATE.md ; \
+	$(GIT) add .github/PULL_REQUEST_TEMPLATE.md ; \
+fi
+endef
+
 .PHONY: repos/upgrade/issue-templates
 repos/upgrade/issue-templates:
 	$(call copy-template-issue-templates)
+
+.PHONY: repos/upgrade/pull-request-template
+repos/upgrade/pull-request-template:
+	$(call copy-template-pr-template)
 
 .PHONY: repos/upgrade/stack
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch repos/upgrade/eval
@@ -404,6 +417,7 @@ else
 endif
 
 		$(call copy-template-issue-templates)
+		$(call copy-template-pr-template)
 
 ifeq (1,$(BOILERPLATE_TEMPLATE))
 		@mkdir -p $(BOILERPLATE_PATH)
