@@ -310,6 +310,35 @@ repos/upgrade/eval:
 	$(eval V510PLUS := $(shell if [[ -f .template/.cloudopsworks/_VERSION ]] ; then cat .template/.cloudopsworks/_VERSION ; else echo -n "" ; fi))
 	@echo "Template version v5.10+ detected?: '$(V510PLUS)'"
 
+define copy-template-issue-templates
+@if [[ -d .template/.github/ISSUE_TEMPLATE ]] ; then \
+	echo "Updating issue templates, excluding reserved 98_* and 99_* files" ; \
+	mkdir -p .github/ISSUE_TEMPLATE ; \
+	find .template/.github/ISSUE_TEMPLATE -maxdepth 1 -type f ! -name '98_*' ! -name '99_*' -print | while IFS= read -r src; do \
+		dst=".github/ISSUE_TEMPLATE/$$(basename "$$src")" ; \
+		cp -pf "$$src" "$$dst" ; \
+		$(GIT) add "$$dst" ; \
+	done ; \
+fi
+endef
+
+define copy-template-pr-template
+@if [[ -f .template/.github/PULL_REQUEST_TEMPLATE.md ]] ; then \
+	echo "Updating pull request template" ; \
+	mkdir -p .github ; \
+	cp -pf .template/.github/PULL_REQUEST_TEMPLATE.md .github/PULL_REQUEST_TEMPLATE.md ; \
+	$(GIT) add .github/PULL_REQUEST_TEMPLATE.md ; \
+fi
+endef
+
+.PHONY: repos/upgrade/issue-templates
+repos/upgrade/issue-templates:
+	$(call copy-template-issue-templates)
+
+.PHONY: repos/upgrade/pull-request-template
+repos/upgrade/pull-request-template:
+	$(call copy-template-pr-template)
+
 .PHONY: repos/upgrade/stack
 repos/upgrade/stack: packages/install/gh repos/upgrade/fetch repos/upgrade/eval
 	$(call assert-set,GIT)
@@ -386,6 +415,9 @@ else
 		[ -d .cloudopsworks/ ] && git add .cloudopsworks/
 		@cp -pfr .template/Makefile Makefile
 endif
+
+		$(call copy-template-issue-templates)
+		$(call copy-template-pr-template)
 
 ifeq (1,$(BOILERPLATE_TEMPLATE))
 		@mkdir -p $(BOILERPLATE_PATH)
