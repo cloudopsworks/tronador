@@ -120,7 +120,6 @@ Available targets:
   gitflow/feature/finish/%            Git-Flow feature finish (manual), this receives the following call pattern: make gitflow/feature/manual/finish:<feature_name>
   gitflow/feature/publish             Git-Flow feature publish
   gitflow/feature/publish/%           Git-Flow feature publish, this receives the following call pattern: make gitflow/feature/publish:<feature_name>
-  gitflow/feature/purge-no-develop/%  Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge-no-develop:<feature_name> # This will not checkout develop branch
   gitflow/feature/purge/%             Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge:<feature_name>
   gitflow/feature/start-no-develop/%  Git-Flow feature start for main-branch development, this receives the following call pattern: make gitflow/feature/start-no-develop:<feature_name>
   gitflow/feature/start/%             Git-Flow feature start, this receives the following call pattern: make gitflow/feature/start:<feature_name>
