@@ -4,6 +4,8 @@ tronador/
 
 .idea
 
+.DS_Store
+.DS_Store/
 
 .ai/
 .claude/
