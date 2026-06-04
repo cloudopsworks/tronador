@@ -130,20 +130,18 @@ else
 endif
 
 ## Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge:<feature_name>
-gitflow/feature/purge/%: gitflow/co/develop
+gitflow/feature/purge/%: gitflow/co/main
 	$(call assert-set,GIT)
 	$(eval FEAT_NAME := $(subst gitflow/feature/purge/,,$@))
 	# Assumes that feature branch is prefixed with feature/
 	@$(GIT) branch -D feature/$(FEAT_NAME)
 	@$(GIT) push origin -d feature/$(FEAT_NAME)
-
-## Git-Flow feature purge, this receives the following call pattern: make gitflow/feature/purge-no-develop:<feature_name> # This will not checkout develop branch
-gitflow/feature/purge-no-develop/%: gitflow/co/main
-	$(call assert-set,GIT)
-	$(eval FEAT_NAME := $(subst gitflow/feature/purge-no-develop/,,$@))
-	# Assumes that feature branch is prefixed with feature/
-	@$(GIT) branch -D feature/$(FEAT_NAME)
-	@$(GIT) push origin -d feature/$(FEAT_NAME)
+	# Check if develop branch exists, if exists checkout develop
+	$(eval DEVELOP_BRANCH := $(shell $(GIT) branch -r --format "%(refname:short)" | awk '/origin/ && ($$0 ~ /origin\/develop/) {sub("origin/", ""); print}'))
+ifeq ($(DEVELOP_BRANCH),develop)
+	@$(GIT) checkout develop
+	@$(GIT) pull origin develop
+endif
 
 ## Git-Flow feature finish (automatic via PR), this receives the following call pattern: make gitflow/feature/finish-no-develop must be on a feature branch and will generate a PR against MAIN branch instead of develop, this is useful for hotfixes or features that need to be merged directly into main without going through develop branch
 gitflow/feature/finish-no-develop: gitflow/deps
