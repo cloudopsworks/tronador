@@ -312,10 +312,20 @@ repos/upgrade/eval:
 
 define copy-template-issue-templates
 @if [[ -d .template/.github/ISSUE_TEMPLATE ]] ; then \
-	echo "Updating issue templates, excluding reserved 98_* and 99_* files" ; \
+	echo "Copying missing issue templates, excluding reserved 98_* and 99_* files" ; \
 	mkdir -p .github/ISSUE_TEMPLATE ; \
 	find .template/.github/ISSUE_TEMPLATE -maxdepth 1 -type f ! -name '98_*' ! -name '99_*' -print | while IFS= read -r src; do \
-		dst=".github/ISSUE_TEMPLATE/$$(basename "$$src")" ; \
+		dst_name="$$(basename "$$src")" ; \
+		case "$$dst_name" in \
+			*.disabled) dst_name="$${dst_name%.disabled}" ;; \
+			*.template) dst_name="$${dst_name%.template}" ;; \
+			*.tmpl) dst_name="$${dst_name%.tmpl}" ;; \
+		esac ; \
+		dst=".github/ISSUE_TEMPLATE/$$dst_name" ; \
+		if [[ -f "$$dst" ]] ; then \
+			echo "Not modifying $$dst" ; \
+			continue ; \
+		fi ; \
 		cp -pf "$$src" "$$dst" ; \
 		$(GIT) add "$$dst" ; \
 	done ; \
@@ -324,10 +334,14 @@ endef
 
 define copy-template-pr-template
 @if [[ -f .template/.github/PULL_REQUEST_TEMPLATE.md ]] ; then \
-	echo "Updating pull request template" ; \
+	echo "Copying missing pull request template" ; \
 	mkdir -p .github ; \
-	cp -pf .template/.github/PULL_REQUEST_TEMPLATE.md .github/PULL_REQUEST_TEMPLATE.md ; \
-	$(GIT) add .github/PULL_REQUEST_TEMPLATE.md ; \
+	if [[ -f .github/PULL_REQUEST_TEMPLATE.md ]] ; then \
+		echo "Not modifying .github/PULL_REQUEST_TEMPLATE.md" ; \
+	else \
+		cp -pf .template/.github/PULL_REQUEST_TEMPLATE.md .github/PULL_REQUEST_TEMPLATE.md ; \
+		$(GIT) add .github/PULL_REQUEST_TEMPLATE.md ; \
+	fi ; \
 fi
 endef
 
