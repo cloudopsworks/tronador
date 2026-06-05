@@ -340,4 +340,4 @@ This project is maintained by [Cloud Ops Works LLC][website].
   [share_reddit]: https://reddit.com/submit/?url=https://github.com/cloudopsworks/tronador
   [share_facebook]: https://facebook.com/sharer/sharer.php?u=https://github.com/cloudopsworks/tronador
   [share_email]: mailto:?subject=Cloud+Ops+Works+Tronador+DevOps+Acceleator&body=https://github.com/cloudopsworks/tronador
-  [beacon]: https://ga-beacon.cloudospworks.co/G-QMZVYYN2VN/cloudopsworks/tronador?pixel&cs=github&cm=readme&an=tronador
+  [beacon]: https://ga-beacon.cloudopsworks.co/G-QMZVYYN2VN/cloudopsworks/tronador?pixel&cs=github&cm=readme&an=tronador
