@@ -324,4 +324,4 @@ This project is maintained by [Cloud Ops Works LLC][website].
   [share_reddit]: {{ printf "https://reddit.com/submit/?url=https://github.com/%s" (ds "config").github_repo }}
   [share_facebook]: {{ printf "https://facebook.com/sharer/sharer.php?u=https://github.com/%s" (ds "config").github_repo }}
   [share_email]: {{ printf "mailto:?subject=%s&body=https://github.com/%s" ((ds "config").name | regexp.Replace " " "+") (ds "config").github_repo }}
-  [beacon]: {{ printf "https://ga-beacon.cloudospworks.co/G-QMZVYYN2VN/%s?pixel&cs=github&cm=readme&an=%s" (ds "config").github_repo (filepath.Base ((ds "config").github_repo)) }}
+  [beacon]: {{ printf "https://ga-beacon.cloudopsworks.co/G-QMZVYYN2VN/%s?pixel&cs=github&cm=readme&an=%s" (ds "config").github_repo (filepath.Base ((ds "config").github_repo)) }}
