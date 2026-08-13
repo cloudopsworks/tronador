@@ -152,7 +152,7 @@ ifneq (,$(filter $(GIT_BRANCH_PREFIX),feature feat))
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(MAIN_BRANCH) -b "Feature '$(GIT_BRANCH)' Finish, will merge the code into '$(MAIN_BRANCH)'." \
-			-t "Feature '$(GIT_BRANCH)' Finish" ; \
+			-t "chore: Feature '$(GIT_BRANCH)' Finish" ; \
 	else \
 		echo "You must be in the latest commit of the feature branch to publish"; \
 	fi
@@ -195,7 +195,7 @@ ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(MAIN_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(MAIN_BRANCH)" \
-			-t "Hotfix Release $(GIT_BRANCH)" ; \
+			-t "chore: Hotfix Release $(GIT_BRANCH)" ; \
 	else \
 		echo "You must be in the latest commit of the release branch to publish"; \
 	fi
@@ -220,7 +220,7 @@ ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	@$(GIT) checkout $(WORKING_BRANCH)
 	@$(GIT) pull origin $(WORKING_BRANCH)
 	@$(GIT) merge --no-ff hotfix/$(RELVERSION)
-	@$(GIT) tag -a $(RELVERSION) -m "HotFix Release $(HOTFIX_NAME)"
+	@$(GIT) tag -a $(RELVERSION) -m "chore: HotFix Release $(HOTFIX_NAME)"
 	@$(GIT) push origin $(WORKING_BRANCH)
 	@$(GIT) push origin $(RELVERSION)
 	@$(GIT) branch -d hotfix/$(RELVERSION)
@@ -348,7 +348,7 @@ ifneq ($(BEACON_STATUS),merge_master)
 	@echo "merge_master" > /tmp/.gitflow_release_beacon
 endif
 ifneq ($(BEACON_STATUS),tag_release)
-	@$(GIT) tag -a $(RELVERSION) -m "Release $(RELVERSION)"
+	@$(GIT) tag -a $(RELVERSION) -m "chore: Release $(RELVERSION)"
 	@echo "tag_release" > /tmp/.gitflow_release_beacon
 endif
 ifneq ($(BEACON_STATUS),push_master)
@@ -379,7 +379,7 @@ gitflow/release/finish/%: gitflow/co/main
 	@$(GIT) checkout $(MAIN_BRANCH)
 	@$(GIT) pull origin $(MAIN_BRANCH)
 	@$(GIT) merge --no-ff release/$(RELVERSION)
-	@$(GIT) tag -a $(RELVERSION) -m "Release $(RELVERSION)"
+	@$(GIT) tag -a $(RELVERSION) -m "chore: Release $(RELVERSION)"
 	@$(GIT) push origin $(MAIN_BRANCH)
 	@$(GIT) push origin $(RELVERSION)
 	@$(GIT) checkout develop
@@ -480,7 +480,7 @@ ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
+		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -m "chore: Version Tagging: v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)..."; \
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
@@ -490,7 +490,7 @@ else
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)" ; \
+		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "chore: Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)" ; \
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..."; \
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
@@ -508,7 +508,7 @@ ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		VER="$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)+deploy-$(META_TAG)" ; \
-		$(GIT) tag v$$VER -m "Version Tagging: v$$VER" ; \
+		$(GIT) tag v$$VER -m "chore: Version Tagging: v$$VER" ; \
 		echo "Tagged v$$VER ..."; \
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
@@ -518,7 +518,7 @@ else
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		VER="$(shell $(GITVERSION) -output json -showvariable SemVer)+deploy-$(META_TAG)" ; \
-		$(GIT) tag v$$VER -m "Pre Release Version Tagging: v$$VER" ; \
+		$(GIT) tag v$$VER -m "chore: Pre Release Version Tagging: v$$VER" ; \
 		echo "Tagged v$$VER ..."; \
 	else \
 		echo "You must be in the latest commit of the branch to tag"; \
