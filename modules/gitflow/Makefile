@@ -83,7 +83,7 @@ ifeq ($(GIT_BRANCH_PREFIX),feature)
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B develop -b "Feature '$(GIT_BRANCH)' Finish, will merge the code into 'develop'." \
-			-t "chore: Feature '$(GIT_BRANCH)' Finish from $(GIT_BRANCH)" ; \
+			-t "chore: Feature Finish from $(GIT_BRANCH) into \`develop\`" ; \
 	else \
 		echo "You must be in the latest commit of the feature branch to publish"; \
 	fi
@@ -152,7 +152,7 @@ ifneq (,$(filter $(GIT_BRANCH_PREFIX),feature feat))
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(MAIN_BRANCH) -b "Feature '$(GIT_BRANCH)' Finish, will merge the code into '$(MAIN_BRANCH)'." \
-			-t "chore: Feature '$(GIT_BRANCH)' Finish from $(GIT_BRANCH)" ; \
+			-t "chore: Feature Finish from $(GIT_BRANCH)" ; \
 	else \
 		echo "You must be in the latest commit of the feature branch to publish"; \
 	fi
@@ -195,7 +195,7 @@ ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
 		$(GH) pr create -B $(MAIN_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(MAIN_BRANCH)" \
-			-t "chore: Hotfix Release $(GIT_BRANCH) from $(GIT_BRANCH)" ; \
+			-t "chore: Hotfix Release from $(GIT_BRANCH)" ; \
 	else \
 		echo "You must be in the latest commit of the release branch to publish"; \
 	fi
