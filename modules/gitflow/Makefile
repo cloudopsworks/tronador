@@ -82,7 +82,7 @@ ifeq ($(GIT_BRANCH_PREFIX),feature)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GH) pr create -B develop -b "Feature '$(GIT_BRANCH)' Finish, will merge the code into 'develop'." \
+		$(GH) pr create -B develop -b "chore: Feature '$(GIT_BRANCH)' Finish, will merge the code into 'develop'." \
 			-t "Feature '$(GIT_BRANCH)' Finish" ; \
 	else \
 		echo "You must be in the latest commit of the feature branch to publish"; \
@@ -151,7 +151,7 @@ ifneq (,$(filter $(GIT_BRANCH_PREFIX),feature feat))
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GH) pr create -B $(MAIN_BRANCH) -b "Feature '$(GIT_BRANCH)' Finish, will merge the code into '$(MAIN_BRANCH)'." \
+		$(GH) pr create -B $(MAIN_BRANCH) -b "chore: Feature '$(GIT_BRANCH)' Finish, will merge the code into '$(MAIN_BRANCH)'." \
 			-t "chore: Feature '$(GIT_BRANCH)' Finish" ; \
 	else \
 		echo "You must be in the latest commit of the feature branch to publish"; \
@@ -194,7 +194,7 @@ ifeq ($(GIT_BRANCH_PREFIX),hotfix)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GH) pr create -B $(MAIN_BRANCH) -b "Hotfix Release $(GIT_BRANCH), will merge the code into $(MAIN_BRANCH)" \
+		$(GH) pr create -B $(MAIN_BRANCH) -b "chore: Hotfix Release $(GIT_BRANCH), will merge the code into $(MAIN_BRANCH)" \
 			-t "chore: Hotfix Release $(GIT_BRANCH)" ; \
 	else \
 		echo "You must be in the latest commit of the release branch to publish"; \
@@ -415,9 +415,9 @@ ifeq ($(GIT_BRANCH_PREFIX),release)
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		$(GH) pr create -B $(MAIN_BRANCH) -b "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
+		$(GH) pr create -B $(MAIN_BRANCH) -b "chore: Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
 			-t "Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
-		$(GH) pr create -B develop -b "Development Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
+		$(GH) pr create -B develop -b "chore: Development Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" \
 			-t "Merge from Release v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
 	else \
 		echo "You must be in the latest commit of the release branch to publish"; \
