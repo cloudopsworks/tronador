@@ -480,7 +480,7 @@ ifeq ($(GIT_BRANCH),$(MAIN_BRANCH))
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		echo "Calling: $(GITVERSION) -output json -showvariable MajorMinorPatch" ; \
+		echo "Calling: $(GITVERSION) -output json -showvariable MajorMinorPatch ; config set? $(GITVERSION_CONFIG_SET)" ; \
 		$(GITVERSION) -output json ; \
 		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch) -m "chore: Version Tagging: v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)" ; \
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable MajorMinorPatch)..."; \
@@ -492,7 +492,7 @@ else
 	@if [[ \
 		"$$($(GIT) ls-remote $(GIT_REMOTE) $(GIT_BRANCH) | cut -f1)" == "$$($(GIT) rev-parse HEAD)" \
 	]]; then \
-		echo "Calling: $(GITVERSION) -output json -showvariable SemVer" ; \
+		echo "Calling: $(GITVERSION) -output json -showvariable SemVer ; config set? $(GITVERSION_CONFIG_SET)" ; \
 		$(GITVERSION) -output json ; \
 		$(GIT) tag v$(shell $(GITVERSION) -output json -showvariable SemVer) -m "chore: Version Tagging: v$(shell $(GITVERSION) -output json -showvariable SemVer)" ; \
 		echo "Tagged v$(shell $(GITVERSION) -output json -showvariable SemVer)..."; \
