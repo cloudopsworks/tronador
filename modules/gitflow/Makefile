@@ -113,8 +113,8 @@ gitflow/feature/publish/%:
 	$(eval FEAT_NAME := $(subst gitflow/feature/publish/,,$@))
 	# Assumes that feature branch is prefixed with feature/
 	@if [[ "$(FEAT_NAME)" != "" ]] ; then \
-	  @$(GIT) checkout feature/$(FEAT_NAME) ; \
-	  @$(GIT) push --set-upstream origin feature/$(FEAT_NAME) ; \
+	  $(GIT) checkout feature/$(FEAT_NAME) ; \
+	  $(GIT) push --set-upstream origin feature/$(FEAT_NAME) ; \
 	else \
 	  echo "You must specify a feature name." ; \
 	  exit 1 ; \
