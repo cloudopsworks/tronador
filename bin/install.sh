@@ -12,3 +12,14 @@ fi
 echo "Cloning ${GITHUB_REPO}#${TRONADOR_BRANCH}..."
 git clone -q -b $TRONADOR_BRANCH $GITHUB_REPO 2>/dev/null
 #rm -rf $TRONADOR_PROJECT/.git # affects the git status of the project
+
+cat >&2 <<'NOTICE'
+
+Deprecation Notice: this make module is being deprecated in favor of our CLI.
+Please refer to our resources documentation and GitHub project:
+
+  Install guide:  https://cloudopsworks.co/resources/tronador-cli-installation/
+  Resources:      https://cloudopsworks.co/resources/
+  GitHub project: https://github.com/cloudopsworks/tronador-cli
+
+NOTICE

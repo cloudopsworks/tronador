@@ -44,6 +44,22 @@ else \
 fi
 endef
 
+# Deprecation notice - emitted once, before tronador's own Makefile is included
+# so it does not print twice in consumer repositories.
+ifndef MAKE_RESTARTS
+ifeq ($(MAKELEVEL),0)
+ifndef TRONADOR_DEPRECATION_SHOWN
+TRONADOR_DEPRECATION_SHOWN := 1
+$(shell printf '\n%s\n%s\n\n  %-15s %s\n  %-15s %s\n  %-15s %s\n\n' \
+  'Deprecation Notice: this make module is being deprecated in favor of our CLI.' \
+  'Please refer to our resources documentation and GitHub project:' \
+  'Install guide:'  'https://cloudopsworks.co/resources/tronador-cli-installation/' \
+  'Resources:'      'https://cloudopsworks.co/resources/' \
+  'GitHub project:' 'https://github.com/cloudopsworks/tronador-cli' >&2)
+endif
+endif
+endif
+
 -include $(if $(findstring true,$(TRONADOR_AUTO_INIT)),$(shell $(tronador_auto_init) >&2)) $(TRONADOR_PATH)/Makefile
 
 .PHONY : init
