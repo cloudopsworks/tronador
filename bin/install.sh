@@ -20,6 +20,7 @@ Please refer to our resources documentation and GitHub project:
 
   Install guide:  https://cloudopsworks.co/resources/tronador-cli-installation/
   Resources:      https://cloudopsworks.co/resources/
+  Docs:           https://tronador.cloudopsworks.co/
   GitHub project: https://github.com/cloudopsworks/tronador-cli
 
 NOTICE
