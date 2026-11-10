@@ -69,15 +69,6 @@ Available targets:
   readme/build                        Create README.md by building it from README.yaml
   readme/init                         Create basic minimalistic .README.md template file
   readme/lint                         Verify the `README.md` is up to date
-  repos/avail                         List available template repository versions next patch versions and next major versions (shortened)
-  repos/available                     List available template repository versions next patch versions and next major versions
-  repos/cicd/update                   Update CICD Pipeline footer versioning
-  repos/recover                       Upgrade Repository from Templates
-  repos/upgrade                       Upgrade Repository from master Templates (Default upgrade, no breaking changes)
-  repos/upgrade/%                     Upgrade Repository from Templates for specific version as part of the last / (%) argument
-  repos/upgrade/dev                   Upgrade Repository from Templates but for DEV!
-  repos/upgrade/major                 Upgrade Repository from master Templates (Default upgrade, no breaking changes)
-  repos/upgrade/master                Upgrade Repository from master Templates (Major upgrade, can contain breaking changes)
   semver/export                       Export semver vars
   template/build                      Create $OUT file by building it from $IN template file
   template/deps                       Install dependencies
