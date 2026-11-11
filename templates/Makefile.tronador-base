@@ -19,9 +19,19 @@ export TRONADOR_PATH := $(or $(wildcard $(TRONADOR_PATH)), $(TRONADOR_PATH_LOCAL
 TRONADOR_AUTO_INIT ?= false
 
 define tronador_install
-	curl --retry 5 --fail --silent --retry-delay 1 https://raw.githubusercontent.com/$(TRONADOR_ORG)/$(TRONADOR_PROJECT)/$(TRONADOR_BRANCH)/bin/install.sh | \
+	set -o pipefail; \
+	curl --retry 5 --retry-max-time 180 --fail --silent --show-error --retry-delay 1 --connect-timeout 10 --max-time 120 https://raw.githubusercontent.com/$(TRONADOR_ORG)/$(TRONADOR_PROJECT)/$(TRONADOR_BRANCH)/bin/install.sh | \
 		bash -s "$(TRONADOR_ORG)" "$(TRONADOR_PROJECT)" "$(TRONADOR_BRANCH)"
 endef
+
+# Remote commit lookup that never prompts and gives up on stalled connections.
+# Matches the exact branch first, then an annotated tag's peeled commit, then a
+# lightweight tag. An empty result means "unreachable or ref not found".
+tronador_remote_sha = GIT_TERMINAL_PROMPT=0 \
+	git -c http.lowSpeedLimit=1000 -c http.lowSpeedTime=15 -C '$(TRONADOR_PATH_LOCAL)' \
+	ls-remote '$(TRONADOR_CLONE_URL)' 'refs/heads/$(TRONADOR_BRANCH)' 'refs/tags/$(TRONADOR_BRANCH)' 'refs/tags/$(TRONADOR_BRANCH)^{}' 2>/dev/null | \
+	awk -v h='refs/heads/$(TRONADOR_BRANCH)' -v t='refs/tags/$(TRONADOR_BRANCH)' \
+	  '$$2==h{b=$$1} $$2==t"^{}"{p=$$1} $$2==t{g=$$1} END{print (b!="" ? b : (p!="" ? p : g))}'
 
 define tronador_auto_init
 if [[ \
@@ -33,16 +43,34 @@ elif [[ \
 	-f "$(TRONADOR_PATH)/Makefile" \
 ]]; then \
 	echo "[.tronador] using external $(TRONADOR_PATH), skip auto init..."; \
-elif [[ \
-	"$(TRONADOR_PATH)" == "$(TRONADOR_PATH_LOCAL)" && \
-	-f "$(TRONADOR_PATH)/Makefile" && \
-	"$$(git -C '$(TRONADOR_PATH_LOCAL)' ls-remote '$(TRONADOR_CLONE_URL)' '$(TRONADOR_BRANCH)' | cut -f1)" == "$$(git -C '$(TRONADOR_PATH_LOCAL)' rev-parse HEAD)" \
-]]; then \
-	echo "[.tronador] Clone of $(TRONADOR_PROJECT) already updated, skip auto init..."; \
+elif [[ -f "$(TRONADOR_PATH_LOCAL)/Makefile" ]]; then \
+	REMOTE_SHA="$$($(tronador_remote_sha))"; \
+	if [[ -z "$$REMOTE_SHA" ]]; then \
+		echo "[.tronador] Could not resolve $(TRONADOR_BRANCH) at $(TRONADOR_CLONE_URL) (unreachable or ref not found), keeping existing clone..."; \
+	elif [[ "$$REMOTE_SHA" == "$$(git -C '$(TRONADOR_PATH_LOCAL)' rev-parse HEAD 2>/dev/null)" ]]; then \
+		echo "[.tronador] Clone of $(TRONADOR_PROJECT) already updated, skip auto init..."; \
+	else \
+		$(tronador_install); \
+	fi; \
 else \
 	$(tronador_install); \
 fi
 endef
+
+# Run the auto-init check once per top-level invocation in this project.
+# Recursive sub-makes inherit TRONADOR_AUTO_INIT_DONE (set to this project's
+# directory) and make restarts set MAKE_RESTARTS; both re-read this file and
+# would repeat the network check. A nested make in a different project still
+# runs its own check. An internal flag is used so a command-line
+# TRONADOR_AUTO_INIT=true cannot bypass the guard in sub-makes.
+ifeq ($(TRONADOR_AUTO_INIT_DONE),$(CURDIR))
+_TRONADOR_DO_AUTO_INIT :=
+else ifdef MAKE_RESTARTS
+_TRONADOR_DO_AUTO_INIT :=
+else
+_TRONADOR_DO_AUTO_INIT := $(findstring true,$(TRONADOR_AUTO_INIT))
+endif
+export TRONADOR_AUTO_INIT_DONE := $(CURDIR)
 
 # Deprecation notice - emitted once, before tronador's own Makefile is included
 # so it does not print twice in consumer repositories.
@@ -60,7 +88,7 @@ endif
 endif
 endif
 
--include $(if $(findstring true,$(TRONADOR_AUTO_INIT)),$(shell $(tronador_auto_init) >&2)) $(TRONADOR_PATH)/Makefile
+-include $(if $(_TRONADOR_DO_AUTO_INIT),$(shell $(tronador_auto_init) >&2)) $(TRONADOR_PATH)/Makefile
 
 .PHONY : init
 ## Init Accelerate Tooling

@@ -4,6 +4,7 @@ export README_YAML ?= README.yaml
 export README_TEMPLATE_FILE ?= $(TRONADOR_PATH)/templates/README.md.gotmpl
 export README_TEMPLATE_YAML := $(if $(findstring http,$(README_YAML)),$(README_YAML),$(TRONADOR_PATH)/templates/$(README_YAML))
 export README_INCLUDES ?= $(file://$(shell pwd)/?type=text/plain)
+export README_INCLUDES := $(README_INCLUDES)
 
 ## Alias for readme/build
 readme: readme/build
