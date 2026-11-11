@@ -1,7 +1,14 @@
 export TMP ?= /tmp
+# Exported $(shell ...) defaults are frozen with `:=` right after their `?=`.
+# GNU Make >= 4.4 expands every exported variable into the environment of each
+# $(shell) call; leaving them recursive makes each shell call re-run all the
+# others (factorial blow-up), which hangs make on modern Linux distributions.
 export TRONADOR_PATH ?= $(shell 'pwd')
+export TRONADOR_PATH := $(TRONADOR_PATH)
 export OS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
+export OS := $(OS)
 export OS_ARCH ?= $(shell uname -m)
+export OS_ARCH := $(OS_ARCH)
 ifeq ($(OS_ARCH),x86_64)
 export ARCH ?= amd64
 else

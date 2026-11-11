@@ -1,8 +1,11 @@
 GIT:= $(shell which git)
 MAIN_BRANCH:=$(shell $(GIT) branch -r --format "%(refname:short)" | awk '/origin/ && ($$0 ~ /origin\/(master|main)/) {sub("origin/", ""); print}')
 export GIT_BRANCH ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null)
+export GIT_BRANCH := $(GIT_BRANCH)
 export GIT_REMOTE ?= $(shell $(GIT) ls-remote --get-url 2>/dev/null)
+export GIT_REMOTE := $(GIT_REMOTE)
 export GIT_BRANCH_PREFIX ?= $(shell $(GIT) rev-parse --abbrev-ref HEAD 2>/dev/null | sed -e 's/\(.*\)\/.*/\1/')
+export GIT_BRANCH_PREFIX := $(GIT_BRANCH_PREFIX)
 GH ?= $(INSTALL_PATH)/gh
 SEMVER ?= $(INSTALL_PATH)/semver
 GITVERSION ?= $(INSTALL_PATH)/gitversion
